@@ -1,0 +1,26 @@
+
+<div class="text-center">Bitte melden Sie sich mit Ihren Hochschuldaten an</div>
+<div class="container form-container">
+    <form action="/login" method="post">
+        <div class="form-group col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+
+        </div>
+        <div class="form-group col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        </div>
+
+        <button type="submit" class="btn btn-primary form-group col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1">Submit</button>
+    </form>
+
+
+
+    <div id="output">
+        {{#if message}}
+            {{message}}
+        {{/if}}
+    </div>
+
+</div>

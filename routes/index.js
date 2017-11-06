@@ -1,3 +1,5 @@
+// login
+var login = require('./login');
 
 // dashboard
 var dashboard = require('./dashboard');
@@ -6,26 +8,29 @@ var dashboard = require('./dashboard');
 var help = require('./help/index');
 
 // cronjobs
-var cronjobs = require('./cronjobs/index');
+const cronjobs = require('./cronjobs/index');
 
 // databases
-var databases = require('./databases/index');
-var postgres = require('./databases/postgres');
-var mongodb = require('./databases/mongodb');
+const databases = require('./databases/index');
+const postgres = require('./databases/postgres');
+const mongodb = require('./databases/mongodb');
 
 // runtimes
-var runtimes = require('./runtimes/index');
-var nodejs = require('./runtimes/nodejs');
-var php = require('./runtimes/php');
+const runtimes = require('./runtimes/index');
+const nodejs = require('./runtimes/nodejs');
+const php = require('./runtimes/php');
 
 // vcs
-var vcs = require('./vcs/index');
-var gitlab = require('./vcs/gitlab');
-var svn = require('./vcs/svn');
+const vcs = require('./vcs/index');
+const gitlab = require('./vcs/gitlab');
+const svn = require('./vcs/svn');
 
 
 
 module.exports = function (app) {
+
+    // login
+    app.use('/login', login);
 
     // dashboard
     app.use('/', dashboard);
