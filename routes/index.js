@@ -1,11 +1,13 @@
 // login
-var login = require('./login');
+const login = require('./login');
+const logout = require('./logout');
+
 
 // dashboard
-var dashboard = require('./dashboard');
+const dashboard = require('./dashboard');
 
 // help
-var help = require('./help/index');
+const help = require('./help/index');
 
 // cronjobs
 const cronjobs = require('./cronjobs/index');
@@ -27,10 +29,13 @@ const svn = require('./vcs/svn');
 
 
 
-module.exports = function (app) {
+module.exports = (app) => {
 
     // login
     app.use('/login', login);
+
+    // logout
+    app.use('/logout', logout);
 
     // dashboard
     app.use('/', dashboard);

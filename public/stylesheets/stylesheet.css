@@ -358,3 +358,11 @@ the following:
    transform:rotate(attr(data-value,deg,0);
 }
 */
+
+#versionnumber {
+    color: #AAAAAA;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 9000;
+}

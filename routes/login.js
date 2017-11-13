@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 /* GET help page. */
-router.get('/', function(req, res, next) {
-    res.render('login', {layout: 'empty'});
+router.get('/', (req, res, next) => {
+    res.render('login', {layout: 'empty', test: "Dummyinhalt"});
 });
 
-router.post('/', function(req, res, next){
+router.post('/', (req, res, next) => {
     res.redirect('/');
 
     // TODO: Prüfen, ob user existiert, falls nicht registerUser.js requiren und User anlegen

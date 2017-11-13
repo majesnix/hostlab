@@ -1,5 +1,5 @@
-module.exports = function(hbs){
-    hbs.registerHelper('TEST', function (value, options) {
+module.exports = (hbs) => {
+    hbs.registerHelper('TEST', (value, options) => {
         return "test";
     });
 };

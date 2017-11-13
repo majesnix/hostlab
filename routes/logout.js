@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('runtimes/php');
+    res.redirect('/login');
 });
 
 module.exports = router;

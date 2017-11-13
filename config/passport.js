@@ -1,6 +1,6 @@
 const LdapStrategy = require('passport-ldapauth').Strategy;
 
-module.exports = function (passport) {
+module.exports = (passport) => {
     //TODO:
 
 };
