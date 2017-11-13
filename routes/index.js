@@ -9,6 +9,9 @@ const dashboard = require('./dashboard');
 // help
 const help = require('./help/index');
 
+// filemanager
+var filemanager = require('./filemanager/index');
+
 // cronjobs
 const cronjobs = require('./cronjobs/index');
 
@@ -42,6 +45,9 @@ module.exports = (app) => {
 
     // help
     app.use('/help', help);
+
+    // filemanager
+    app.use('/filemanager', filemanager);
 
     // cronjobs
     app.use('/cronjobs', cronjobs);
