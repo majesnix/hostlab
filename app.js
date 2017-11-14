@@ -6,6 +6,15 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const handlebars = require('express-handlebars');
 const passport = require('passport');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
+const configDB = require('./config/mongoDB.js');
+mongoose.connect(configDB.url, {
+    useMongoClient: true
+
+});
 
 const app = express();
 
@@ -28,11 +37,45 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session(
+    {
+        secret: 'lol',
+        store: new MongoStore(
+            {
+                mongooseConnection: mongoose.connection,
+
+                // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
+                touchAfter: 5 // time period in seconds
+            }),
+
+        // Cookies werden nach der maxAge Zeit gelöscht, auch bei Nutzerinteraktion
+        // Durch rolling: true wird bei jedem Request das maxAge neu gesetzt
+        rolling: true,
+
+        // Wenn die Session nicht modifiziert wurde wird sie nicht bei jedem Request neu gespeichert
+        resave: false,
+
+        // Bei jedem Request werden Cookies erzeugt, auch wenn nicht eingeloggt wird.
+        // Durch saveUninitialized: false werden diese Cookies nicht gespeichert und die SessionDB wird nicht vollgemüllt
+        saveUninitialized: false,
+
+        // Setzt die CookiespeicherDAUER auf eine festgelegte Zeit
+        cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 Stunden
+
+    }
+));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// configure passport
+require('./config/passport')(passport);
 
 // mount routes
 require('./routes')(app);
 
-
+//Testuser anlegen
+//require('./tasks/devhelper/createUser')('user123', 'user123@user123.de', 'user123', false)
 
 // catch 404 and forward to error handler
 app.use( (req, res, next) => {
