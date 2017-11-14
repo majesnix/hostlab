@@ -1,5 +1,7 @@
 const User = require('../../databases/mongodb/models/user');
 
+const registerUser = require('../registerUser');
+
 
 module.exports = (username, email, password, isAdmin) => {
 
@@ -17,7 +19,7 @@ module.exports = (username, email, password, isAdmin) => {
     newUser.save(function (err) {
         if (err)
             throw err;
-        //return done(null, newUser);
+        registerUser(username,password)
     });
 
 };
