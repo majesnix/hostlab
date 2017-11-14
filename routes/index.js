@@ -62,9 +62,21 @@ module.exports = (app) => {
     app.use('/runtimes/nodejs', nodejs);
     app.use('/runtimes/php', php);
 
-    // runtimes
+
+
+    // vcs
     app.use('/vcs', vcs);
     app.use('/vcs/nodejs', gitlab);
     app.use('/vcs/php', svn);
 
+    // ab hier Admin Routen
+    app.use(isAdmin);
+
 };
+
+function isAdmin(req, res, next){
+    if(true){
+        return next();
+    }
+    res.redirect('/login')
+}
