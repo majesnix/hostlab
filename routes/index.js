@@ -37,6 +37,9 @@ module.exports = (app) => {
     // login
     app.use('/login', login);
 
+
+    app.use(isRegistered);
+
     // logout
     app.use('/logout', logout);
 
@@ -74,8 +77,14 @@ module.exports = (app) => {
 
 };
 
+function isRegistered(req, res, next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect('/login')}
+
 function isAdmin(req, res, next){
-    if(true){
+    if(req.isAuthenticated() && req.user.admin){
         return next();
     }
     res.redirect('/login')
