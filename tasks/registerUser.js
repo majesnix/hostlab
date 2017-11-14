@@ -1,14 +1,17 @@
 // Beim ersten Login auszuführen um Nutzer anzulegen
 
-module.exports = (user) => {
+module.exports = (username, password) => {
   // Shellscripte ausführen, wie z.B einen Nutzer anlegen, Gitlab anlegen, DB anlegen etc.
 
     const { spawn } = require('child_process');
 
 
-    //TODO: User anlegen
+    //User wird angelegt und ein Home verzeichnis erstellt, Passwort wird über echo in passwd gepiped
+    // -S gibt an, dass der Input stdio ist
+    // TODO: Eleganter als mit echo lösen
     const child = spawn(
-        'ls -l',
+        'useradd -d /home/' + username + ' -m ' + username +
+        ' && echo ' + password + ' | passwd -S ' + username ,
         {
             stdio: 'inherit',
             shell: true
