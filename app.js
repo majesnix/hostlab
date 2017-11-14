@@ -29,6 +29,9 @@ app.engine('hbs', handlebars({
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+
+
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -74,8 +77,12 @@ require('./config/passport')(passport);
 // mount routes
 require('./routes')(app);
 
-//Testuser anlegen
+//Testuser in DB anlegen
 //require('./tasks/devhelper/createUser')('user123', 'user123@user123.de', 'user123', false)
+
+// Systemuser
+//require('./tasks/registerUser')('user123','user123');
+
 
 // catch 404 and forward to error handler
 app.use( (req, res, next) => {
