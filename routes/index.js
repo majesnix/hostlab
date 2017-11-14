@@ -30,7 +30,8 @@ const vcs = require('./vcs/index');
 const gitlab = require('./vcs/gitlab');
 const svn = require('./vcs/svn');
 
-
+// admin
+const admin = require('./admin/index');
 
 module.exports = (app) => {
 
@@ -74,6 +75,8 @@ module.exports = (app) => {
 
     // ab hier Admin Routen
     app.use(isAdmin);
+
+    app.use('/admin', admin);
 
 };
 
