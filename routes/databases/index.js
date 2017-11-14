@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('databases/index');
+    res.render('database/index', {username: req.user.username});
 });
 
 module.exports = router;

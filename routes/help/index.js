@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('help/index');
+    res.render('help/index', {username: req.user.username});
 });
 
 module.exports = router;
