@@ -9,12 +9,25 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/newLocalUser', (req, res) => {
-   let username = req.body.username;
-   let password = req.body.password;
-   let email  = req.body.email;
-   let admin = req.body.admin;
 
-    createUser(username, email, password, admin, true)
+    let opts = {
+        username: req.body.username,
+        password: req.body.password,
+        email: req.body.email,
+        admin: req.body.admin,
+        localuser: true
+
+    };
+
+    createUser(opts, (err, user) => {
+        if(err){
+            console.log(err);
+        }
+        console.log(user);
+        res.send('ok');
+        //TODO: sonst antworten
+    })
+
 
 });
 
