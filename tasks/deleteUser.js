@@ -4,7 +4,7 @@ const linuxUser = require('linux-user');
 
 const deleteUserinDB = (opts, callback) => {
 
-    User.findOneAndRemove({'username': opts.username}, function (err) {
+    User.deleteOne({'username': opts.username}, function (err) {
         if (err) {
             console.log(err);
             return callback(err);
