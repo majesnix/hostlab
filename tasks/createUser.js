@@ -1,9 +1,8 @@
 const User = require('../databases/mongodb/models/user');
+const linuxUser = require('linux-user');
 
-const createUserOnServer = require('./createUserOnServer');
 
-
-module.exports = (opts, callback) => {
+const createUserinDB = (opts, callback) => {
 
 
     let newUser = new User();
@@ -11,8 +10,8 @@ module.exports = (opts, callback) => {
     newUser.email = opts.email;
     newUser.generateHash(opts.password, function (err, hash) {
         if (err) {
-            callback(err);
-            return;
+            return callback(err);
+
         }
         newUser.password = hash;
     });
@@ -20,22 +19,17 @@ module.exports = (opts, callback) => {
     newUser.localuser = opts.localuser;
     newUser.save(function (err) {
         if (err) {
-            callback(err);
-            throw err;
+            return callback(err);
         }
-
-        createUserOnServer({
-            username: opts.username,
-            password: opts.password
-        }, (err) => {
-            if (err) {
-                callback(err);
+        linuxUser.addUser(opts.username, (err, user) => {
+            if(err){
+                return callback(err);
             }
-            else {
-                callback(err, newUser);
-            }
-
+            return callback(false, user);
         })
+
     });
 
 };
+
+module.exports = createUserinDB;
