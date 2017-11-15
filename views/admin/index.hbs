@@ -1,7 +1,7 @@
 <h1>Adminpage</h1>
 
 <h3>Create User</h3>
-<form action="admin/newLocalUser" method="post">
+<form action="admin/user" method="post">
     <div class="form-group">
         <label for="email">Username:</label>
         <input type="text" name="username" id="username" required class="form-control">
@@ -19,3 +19,24 @@
     </div>
     <button type="submit" class="btn btn-default">Submit</button>
 </form>
+
+<ul>
+    {{#each users}}
+        <li>{{this.username}} <span class="deleteUser" id="{{this.username}}">X</span></li>
+    {{/each}}
+</ul>
+
+<script>
+    $('.deleteUser').on('click', function() {
+        const username = $(this).attr('id');
+        console.log(username)
+        $.ajax({
+            url: '/admin/user/' + username,
+            method: 'delete',
+            success: function () {
+                console.log("ok");
+            }
+        })
+    })
+
+</script>
