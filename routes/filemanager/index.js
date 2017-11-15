@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('filemanager/index', {username: req.user.username});
+    res.render('filemanager/index', {user: req.user});
 });
 
 module.exports = router;
