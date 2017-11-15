@@ -1,6 +1,6 @@
-const User = require('../../databases/mongodb/models/user');
+const User = require('../databases/mongodb/models/user');
 
-const registerUserOnServer = require('../registerUserOnServer');
+const createUserOnServer = require('./createUserOnServer');
 
 
 module.exports = (username, email, password, isAdmin, localuser) => {
@@ -20,7 +20,7 @@ module.exports = (username, email, password, isAdmin, localuser) => {
     newUser.save(function (err) {
         if (err)
             throw err;
-        registerUserOnServer(username,password)
+        createUserOnServer(username,password)
     });
 
 };

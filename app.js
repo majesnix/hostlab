@@ -13,7 +13,6 @@ const MongoStore = require('connect-mongo')(session);
 const configDB = require('./config/mongoDB.js');
 mongoose.connect(configDB.url, {
     useMongoClient: true
-
 });
 
 const app = express();
@@ -24,8 +23,8 @@ app.engine('hbs', handlebars({
     extname: '.hbs',
     layoutsDir: 'views/layouts/',
     partialsDir: 'views/partials/'
-
 }));
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
@@ -78,10 +77,10 @@ require('./config/passport')(passport);
 require('./routes')(app);
 
 //Testuser in DB anlegen
-//require('./tasks/devhelper/createUser')('user123', 'user123@user123.de', 'user123', false)
+//require('./tasks/createUserInDB')('admin', 'admin@admin.de', 'admin', true, true)
 
 // Systemuser
-//require('./tasks/registerUser')('user123','user123');
+//require('./tasks/createUserOnServer')('user123','user123');
 
 
 // catch 404 and forward to error handler
