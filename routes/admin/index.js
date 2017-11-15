@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const createUser = require('../../tasks/createUser');
-const deleteUser = require('../../tasks/createUser');
+const deleteUser = require('../../tasks/deleteUser');
 
 
 const User = require('../../databases/mongodb/models/user');
@@ -50,15 +50,21 @@ router.delete('/user/:username', (req, res) => {
         username: req.params.username,
     };
 
-    deleteUser(opts, (err) => {
-        if(err){
-            console.log(err);
-        }
-        else{
-            res.send('ok');
+    if(req.user.username !== opts.username){
+        deleteUser(opts, (err) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                res.send('ok');
 
-        }
-    })
+            }
+        })
+    }
+    else {
+        res.send('You cant delete yourself');
+    }
+
 
 
 });
