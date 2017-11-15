@@ -1,14 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const createUser = require('../../tasks/createUserInDB');
+const createUser = require('../../tasks/createUser');
+const deleteUser = require('../../tasks/createUser');
+
+
+const User = require('../../databases/mongodb/models/user');
 
 
 /* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('admin/index', {user: req.user});
+
+    User.find({}, function (err, users) {
+        if (err) {
+            console.log(err);
+        }
+        console.log(users);
+        res.render('admin/index', {user: req.user, users: users});
+    });
+
+
 });
 
-router.post('/newLocalUser', (req, res) => {
+router.post('/user', (req, res) => {
 
     let opts = {
         username: req.body.username,
@@ -26,6 +39,25 @@ router.post('/newLocalUser', (req, res) => {
         console.log(user);
         res.send('ok');
         //TODO: sonst antworten
+    })
+
+
+});
+
+router.delete('/user/:username', (req, res) => {
+
+    let opts = {
+        username: req.params.username,
+    };
+
+    deleteUser(opts, (err) => {
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.send('ok');
+
+        }
     })
 
 
