@@ -24,22 +24,61 @@ module.exports = (passport) => {
         function (req, username, password, done) {
             User.findOne({'username': username}, function (err, user) {
                 console.log(user);
-                if (err){
+                if (err) {
                     console.log(err);
                     return done(err);
                 }
                 if (!user)
                     return done(null, false);
-                user.validPassword(password, function(err, res){
-                    if(err){
+
+                // Wenn User LDAP User war, aber die LDAP Authentifizierung nicht erfolgreich war,
+                // dann darf er sich nicht einloggen
+                if (!user.localuser) {
+                    return done(null, false);
+                }
+
+                user.validPassword(password, function (err, res) {
+                    if (err) {
                         return done(err);
                     }
-                    if(res === false){
+                    if (res === false) {
                         return done(null, false);
                     }
                     return done(null, user);
                 });
             });
         }));
+
+
+    passport.use('ldapauth', new LdapStrategy({
+            server: {
+                url: 'ldap://localhost:389',
+                bindDN: 'cn=root',
+                bindCredentials: 'secret',
+                searchBase: 'ou=passport-ldapauth',
+                searchFilter: '(uid={{username}})'
+            }
+        },
+        function (req, user, done) {
+
+            User.findOne({'username': user}, function (err, user) {
+                console.log(user);
+                if (err) {
+                    console.log(err);
+                    return done(err);
+                }
+                if (!user){
+                    // TODO: Konto anlegen und LDAP Tag einfügen
+                    // TODO: Dann weiterleiten mit "done"
+                }
+
+
+
+                return done(null, user);
+
+            });
+
+        })
+    );
 
 };
