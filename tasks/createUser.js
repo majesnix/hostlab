@@ -25,7 +25,13 @@ const createUserinDB = (opts, callback) => {
             if(err){
                 return callback(err);
             }
-            return callback(false, user);
+            linuxUser.setPassword(opts.username, opts.password, (err) => {
+                if(err){
+                    return callback(err);
+                }
+                return callback(false, newUser);
+            });
+
         })
 
     });
