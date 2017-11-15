@@ -16,6 +16,7 @@
     "express-session": "^1.15.6",
     "find-free-port": "^1.0.2",
     "hbs": "~4.0.1",
+    "linux-user": "^0.1.0",
     "mongoose": "^4.13.2",
     "morgan": "~1.9.0",
     "passport": "^0.4.0",
