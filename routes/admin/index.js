@@ -11,9 +11,10 @@ router.get('/', (req, res, next) => {
 router.post('/newLocalUser', (req, res) => {
    let username = req.body.username;
    let password = req.body.password;
+   let email  = req.body.email;
    let admin = req.body.admin;
 
-    createUser(username, 'user123@user123.de', password, admin, true)
+    createUser(username, email, password, admin, true)
 
 });
 
