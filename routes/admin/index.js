@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const createUser = require('../../tasks/devhelper/createUser');
+const createUser = require('../../tasks/createUserInDB');
 
 
 /* GET help page. */
