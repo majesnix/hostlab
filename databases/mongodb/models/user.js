@@ -57,8 +57,11 @@ const userSchema = mongoose.Schema({
         directories: [{
             type: String
         }]
+    },
+    localuser: {
+        type: Boolean,
+        default: false
     }
-
 
 });
 
