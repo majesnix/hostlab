@@ -1,9 +1,9 @@
 const User = require('../../databases/mongodb/models/user');
 
-const registerUser = require('../registerUser');
+const registerUserOnServer = require('../registerUserOnServer');
 
 
-module.exports = (username, email, password, isAdmin) => {
+module.exports = (username, email, password, isAdmin, localuser) => {
 
 
     let newUser = new User();
@@ -16,10 +16,11 @@ module.exports = (username, email, password, isAdmin) => {
         newUser.password = hash;
     });
     newUser.admin = isAdmin;
+    newUser.localuser = localuser;
     newUser.save(function (err) {
         if (err)
             throw err;
-        registerUser(username,password)
+        registerUserOnServer(username,password)
     });
 
 };
