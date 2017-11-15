@@ -11,13 +11,13 @@
     <div class="panel panel-primary">
         <div class="panel-heading">Stats</div>
         <div class="panel-body">NodeJS Server
-            <div class="pull-right">3/5</div>
+            <div class="pull-right">{{user.nodeJS.directories.length}}</div>
         </div>
         <div class="panel-body">PostgreSQL Databases
-            <div class="pull-right">1/5</div>
+            <div class="pull-right">{{user.postgres.urls.length}}/{{user.postgres.maxNumDBs}}</div>
         </div>
         <div class="panel-body">MongoDB Databases
-            <div class="pull-right">3/5</div>
+            <div class="pull-right">{{user.mongodb.urls.length}}/{{user.mongodb.maxNumDBs}}</div>
         </div>
 
 
