@@ -12,24 +12,21 @@ const MongoStore = require('connect-mongo')(session);
 
 const configDB = require('./config/mongoDB.js');
 mongoose.connect(configDB.url, {
-    useMongoClient: true
+  useMongoClient: true,
 });
 
 const app = express();
 
 // view engine setup
 app.engine('hbs', handlebars({
-    defaultLayout: 'main',
-    extname: '.hbs',
-    layoutsDir: 'views/layouts/',
-    partialsDir: 'views/partials/'
+  defaultLayout: 'main',
+  extname: '.hbs',
+  layoutsDir: 'views/layouts/',
+  partialsDir: 'views/partials/',
 }));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-
-
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -41,30 +38,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session(
     {
-        secret: 'lol',
-        store: new MongoStore(
-            {
-                mongooseConnection: mongoose.connection,
+      secret: 'lol',
+      store: new MongoStore(
+          {
+            mongooseConnection: mongoose.connection,
 
-                // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
-                touchAfter: 5 // time period in seconds
-            }),
+            // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
+            touchAfter: 5 // time period in seconds
+          }),
 
-        // Cookies werden nach der maxAge Zeit gelöscht, auch bei Nutzerinteraktion
-        // Durch rolling: true wird bei jedem Request das maxAge neu gesetzt
-        rolling: true,
+      // Cookies werden nach der maxAge Zeit gelöscht, auch bei Nutzerinteraktion
+      // Durch rolling: true wird bei jedem Request das maxAge neu gesetzt
+      rolling: true,
 
-        // Wenn die Session nicht modifiziert wurde wird sie nicht bei jedem Request neu gespeichert
-        resave: false,
+      // Wenn die Session nicht modifiziert wurde wird sie nicht bei jedem Request neu gespeichert
+      resave: false,
 
-        // Bei jedem Request werden Cookies erzeugt, auch wenn nicht eingeloggt wird.
-        // Durch saveUninitialized: false werden diese Cookies nicht gespeichert und die SessionDB wird nicht vollgemüllt
-        saveUninitialized: false,
+      // Bei jedem Request werden Cookies erzeugt, auch wenn nicht eingeloggt wird.
+      // Durch saveUninitialized: false werden diese Cookies nicht gespeichert und die SessionDB wird nicht vollgemüllt
+      saveUninitialized: false,
 
-        // Setzt die CookiespeicherDAUER auf eine festgelegte Zeit
-        cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 Stunden
+      // Setzt die CookiespeicherDAUER auf eine festgelegte Zeit
+      cookie: {maxAge: 24 * 60 * 60 * 1000} // 24 Stunden
 
-    }
+    },
 ));
 
 app.use(passport.initialize());
@@ -76,29 +73,38 @@ require('./config/passport')(passport);
 // mount routes
 require('./routes')(app);
 
-//Testuser in DB anlegen
-//require('./tasks/createUserInDB')('admin', 'admin@admin.de', 'admin', true, true)
-
-// Systemuser
-//require('./tasks/createUserOnServer')('user123','user123');
-
+/**
+ * Create adminuser during first run
+ */
+if (require('first-run')()) {
+  require('./tasks/createUser')({
+        username: 'root', password: '12345', admin: true, localuser: true,
+      },
+      function(err, user) {
+        if (err) {
+          console.error('Error while creating initial adminuser:', err.message);
+          process.exit(err.code);
+        }
+        console.log(user);
+      });
+}
 
 // catch 404 and forward to error handler
-app.use( (req, res, next) => {
-    const err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
 // error handler
-app.use( (err, req, res, next) => {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use((err, req, res, next) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
 module.exports = app;
