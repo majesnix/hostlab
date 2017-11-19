@@ -15,7 +15,7 @@ const deleteUserinDB = (opts, callback) => {
 
   User.deleteOne({'username': opts.username}, function(err) {
     if (err) {
-      console.log(err);
+      console.error(err);
       return callback(err);
     }
 

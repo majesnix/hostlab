@@ -10,7 +10,7 @@ router.get('/', (req, res, next) => {
 
   User.find({}, function(err, users) {
     if (err) {
-      console.log(err);
+      console.error(err);
     }
     console.log(users);
     res.render('admin/index', {user: req.user, users: users});
@@ -31,7 +31,7 @@ router.post('/user', (req, res) => {
 
   createUser(opts, (err, user) => {
     if (err) {
-      console.log(err);
+      console.error(err);
     }
     console.log(user);
     res.send('ok');
@@ -49,7 +49,7 @@ router.delete('/user/:username', (req, res) => {
   if (req.user.username !== opts.username) {
     deleteUser(opts, (err) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       }
       else {
         res.send('ok');
