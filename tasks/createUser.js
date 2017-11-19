@@ -1,16 +1,5 @@
 const User = require('../databases/mongodb/models/user');
 
-/**
- * Skip system user operations while testing on other OS than Linux
- */
-const linuxUser = process.platform === 'linux'
-    ? require('linux-user')
-    : {
-      addUser: () => {
-        console.info('Not running on linux, did not create system user');
-      },
-    };
-
 const createUserinDB = (opts, callback) => {
 
   let newUser = new User();
@@ -31,6 +20,18 @@ const createUserinDB = (opts, callback) => {
     if (err) {
       return callback(err);
     }
+
+    /**
+     * Skip system user operations while testing on other OS than Linux
+     */
+    const linuxUser = process.platform === 'linux'
+        ? require('linux-user')
+        : {
+          addUser: () => {
+            console.info('Not running on linux, did not create system user');
+            return callback(false, newUser);
+          },
+        };
 
     linuxUser.addUser(opts.username, (err, user) => {
       if (err) {
