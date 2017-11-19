@@ -2,7 +2,6 @@
 const login = require('./login');
 const logout = require('./logout');
 
-
 // dashboard
 const dashboard = require('./dashboard');
 
@@ -10,7 +9,7 @@ const dashboard = require('./dashboard');
 const help = require('./help/index');
 
 // filemanager
-var filemanager = require('./filemanager/index');
+const filemanager = require('./filemanager/index');
 
 // cronjobs
 const cronjobs = require('./cronjobs/index');
@@ -35,60 +34,58 @@ const admin = require('./admin/index');
 
 module.exports = (app) => {
 
-    // login
-    app.use('/login', login);
+  // login
+  app.use('/login', login);
 
+  app.use(isRegistered);
 
-    app.use(isRegistered);
+  // logout
+  app.use('/logout', logout);
 
-    // logout
-    app.use('/logout', logout);
+  // dashboard
+  app.use('/', dashboard);
 
-    // dashboard
-    app.use('/', dashboard);
+  // help
+  app.use('/help', help);
 
-    // help
-    app.use('/help', help);
+  // filemanager
+  app.use('/filemanager', filemanager);
 
-    // filemanager
-    app.use('/filemanager', filemanager);
+  // cronjobs
+  app.use('/cronjobs', cronjobs);
 
-    // cronjobs
-    app.use('/cronjobs', cronjobs);
+  // databases
+  app.use('/databases', databases);
+  app.use('/databases/postgresql', postgres);
+  app.use('/databases/mongodb', mongodb);
 
-    // databases
-    app.use('/databases', databases);
-    app.use('/databases/postgresql', postgres);
-    app.use('/databases/mongodb', mongodb);
+  // runtimes
+  app.use('/runtimes', runtimes);
+  app.use('/runtimes/nodejs', nodejs);
+  app.use('/runtimes/php', php);
 
-    // runtimes
-    app.use('/runtimes', runtimes);
-    app.use('/runtimes/nodejs', nodejs);
-    app.use('/runtimes/php', php);
+  // vcs
+  app.use('/vcs', vcs);
+  app.use('/vcs/nodejs', gitlab);
+  app.use('/vcs/php', svn);
 
+  // ab hier Admin Routen
+  app.use(isAdmin);
 
-
-    // vcs
-    app.use('/vcs', vcs);
-    app.use('/vcs/nodejs', gitlab);
-    app.use('/vcs/php', svn);
-
-    // ab hier Admin Routen
-    app.use(isAdmin);
-
-    app.use('/admin', admin);
+  app.use('/admin', admin);
 
 };
 
-function isRegistered(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect('/login')}
+function isRegistered(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
-function isAdmin(req, res, next){
-    if(req.isAuthenticated() && req.user.admin){
-        return next();
-    }
-    res.redirect('/')
+function isAdmin(req, res, next) {
+  if (req.isAuthenticated() && req.user.admin) {
+    return next();
+  }
+  res.redirect('/');
 }
