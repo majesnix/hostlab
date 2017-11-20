@@ -1,3 +1,3 @@
 module.exports = {
-    url: 'mongodb://localhost/webdev1718'
+  url: 'mongodb://hostlab.local/hostlab',
 };
