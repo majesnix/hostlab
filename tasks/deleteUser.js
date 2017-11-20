@@ -1,21 +1,7 @@
 const User = require('../databases/mongodb/models/user');
 
-/**
- * Skip system user operations while testing on other OS than Linux
- */
-const linuxUser = process.platform === 'linux'
-    ? require('linux-user')
-    : {
-      removeUser: function() {
-        console.info('Not running on linux, did not delete system user');
-      },
-    };
+const deleteUserinDB = (opts, callback) => {
 
-const deleteUser = (opts, callback) => {
-
-  /**
-   * Nutzer wird in Datenbank gesucht und gelöscht
-   */
   User.deleteOne({'username': opts.username}, function(err) {
     if (err) {
       console.error(err);
@@ -23,8 +9,17 @@ const deleteUser = (opts, callback) => {
     }
 
     /**
-     * Nutzer wird vom System entfernt(inklusive Home Verzeichnis)
+     * Skip system user operations while testing on other OS than Linux
      */
+    const linuxUser = process.platform === 'linux'
+        ? require('linux-user')
+        : {
+          removeUser: function() {
+            console.info('Not running on linux, did not delete system user');
+            return callback(false);
+          },
+        };
+
     linuxUser.removeUser(opts.username, (err) => {
       if (err) {
         return callback(err);
@@ -37,4 +32,4 @@ const deleteUser = (opts, callback) => {
 
 };
 
-module.exports = deleteUser;
+module.exports = deleteUserinDB;
