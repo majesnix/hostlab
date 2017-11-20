@@ -1,0 +1,51 @@
+<h1>Settings</h1>
+
+
+<div class="row">
+<div class="container col-md-4">
+    <h3>Change Password</h3>
+    <form>
+        <div class="form-group">
+            <label for="oldPassword">Old password</label>
+            <input type="text" class="form-control" id="oldPassword" name="oldPassword" placeholder="Enter old password">
+        </div>
+        <div class="form-group">
+            <label for="newPassword">New password</label>
+            <input type="text" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password">
+        </div>
+        <div class="form-group">
+            <label for="newPasswordConfirm">Confirm new password</label>
+            <input type="text" class="form-control" id="newPasswordConfirm" name="newPasswordConfirm" placeholder="Confirm new password">
+        </div>
+
+        <button id="changePassword" class="btn btn-primary form-group">Change password</button>
+    </form>
+</div>
+    <hr class="col-xs-12">
+</div>
+<div class="row">
+    <div class="container col-md-4">
+        <h3>Change Email</h3>
+        <form>
+            <div class="form-group">
+                {{user.email}}
+            </div>
+            <div class="form-group">
+                <label for="newEmail">New email</label>
+                <input type="text" class="form-control" id="newEmail" name="newEmail" placeholder="Enter new email">
+            </div>
+            <div class="form-group">
+                <label for="newEmailConfirm">Confirm new email</label>
+                <input type="text" class="form-control" id="newEmailConfirm" name="newEmailConfirm" placeholder="Confirm new email">
+            </div>
+
+            <button id="changeEmail" class="btn btn-primary form-group">Change email</button>
+        </form>
+    </div>
+</div>
+
+<hr class="col-xs-12">
+
+<h3 class="alert-danger">Delete Account</h3>
+<div>Once you delete your account, there is no going back. Please be certain.</div>
+<button id="deleteAccount" class="btn btn-danger">Delete Account</button>

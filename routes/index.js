@@ -5,6 +5,9 @@ const logout = require('./logout');
 // dashboard
 const dashboard = require('./dashboard');
 
+// settings
+const settings = require('./settings');
+
 // help
 const help = require('./help/index');
 
@@ -41,6 +44,9 @@ module.exports = (app) => {
    * Ab hier können die Routen nur noch als registrierter Benutzer aufgerufen werden
    */
   app.use(isRegistered);
+
+  //settings
+  app.use('/settings', settings);
 
 
   // logout
