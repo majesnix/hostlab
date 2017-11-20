@@ -1,6 +1,6 @@
 const User = require('../databases/mongodb/models/user');
 
-const createUserinDB = (opts, callback) => {
+const createUser = (opts, callback) => {
 
   let newUser = new User();
   newUser.username = opts.username;
@@ -33,11 +33,17 @@ const createUserinDB = (opts, callback) => {
           },
         };
 
+    /**
+     * Erstelle Systemuser mit Homeverzeichnis
+     */
     linuxUser.addUser(opts.username, (err, user) => {
       if (err) {
         return callback(err);
       }
 
+      /**
+       * Setze Userpasswort
+       */
       linuxUser.setPassword(opts.username, opts.password, (err) => {
         if (err) {
           return callback(err);
@@ -52,4 +58,4 @@ const createUserinDB = (opts, callback) => {
 
 };
 
-module.exports = createUserinDB;
+module.exports = createUser;

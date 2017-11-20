@@ -1,6 +1,6 @@
 const User = require('../databases/mongodb/models/user');
 
-const deleteUserinDB = (opts, callback) => {
+const deleteUser = (opts, callback) => {
 
   User.deleteOne({'username': opts.username}, function(err) {
     if (err) {
@@ -20,6 +20,9 @@ const deleteUserinDB = (opts, callback) => {
           },
         };
 
+    /**
+     * Entferne Systemuser mit Homeverzeichnis
+     */
     linuxUser.removeUser(opts.username, (err) => {
       if (err) {
         return callback(err);
@@ -32,4 +35,4 @@ const deleteUserinDB = (opts, callback) => {
 
 };
 
-module.exports = deleteUserinDB;
+module.exports = deleteUser;
