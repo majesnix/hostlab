@@ -47,10 +47,7 @@ module.exports = (app) => {
   app.use('/logout', logout);
 
   // dashboard
-  app.use('/', function(req, res, next){
-    res.locals.dashboard = true;
-    next();
-  }, dashboard);
+  app.use('/', dashboard);
 
   // help
   app.use('/help', help);
