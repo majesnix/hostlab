@@ -3,7 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "get-docker": "bash bin/scripts/get-docker.sh",
+    "get-nodejs": "sudo -E bash bin/scripts/get-nodejs.sh && sudo apt install -y nodejs",
+    "mongo-docker": "bash bin/scripts/mongo-docker.sh",
+    "gitlab-docker": "bash bin/scripts/gitlab-docker.sh"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
