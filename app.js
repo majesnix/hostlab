@@ -74,20 +74,29 @@ require('./config/passport')(passport);
 require('./routes')(app);
 
 /**
- * Create adminuser during first run
+ * Erstelle initialen Administrator falls noch keine Nutzer vorhanden
  */
-if (require('first-run')()) {
-  require('./tasks/createUser')({
-        username: 'root', password: '12345', admin: true, localuser: true,
-      },
-      function(err, user) {
-        if (err) {
-          console.error('Error while creating initial adminuser:', err.message);
-          process.exit(err.code);
-        }
-        console.log(user);
-      });
-}
+require('./databases/mongodb/models/user').find(function(err, users) {
+  if (err) {
+    return console.error(err);
+  }
+
+  console.log('got users:', users);
+
+  if (users.length === 0) {
+    require('./tasks/createUser')({
+          username: 'admin', password: '12345', admin: true, localuser: true,
+        },
+        function(err, user) {
+          if (err) {
+            console.error('Error while creating initial adminuser:',
+                err.message);
+            process.exit(err.code);
+          }
+          console.log(user);
+        });
+  }
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
