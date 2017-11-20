@@ -20,8 +20,7 @@ const userSchema = mongoose.Schema({
         default: Date.now
     },
     lastLogin: {
-        type: Date,
-        default: Date.now
+        type: Date
     },
     mongodb: {
         maxNumDBs: {
