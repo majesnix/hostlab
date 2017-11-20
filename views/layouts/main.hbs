@@ -33,17 +33,25 @@
         </div>
         <!-- Top Menu Items -->
         <ul class="nav navbar-right top-nav">
-            <li>
-                <a href="#"><i class="fa fa-fw fa-user-o"></i> {{user.username}}</a>
-            </li>
-            <li>
-                <a href="/logout"><i class="fa fa-fw fa-power-off"></i> Logout</a>
+            {{#if user.admin}}
+                <li>
+                    <a href="/admin"><i class="fa fa-fw fa-gears"></i> Adminpanel</a>
+                </li>
+            {{/if}}
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-user-o"></i> {{user.username}}
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/settings"><i class="fa fa-fw fa-gear"></i> Settings</a></li>
+                    <li><a href="/logout"><i class="fa fa-fw fa-power-off"></i> Logout</a></li>
+                </ul>
             </li>
         </ul>
         <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
-                <li class="active">
+                <li class="{{#if dashboard}}active{{/if}}">
                     <a href="/"><i class="fa fa-fw fa-tachometer"></i> Dashboard</a>
                 </li>
                 <li>
@@ -83,11 +91,6 @@
                 <li>
                     <a href="/help"><i class="fa fa-fw fa-question-circle"></i> Help</a>
                 </li>
-                {{#if user.admin}}
-                    <li>
-                        <a href="/admin"><i class="fa fa-fw fa-gears"></i> Adminpanel</a>
-                    </li>
-                    {{/if}}
             </ul>
 
         </div>
