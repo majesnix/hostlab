@@ -33,7 +33,7 @@ router.post('/user', (req, res) => {
     if (err) {
       console.error(err);
     }
-    console.log('Created user:', user);
+    console.log(user);
     res.send('ok');
     //TODO: sonst antworten
   });
