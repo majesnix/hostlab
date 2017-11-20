@@ -17,7 +17,9 @@ mongoose.connect(configDB.url, {
 
 const app = express();
 
-// view engine setup
+/**
+ * Handlebars Konfiguration
+ */
 app.engine('hbs', handlebars({
   defaultLayout: 'main',
   extname: '.hbs',
@@ -65,6 +67,10 @@ app.use(session(
 ));
 
 app.use(passport.initialize());
+/**
+ * Passport modifiziert nachdem Express die Session geladen hat diverse Parameter,
+ * wie z.B req.user
+ */
 app.use(passport.session());
 
 // configure passport

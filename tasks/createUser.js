@@ -11,12 +11,15 @@ const linuxUser = process.platform === 'linux'
       },
     };
 
-const createUserinDB = (opts, callback) => {
+const createUser = (opts, callback) => {
 
   let newUser = new User();
   newUser.username = opts.username;
   newUser.email = opts.email;
 
+  /**
+   * Passwort des Nutzers wird gehasht abgespeichert
+   */
   newUser.generateHash(opts.password, function(err, hash) {
     if (err) {
       return callback(err);
@@ -32,11 +35,17 @@ const createUserinDB = (opts, callback) => {
       return callback(err);
     }
 
+    /**
+     * Systemnutzer wird erstellt
+     */
     linuxUser.addUser(opts.username, (err, user) => {
       if (err) {
         return callback(err);
       }
 
+      /**
+       * Passwort des Systemnutzers wird gesetzt
+       */
       linuxUser.setPassword(opts.username, opts.password, (err) => {
         if (err) {
           return callback(err);
@@ -51,4 +60,4 @@ const createUserinDB = (opts, callback) => {
 
 };
 
-module.exports = createUserinDB;
+module.exports = createUser;

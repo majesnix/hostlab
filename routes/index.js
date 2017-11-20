@@ -37,13 +37,20 @@ module.exports = (app) => {
   // login
   app.use('/login', login);
 
+  /**
+   * Ab hier können die Routen nur noch als registrierter Benutzer aufgerufen werden
+   */
   app.use(isRegistered);
+
 
   // logout
   app.use('/logout', logout);
 
   // dashboard
-  app.use('/', dashboard);
+  app.use('/', function(req, res, next){
+    res.locals.dashboard = true;
+    next();
+  }, dashboard);
 
   // help
   app.use('/help', help);
@@ -69,13 +76,18 @@ module.exports = (app) => {
   app.use('/vcs/nodejs', gitlab);
   app.use('/vcs/php', svn);
 
-  // ab hier Admin Routen
+  /**
+   * Ab hier können die Routen nur noch als Administrator aufgerufen werden
+   */
   app.use(isAdmin);
 
   app.use('/admin', admin);
 
 };
 
+/**
+ * Helferfunktion um registrierte Nutzer zu identifizieren
+ */
 function isRegistered(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -83,6 +95,9 @@ function isRegistered(req, res, next) {
   res.redirect('/login');
 }
 
+/**
+ * Helferfunktion um Administrator zu identifizieren
+ */
 function isAdmin(req, res, next) {
   if (req.isAuthenticated() && req.user.admin) {
     return next();
