@@ -24,7 +24,8 @@ router.post('/password', (req, res, next) => {
             res.redirect('/settings');
           }
           else if (!user.localuser) {
-
+            req.flash('feedback', 'Only local users can change their password here.');
+            res.redirect('/settings');
           }
           else {
             user.validPassword(oldPassword, function(err, response) {
