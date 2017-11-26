@@ -1,26 +1,82 @@
 <h1>Settings</h1>
 
+<div id="feedback">{{#if feedback}}
+    <span>{{feedback}}</span>
+{{/if}}
+</div>
+
 
 <div class="row">
-<div class="container col-md-4">
-    <h3>Change Password</h3>
-    <form>
-        <div class="form-group">
-            <label for="oldPassword">Old password</label>
-            <input type="text" class="form-control" id="oldPassword" name="oldPassword" placeholder="Enter old password">
-        </div>
-        <div class="form-group">
-            <label for="newPassword">New password</label>
-            <input type="text" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password">
-        </div>
-        <div class="form-group">
-            <label for="newPasswordConfirm">Confirm new password</label>
-            <input type="text" class="form-control" id="newPasswordConfirm" name="newPasswordConfirm" placeholder="Confirm new password">
-        </div>
+    <div class="container col-md-4">
+        <h3>Change Password</h3>
+        <form method="post" action="/settings/password">
+            <div class="form-group">
+                <label for="oldPassword">Old password</label>
+                <input type="text" class="form-control" id="oldPassword" name="oldPassword"
+                       placeholder="Enter old password">
+            </div>
+            <div class="form-group">
+                <label for="newPassword">New password</label>
+                <input type="text" class="form-control" id="newPassword" name="newPassword"
+                       placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+                <label for="newPasswordConfirm">Confirm new password</label>
+                <input type="text" class="form-control" id="newPasswordConfirm" name="newPasswordConfirm"
+                       placeholder="Confirm new password">
+            </div>
 
-        <button id="changePassword" class="btn btn-primary form-group">Change password</button>
-    </form>
-</div>
+            <button type="submit" id="changePassword" class="btn btn-primary form-group">Change password</button>
+        </form>
+    </div>
+
+    <script>
+        $('#changePassword').on('click', (e) => {
+            if ($('#oldPassword').val().length <= 0) {
+                e.preventDefault();
+                missingOldPassword();
+            }
+            if (!checkNewPassword()) {
+                e.preventDefault();
+                newPasswordMismatch();
+            }
+        });
+
+        function missingOldPassword() {
+
+            $('#feedback').append("<div class='alert-danger'>You must enter your old password</div>");
+            $('#oldPassword').val('');
+            $('#oldPassword').css('border-color', '#FF0000');
+            $('#newPassword').val('');
+            $('#newPasswordConfirm').val('');
+        }
+
+        function newPasswordMismatch() {
+            $('#feedback').append("<div class='alert-danger'>New passwords did not match or are shorter than 6 characters</div>");
+            $('#oldPassword').val('');
+            $('#newPassword').val('');
+            $('#newPasswordConfirm').val('');
+            $('#newPassword').css('border-color', '#FF0000');
+            $('#newPasswordConfirm').css('border-color', '#FF0000');
+        }
+
+        function checkNewPassword() {
+            if ($('#newPassword').val() === $('#newPasswordConfirm').val() && $('#newPassword').val().length > 5) {
+                return true;
+            }
+            return false;
+        }
+
+        $(document).on('click', '#oldPassword, #newPassword, #newPasswordConfirm', () => {
+            $('#feedback').text('').removeClass('alert-danger');
+            $('#oldPassword').css('border-color', '#ccc');
+            $('#newPassword').css('border-color', '#ccc');
+            $('#newPasswordConfirm').css('border-color', '#ccc');
+        });
+
+
+    </script>
+
     <hr class="col-xs-12">
 </div>
 <div class="row">
@@ -36,7 +92,8 @@
             </div>
             <div class="form-group">
                 <label for="newEmailConfirm">Confirm new email</label>
-                <input type="text" class="form-control" id="newEmailConfirm" name="newEmailConfirm" placeholder="Confirm new email">
+                <input type="text" class="form-control" id="newEmailConfirm" name="newEmailConfirm"
+                       placeholder="Confirm new email">
             </div>
 
             <button id="changeEmail" class="btn btn-primary form-group">Change email</button>
