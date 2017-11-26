@@ -9,6 +9,7 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const flash = require('connect-flash');
 
 const configDB = require('./config/mongoDB.js');
 mongoose.connect(configDB.url, {
@@ -72,6 +73,8 @@ app.use(passport.initialize());
  * wie z.B req.user
  */
 app.use(passport.session());
+
+app.use(flash());
 
 // configure passport
 require('./config/passport')(passport);
