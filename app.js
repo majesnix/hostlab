@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
+const debug = require('debug')('hostlab:app');
 
 const configDB = require('./config/mongoDB.js');
 mongoose.connect(configDB.url, {
@@ -89,18 +90,23 @@ require('./databases/mongodb/models/user').count(function(err, userCount) {
   if (err) {
     return console.error(err);
   }
+  debug('Got %d user(s) on start', userCount);
   if (userCount === 0) {
-    require('./tasks/createUser')({
-          username: 'admin', password: '12345', admin: true, localuser: true,
-        },
-        function(err, user) {
-          if (err) {
-            console.error('Error while creating initial adminuser:',
-                err.message);
-            process.exit(err.code);
-          }
-          console.log(user);
-        });
+    debug('Creating initial user...');
+    const initUser = {
+      username: 'admin',
+      password: '12345',
+      admin: true,
+      localuser: true,
+    };
+    require('./tasks/createUser')(initUser, function(err, user) {
+      if (err) {
+        console.error('Error while creating initial adminuser:',
+            err.message);
+        process.exit(err.code);
+      }
+      debug('Created initial user: %o', initUser);
+    });
   }
 });
 
