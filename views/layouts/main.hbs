@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="/stylesheets/stylesheet.css">
 
     <script src="/assets/jquery-3.2.1.min.js"></script>
-
-
+    <script src="/assets/bootstrap-3.3.0/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -40,8 +39,9 @@
             {{/if}}
 
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-user-o"></i> {{user.username}}
-                    <span class="caret"></span></a>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-fw fa-user-o"></i> {{user.username}}<span class="caret"></span>
+                </a>
                 <ul class="dropdown-menu">
                     <li><a href="/settings"><i class="fa fa-fw fa-gear"></i> Settings</a></li>
                     <li><a href="/logout"><i class="fa fa-fw fa-power-off"></i> Logout</a></li>
@@ -51,44 +51,49 @@
         <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
-                <li class="{{#if dashboard}}active{{/if}}">
+                <li {{#if nav-dashboard}}class="active"{{/if}}>
                     <a href="/"><i class="fa fa-fw fa-tachometer"></i> Dashboard</a>
                 </li>
-                <li>
+                <li {{#if nav-filemanager}}class="active"{{/if}}>
                     <a href="/filemanager"><i class="fa fa-fw fa-folder"></i> Filemanager</a>
                 </li>
-                <li>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-databases"><i
-                            class="fa fa-fw fa-database"></i> Databases <i
-                            class="fa fa-fw fa-angle-down pull-right"></i></a>
-                    <ul id="submenu-databases" class="collapse">
+                <li {{#if nav-databases}}class="active"{{/if}}>
+                    <a href="#" data-toggle="collapse" data-target="#submenu-databases">
+                        <i class="fa fa-fw fa-database"></i>
+                        <span>Databases</span>
+                        <i class="fa fa-fw fa-angle-down pull-right"></i>
+                    </a>
+                    <ul id="submenu-databases" class="collapse {{#if nav-databases}}in{{/if}}">
                         <li><a href="/databases/postgresql"><i class="fa fa-angle-double-right"></i> PostgreSQL</a></li>
                         <li><a href="/databases/mongodb"><i class="fa fa-angle-double-right"></i> MongoDB</a></li>
                     </ul>
                 </li>
-                <li>
+                <li {{#if nav-runtimes}}class="active"{{/if}}>
                     <a href="#" data-toggle="collapse" data-target="#submenu-runtimes">
-                        <i class="fa fa-fw fa-play"></i> Runtimes <i class="fa fa-fw fa-angle-down pull-right"></i>
+                        <i class="fa fa-fw fa-play"></i>
+                        <span>Runtimes</span>
+                        <i class="fa fa-fw fa-angle-down pull-right"></i>
                     </a>
-                    <ul id="submenu-runtimes" class="collapse">
+                    <ul id="submenu-runtimes" class="collapse {{#if nav-runtimes}}in{{/if}}">
                         <li><a href="/runtimes/nodejs"><i class="fa fa-angle-double-right"></i> Node.js</a></li>
                         <li><a href="/runtimes/php"><i class="fa fa-angle-double-right"></i> PHP</a></li>
                     </ul>
                 </li>
-                <li>
+                <li {{#if nav-vcs}}class="active"{{/if}}>
                     <a href="#" data-toggle="collapse" data-target="#submenu-vcs">
-                        <i class="fa fa-fw fa-code-fork"></i> VersionControl <i
-                            class="fa fa-fw fa-angle-down pull-right"></i>
+                        <i class="fa fa-fw fa-code-fork"></i>
+                        <span>Version Control</span>
+                        <i class="fa fa-fw fa-angle-down pull-right"></i>
                     </a>
-                    <ul id="submenu-vcs" class="collapse">
+                    <ul id="submenu-vcs" class="collapse {{#if nav-vcs}}in{{/if}}">
                         <li><a href="/vcs/git"><i class="fa fa-angle-double-right"></i> git</a></li>
                         <li><a href="/vcs/svn"><i class="fa fa-angle-double-right"></i> svn</a></li>
                     </ul>
                 </li>
-                <li>
+                <li {{#if nav-cronjobs}}class="active"{{/if}}>
                     <a href="/cronjobs"><i class="fa fa-fw fa-clock-o"></i> Cronjobs</a>
                 </li>
-                <li>
+                <li {{#if nav-help}}class="active"{{/if}}>
                     <a href="/help"><i class="fa fa-fw fa-question-circle"></i> Help</a>
                 </li>
             </ul>
@@ -102,7 +107,7 @@
             <!-- Page Heading -->
             <div class="row" id="main">
 
-                    {{{body}}}
+                {{{body}}}
 
             </div>
             <!-- /.row -->
@@ -113,8 +118,16 @@
     <div id="versionnumber">{{> versionnumber}}</div>
 </div><!-- /#wrapper -->
 
-<script src="/assets/bootstrap-3.3.0/bootstrap.min.js"></script>
-
+<script>
+    $(function() {
+//        var navPath = location.pathname.split('/')[1];
+//        var submenu = $('#submenu-' + navPath);
+//        if (submenu) {
+//            submenu.toggleClass('in');
+//        }
+        $('a[href="' + location.pathname + '"]').attr('href', '#');
+    });
+</script>
 
 </body>
 </html>

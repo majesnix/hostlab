@@ -45,9 +45,10 @@ module.exports = (app) => {
    */
   app.use(isRegistered);
 
+  app.use(exposeReqInfos);
+
   //settings
   app.use('/settings', settings);
-
 
   // logout
   app.use('/logout', logout);
@@ -106,4 +107,14 @@ function isAdmin(req, res, next) {
     return next();
   }
   res.redirect('/');
+}
+
+/**
+ * Helferfunktion für Vorverarbeitungen des Requests
+ */
+function exposeReqInfos(req, res, next) {
+  const navPath = req.path.split('/')[1] || 'dashboard';
+  const activeNav = 'nav-' + navPath;
+  res.locals[activeNav] = true;
+  next();
 }
