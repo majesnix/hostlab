@@ -3,7 +3,10 @@ const router = require('express').Router();
 const User = require('../../databases/mongodb/models/user');
 
 router.get('/', (req, res, next) => {
-  res.render('settings', {feedback: req.flash('feedback')});
+  res.render('settings', {
+    feedback: req.flash('feedback'),
+    success: req.flash('success') || false,
+  });
 });
 
 router.post('/password', (req, res, next) => {
@@ -11,7 +14,6 @@ router.post('/password', (req, res, next) => {
       const newPassword = req.body.newPassword;
       const newPasswordConfirm = req.body.newPasswordConfirm;
       console.log(req.user.username);
-
       if (newPassword === newPasswordConfirm) {
         User.findOne({'username': req.user.username}, function(err, user) {
           if (err) {
@@ -53,6 +55,7 @@ router.post('/password', (req, res, next) => {
                         res.redirect('/settings');
                       }
                       else {
+                        req.flash('success', true);
                         req.flash('feedback', 'Password changed successfully.');
                         res.redirect('/settings');
                       }
@@ -70,5 +73,27 @@ router.post('/password', (req, res, next) => {
       }
     },
 );
+
+router.delete('/account', (req, res, next) => {
+  if (!req.user.admin) {
+
+    User.deleteOne({'username': req.user.username}, function(err) {
+      if (err) {
+        console.error(err);
+        // Servererror
+        res.sendStatus(500);
+      }
+      else {
+        // ok
+        res.sendStatus(200);
+      }
+    });
+
+  }
+  else {
+    // forbidden
+    res.sendStatus(403);
+  }
+});
 
 module.exports = router;

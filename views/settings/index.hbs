@@ -1,38 +1,39 @@
 <h1>Settings</h1>
 
-<div id="feedback">{{#if feedback}}
-    <span>{{feedback}}</span>
-{{/if}}
+<div id="feedback" class="{{#if success}}alert-success{{else}}alert-danger{{/if}}">
+    {{#if feedback}}
+        <span>{{feedback}}</span>
+    {{/if}}
 </div>
 
+{{#if user.localuser}}
+    <div class="row">
+        <div class="container col-md-4">
+            <h3>Change Password</h3>
+            <form method="post" action="/settings/password">
+                <div class="form-group">
+                    <label for="oldPassword">Old password</label>
+                    <input type="password" class="form-control" id="oldPassword" name="oldPassword"
+                           placeholder="Enter old password">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New password</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword"
+                           placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label for="newPasswordConfirm">Confirm new password</label>
+                    <input type="password" class="form-control" id="newPasswordConfirm" name="newPasswordConfirm"
+                           placeholder="Confirm new password">
+                </div>
 
-<div class="row">
-    <div class="container col-md-4">
-        <h3>Change Password</h3>
-        <form method="post" action="/settings/password">
-            <div class="form-group">
-                <label for="oldPassword">Old password</label>
-                <input type="password" class="form-control" id="oldPassword" name="oldPassword"
-                       placeholder="Enter old password">
-            </div>
-            <div class="form-group">
-                <label for="newPassword">New password</label>
-                <input type="password" class="form-control" id="newPassword" name="newPassword"
-                       placeholder="Enter new password">
-            </div>
-            <div class="form-group">
-                <label for="newPasswordConfirm">Confirm new password</label>
-                <input type="password" class="form-control" id="newPasswordConfirm" name="newPasswordConfirm"
-                       placeholder="Confirm new password">
-            </div>
+                <button type="submit" id="changePassword" class="btn btn-primary form-group">Change password</button>
+            </form>
+        </div>
 
-            <button type="submit" id="changePassword" class="btn btn-primary form-group">Change password</button>
-        </form>
-    </div>
-
-    <script>
-        $('#changePassword').on('click', (e) => {
-            if ($('#oldPassword').val().length <= 0) {
+        <script>
+            $('#changePassword').on('click', (e) => {
+                if ($('#oldPassword').val().length <= 0) {
                 e.preventDefault();
                 missingOldPassword();
             }
@@ -40,45 +41,48 @@
                 e.preventDefault();
                 newPasswordMismatch();
             }
-        });
+            });
 
-        function missingOldPassword() {
+            function missingOldPassword() {
 
-            $('#feedback').append("<div class='alert-danger'>You must enter your old password</div>");
-            $('#oldPassword').val('');
-            $('#oldPassword').css('border-color', '#FF0000');
-            $('#newPassword').val('');
-            $('#newPasswordConfirm').val('');
-        }
-
-        function newPasswordMismatch() {
-            $('#feedback').append("<div class='alert-danger'>New passwords did not match or are shorter than 6 characters</div>");
-            $('#oldPassword').val('');
-            $('#newPassword').val('');
-            $('#newPasswordConfirm').val('');
-            $('#newPassword').css('border-color', '#FF0000');
-            $('#newPasswordConfirm').css('border-color', '#FF0000');
-        }
-
-        function checkNewPassword() {
-            if ($('#newPassword').val() === $('#newPasswordConfirm').val() && $('#newPassword').val().length > 5) {
-                return true;
+                $('#feedback').append('<div class=\'alert-danger\'>You must enter your old password</div>');
+                $('#oldPassword').val('');
+                $('#oldPassword').css('border-color', '#FF0000');
+                $('#newPassword').val('');
+                $('#newPasswordConfirm').val('');
             }
-            return false;
-        }
 
-        $(document).on('click', '#oldPassword, #newPassword, #newPasswordConfirm', () => {
-            $('#feedback').text('').removeClass('alert-danger');
+            function newPasswordMismatch() {
+                $('#feedback').
+                append('<div class=\'alert-danger\'>New passwords did not match or are shorter than 6 characters</div>');
+                $('#oldPassword').val('');
+                $('#newPassword').val('');
+                $('#newPasswordConfirm').val('');
+                $('#newPassword').css('border-color', '#FF0000');
+                $('#newPasswordConfirm').css('border-color', '#FF0000');
+            }
+
+            function checkNewPassword() {
+                if ($('#newPassword').val() === $('#newPasswordConfirm').val() && $('#newPassword').val().length > 5) {
+                    return true;
+                }
+                return false;
+            }
+
+            $(document).on('click', '#oldPassword, #newPassword, #newPasswordConfirm', () => {
+                $('#feedback').text('').removeClass('alert-danger');
             $('#oldPassword').css('border-color', '#ccc');
             $('#newPassword').css('border-color', '#ccc');
             $('#newPasswordConfirm').css('border-color', '#ccc');
-        });
+            });
 
 
-    </script>
+        </script>
 
-    <hr class="col-xs-12">
-</div>
+        <hr class="col-xs-12">
+    </div>
+    <!-- EndIf Localuser -->
+{{/if}}
 <div class="row">
     <div class="container col-md-4">
         <h3>Change Email</h3>
@@ -106,3 +110,27 @@
 <h3 class="alert-danger">Delete Account</h3>
 <div>Once you delete your account, there is no going back. Please be certain.</div>
 <button id="deleteAccount" class="btn btn-danger">Delete Account</button>
+
+<script>
+    $('#deleteAccount').on('click', () => {
+        $.ajax({
+        url: '/settings/account',
+        method: 'delete',
+        statusCode: {
+            200: function(data) {
+                window.location = 'http://localhost:3000/login';
+            },
+            403: function() {
+                $('#feedback').
+                append('<div class=\'alert-danger\'>Admins are not allowed to delete their own accounts.</div>');
+
+            },
+            500: function() {
+                $('#feedback').
+                append('<div class=\'alert-danger\'>Error on deleting your account. Please try again or contact an administrator.</div>');
+
+            },
+        },
+    });
+    });
+</script>
