@@ -1,5 +1,6 @@
 const router = require('express').Router();
 
+const deleteUser = require('../../tasks/deleteUser');
 const User = require('../../databases/mongodb/models/user');
 
 router.get('/', (req, res, next) => {
@@ -77,7 +78,7 @@ router.post('/password', (req, res, next) => {
 router.delete('/account', (req, res, next) => {
   if (!req.user.admin) {
 
-    User.deleteOne({'username': req.user.username}, function(err) {
+    deleteUser({username: req.user.username}, (err) => {
       if (err) {
         console.error(err);
         // Servererror
@@ -86,14 +87,17 @@ router.delete('/account', (req, res, next) => {
       else {
         // ok
         res.sendStatus(200);
+
       }
     });
 
   }
+
   else {
     // forbidden
     res.sendStatus(403);
   }
-});
+})
+;
 
 module.exports = router;
