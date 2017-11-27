@@ -18,8 +18,8 @@ const createUser = (opts, callback) => {
       skip_confirmation: "true"// E-Mail Zertifizierung überspringen
   };
   // gitlab post request zur Erstellunge des Gitlab Nutzer
-  // TODO: get Token from ENV variable
-  request.post({url:'http://gitlab.local/api/v4/users?private_token=ztMRuozmaWCL7BEtjNwv', formData: gitlabopts}, function (err, httpResponse, body) {
+  // Token wird aus der Env Varialbe "GITLAB_TOKEN" geladen
+  request.post({url:'http://gitlab.local/api/v4/users?private_token='+process.env.GITLAB_TOKEN, formData: gitlabopts}, function (err, httpResponse, body) {
       if (err) {
           return console.error('Git User creation failed', err);
       }
