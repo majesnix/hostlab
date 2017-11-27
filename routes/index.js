@@ -1,43 +1,22 @@
-// login
 const login = require('./login');
 const logout = require('./logout');
-
-// dashboard
 const dashboard = require('./dashboard');
-
-// settings
 const settings = require('./settings');
-
-// help
 const help = require('./help/index');
-
-// filemanager
-const filemanager = require('./filemanager/index');
-
-// cronjobs
-const cronjobs = require('./cronjobs/index');
-
-// databases
-const databases = require('./databases/index');
+const filemanager = require('./filemanager');
+const cronjobs = require('./cronjobs');
+const databases = require('./databases');
 const postgres = require('./databases/postgres');
 const mongodb = require('./databases/mongodb');
-
-// runtimes
-const runtimes = require('./runtimes/index');
+const runtimes = require('./runtimes');
 const nodejs = require('./runtimes/nodejs');
 const php = require('./runtimes/php');
-
-// vcs
-const vcs = require('./vcs/index');
+const vcs = require('./vcs');
 const gitlab = require('./vcs/gitlab');
 const svn = require('./vcs/svn');
-
-// admin
-const admin = require('./admin/index');
+const admin = require('./admin');
 
 module.exports = (app) => {
-
-  // login
   app.use('/login', login);
 
   /**
@@ -45,40 +24,32 @@ module.exports = (app) => {
    */
   app.use(isRegistered);
 
-  app.use(exposeReqInfos);
-
-  //settings
-  app.use('/settings', settings);
-
-  // logout
   app.use('/logout', logout);
 
-  // dashboard
+  app.use(exposeReqInfos);
+
   app.use('/', dashboard);
 
-  // help
-  app.use('/help', help);
-
-  // filemanager
-  app.use('/filemanager', filemanager);
-
-  // cronjobs
   app.use('/cronjobs', cronjobs);
 
-  // databases
   app.use('/databases', databases);
-  app.use('/databases/postgresql', postgres);
   app.use('/databases/mongodb', mongodb);
+  app.use('/databases/postgresql', postgres);
 
-  // runtimes
+  app.use('/filemanager', filemanager);
+
+  app.use('/help', help);
+
   app.use('/runtimes', runtimes);
   app.use('/runtimes/nodejs', nodejs);
   app.use('/runtimes/php', php);
 
-  // vcs
+  app.use('/settings', settings);
+
   app.use('/vcs', vcs);
   app.use('/vcs/nodejs', gitlab);
   app.use('/vcs/php', svn);
+
 
   /**
    * Ab hier können die Routen nur noch als Administrator aufgerufen werden
@@ -113,6 +84,8 @@ function isAdmin(req, res, next) {
  * Helferfunktion für Vorverarbeitungen des Requests
  */
 function exposeReqInfos(req, res, next) {
+  // Damit die Rendering-Engine weiß auf welchem Navigationselement wir uns
+  // befinden, stellen wir ihr eine entsprechende Variable zur Verfügung.
   const navPath = req.path.split('/')[1] || 'dashboard';
   const activeNav = 'nav-' + navPath;
   res.locals[activeNav] = true;
