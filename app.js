@@ -101,7 +101,7 @@ require('./databases/mongodb/models/user').count(function(err, userCount) {
     };
     require('./tasks/createUser')(initUser, function(err, user) {
       if (err) {
-        console.error('Error while creating initial adminuser:',
+        console.error('Error while creating initial user:',
             err.message);
         process.exit(err.code);
       }
