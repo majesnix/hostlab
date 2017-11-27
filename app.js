@@ -85,14 +85,11 @@ require('./routes')(app);
 /**
  * Erstelle initialen Administrator falls noch keine Nutzer vorhanden
  */
-require('./databases/mongodb/models/user').find(function(err, users) {
+require('./databases/mongodb/models/user').count(function(err, userCount) {
   if (err) {
     return console.error(err);
   }
-
-  console.log('got users:', users);
-
-  if (users.length === 0) {
+  if (userCount === 0) {
     require('./tasks/createUser')({
           username: 'admin', password: '12345', admin: true, localuser: true,
         },
