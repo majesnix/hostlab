@@ -1,19 +1,15 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 
-/* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('databases/mongodb', {user: req.user});
+  res.render('databases/mongodb');
 });
 
 router.get('/mongoadmin', (req, res, next) => {
-    res.render('databases/mongoadmin', {user: req.user});
+  res.render('databases/mongoadmin');
 });
-
 
 router.get('/mongocollection', (req, res, next) => {
-    res.render('databases/mongocollection', {user: req.user});
+  res.render('databases/mongocollection');
 });
-
 
 module.exports = router;

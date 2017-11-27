@@ -1,9 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 
-/* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('vcs/index');
+  res.render('vcs');
 });
 
 module.exports = router;

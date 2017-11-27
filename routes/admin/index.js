@@ -1,19 +1,17 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const createUser = require('../../tasks/createUser');
 const deleteUser = require('../../tasks/deleteUser');
 
 const User = require('../../databases/mongodb/models/user');
 
-/* GET help page. */
 router.get('/', (req, res, next) => {
 
-  User.find({}, function(err, users) {
+  User.find(function(err, users) {
     if (err) {
       console.error(err);
     }
     console.log(users);
-    res.render('admin/index', {user: req.user, users: users});
+    res.render('admin', {users});
   });
 
 });

@@ -1,11 +1,9 @@
-const express = require('express');
-const router = express.Router();
-
+const router = require('express').Router();
 
 const User = require('../../databases/mongodb/models/user');
 
 router.get('/', (req, res, next) => {
-  res.render('settings/index', {user: req.user, feedback: req.flash('feedback')});
+  res.render('settings', {feedback: req.flash('feedback')});
 });
 
 router.post('/password', (req, res, next) => {
@@ -24,7 +22,8 @@ router.post('/password', (req, res, next) => {
             res.redirect('/settings');
           }
           else if (!user.localuser) {
-            req.flash('feedback', 'Only local users can change their password here.');
+            req.flash('feedback',
+                'Only local users can change their password here.');
             res.redirect('/settings');
           }
           else {
@@ -59,20 +58,16 @@ router.post('/password', (req, res, next) => {
                       }
                     });
                   }
-
                 });
-
               }
             });
           }
-
         });
       }
       else {
         req.flash('feedback', 'New passwords did not match.');
         res.redirect('/settings');
       }
-
     },
 );
 

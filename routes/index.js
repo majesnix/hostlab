@@ -2,7 +2,7 @@ const login = require('./login');
 const logout = require('./logout');
 const dashboard = require('./dashboard');
 const settings = require('./settings');
-const help = require('./help/index');
+const help = require('./help');
 const filemanager = require('./filemanager');
 const cronjobs = require('./cronjobs');
 const databases = require('./databases');
@@ -50,7 +50,6 @@ module.exports = (app) => {
   app.use('/vcs/nodejs', gitlab);
   app.use('/vcs/php', svn);
 
-
   /**
    * Ab hier können die Routen nur noch als Administrator aufgerufen werden
    */
@@ -65,6 +64,9 @@ module.exports = (app) => {
  */
 function isRegistered(req, res, next) {
   if (req.isAuthenticated()) {
+    // Reiche das User-Objekt an die nächsten Routen weiter
+    res.locals.user = req.user;
+
     return next();
   }
   res.redirect('/login');

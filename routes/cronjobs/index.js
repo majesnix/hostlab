@@ -1,9 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 
-/* GET help page. */
 router.get('/', (req, res, next) => {
-    res.render('cronjobs/index', {user: req.user});
+  res.render('cronjobs');
 });
 
 module.exports = router;
