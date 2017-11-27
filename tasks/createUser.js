@@ -14,7 +14,8 @@ const createUser = (opts, callback) => {
       username: opts.username,
       name: opts.username,
       password: opts.password,
-      admin: opts.admin
+      admin: opts.admin,
+      skip_confirmation: "true"// E-Mail Zertifizierung überspringen
   };
   // gitlab post request zur Erstellunge des Gitlab Nutzer
   // TODO: get Token from ENV variable
