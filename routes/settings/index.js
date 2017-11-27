@@ -14,21 +14,27 @@ router.post('/password', (req, res, next) => {
       const oldPassword = req.body.oldPassword;
       const newPassword = req.body.newPassword;
       const newPasswordConfirm = req.body.newPasswordConfirm;
-      console.log(req.user.username);
+
+      // Serverseitiger Check, ob die neuen Passwörter übereinstimmen
       if (newPassword === newPasswordConfirm) {
         User.findOne({'username': req.user.username}, function(err, user) {
           if (err) {
             console.error(err);
           }
+
+          // Kein Nutzer existiert
           else if (!user) {
             req.flash('feedback', 'No user found.');
             res.redirect('/settings');
           }
+
+          // Nutzer ist nicht Localuser (er darf sein PW also nicht ändern)
           else if (!user.localuser) {
             req.flash('feedback',
                 'Only local users can change their password here.');
             res.redirect('/settings');
           }
+          // Passwortänderung nur, wenn altes Passwort korrekt war
           else {
             user.validPassword(oldPassword, function(err, response) {
               if (err) {
@@ -36,11 +42,13 @@ router.post('/password', (req, res, next) => {
                 req.flash('feedback', 'Error on updating your password.');
                 res.redirect('/settings');
               }
+              // altes Passwort war falsch
               else if (response === false) {
                 req.flash('feedback', 'Old password did not match.');
                 res.redirect('/settings');
               }
               else {
+                // Neues Passwort gehasht abspeichern
                 user.generateHash(newPassword, (err, hash) => {
                   if (err) {
                     console.error(err);
@@ -55,6 +63,8 @@ router.post('/password', (req, res, next) => {
                         req.flash('feedback', 'Error on updating your password.');
                         res.redirect('/settings');
                       }
+
+                      // Antwort bei erfolgreicher Änderung
                       else {
                         req.flash('success', true);
                         req.flash('feedback', 'Password changed successfully.');
@@ -68,6 +78,7 @@ router.post('/password', (req, res, next) => {
           }
         });
       }
+      // Neue Passwörter stimmen nicht überein
       else {
         req.flash('feedback', 'New passwords did not match.');
         res.redirect('/settings');
@@ -76,6 +87,8 @@ router.post('/password', (req, res, next) => {
 );
 
 router.delete('/account', (req, res, next) => {
+
+  // Man darf seinen Account nur dann löschen, wenn man kein Admin ist
   if (!req.user.admin) {
 
     deleteUser({username: req.user.username}, (err) => {
@@ -87,17 +100,13 @@ router.delete('/account', (req, res, next) => {
       else {
         // ok
         res.sendStatus(200);
-
       }
     });
-
   }
-
   else {
     // forbidden
     res.sendStatus(403);
   }
-})
-;
+});
 
 module.exports = router;
