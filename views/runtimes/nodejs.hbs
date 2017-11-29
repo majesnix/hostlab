@@ -1,4 +1,5 @@
 <h1>Node.js</h1>
+
 <div class="col-md-12">
     <!-- Trigger the modal with a button -->
     <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#myModal">
@@ -17,11 +18,9 @@
             </div>
             <div class="modal-body">
                 <ul>
-                    <li><a href="#">/mean-stack</a></li>
-                    <li><a href="#">/myApp</a></li>
-                    <li class="text-muted">/42</li>
-                    <li class="text-muted">/IT-Sicherheit</li>
-                    <li class="text-muted">/Webentwicklung</li>
+                    {{#each repositories}}
+                    <li>/<u>{{this}}</u></li>
+                    {{/each}}
                 </ul>
             </div>
         </div>
