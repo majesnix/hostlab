@@ -76,7 +76,7 @@ function isRegistered(req, res, next) {
  * Helferfunktion um Administrator zu identifizieren
  */
 function isAdmin(req, res, next) {
-  if (req.isAuthenticated() && req.user.admin) {
+  if (req.isAuthenticated() && req.user.isAdmin) {
     return next();
   }
   res.redirect('/');

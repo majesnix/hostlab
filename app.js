@@ -94,8 +94,9 @@ require('./databases/mongodb/models/user').count(function(err, userCount) {
   if (userCount === 0) {
     debug('Creating initial user...');
     const initUser = {
-      username: 'admin',
-      password: '12345',
+      email: 'admin@hostlab.hsrw.eu',
+      username: 'hsrwadmin',
+      password: '12345678',
       isAdmin: true,
       isLdapUser: false,
     };

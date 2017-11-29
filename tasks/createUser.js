@@ -1,5 +1,5 @@
 const User = require('../databases/mongodb/models/user');
-// request Modul ermöglich das posten an den gitlab Server
+// request Modul ermöglicht das posten an den gitlab Server
 const request = require('request');
 
 const createUser = (opts, callback) => {
@@ -24,19 +24,20 @@ const createUser = (opts, callback) => {
     username: opts.username,
     name: opts.username,
     password: opts.password,
-    admin: opts.isAdmin,
+    admin: ""+opts.isAdmin,
     skip_confirmation: "true"// E-Mail Zertifizierung überspringen
   };
+  console.log(gitlabopts);
   // gitlab post request zur Erstellunge des Gitlab Nutzer
   // Token wird aus der Env Varialbe "GITLAB_TOKEN" geladen
   request.post({url:'http://gitlab.local/api/v4/users?private_token='+process.env.GITLAB_TOKEN, formData: gitlabopts}, function (err, httpResponse, body) {
     if (err) {
       return console.error('Git User creation failed', err);
     }
-    console.log('Git User Created:', body);
-
-    //TODO: Gitlab ID holen und mit in DB schreiben
-    // newuser.gitlab_id = (response);
+    console.log('Git User Created:', JSON.parse(body));
+    
+    // Gitlab User ID in die Datenbank schreiben
+    newUser.gitlab_id = JSON.parse(body).id;
 
     newUser.save(function(err) {
       if (err) {
