@@ -131,7 +131,7 @@
 <script>
     $('.modal-body').on('click', 'li', function() {
         let gitlab_url = $(this).data("url");
-        $.post( "api/container", { http_url_to_repo: gitlab_url, type: 'nodejs' })
+        $.post( "/api/container", { http_url_to_repo: gitlab_url, type: 'nodejs' })
         .done(function() {
             console.log( "Post  api/container send ", gitlab_url );
         })
