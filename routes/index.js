@@ -15,11 +15,9 @@ const vcs = require('./vcs');
 const gitlab = require('./vcs/gitlab');
 const svn = require('./vcs/svn');
 const admin = require('./admin');
+const container = require('./api/container');
 
 module.exports = (app) => {
-
-
-
 
   app.use('/login', login);
 
@@ -32,6 +30,7 @@ module.exports = (app) => {
 
   app.use(exposeReqInfos);
 
+  app.use('/api/container', container);
 
   app.use('/', dashboard);
 

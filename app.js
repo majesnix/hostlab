@@ -83,8 +83,6 @@ require('./config/passport')(passport);
 // mount routes
 require('./routes')(app);
 
-//mount API
-require('./api')(app);
 
 /**
  * Erstelle initialen Administrator falls noch keine Nutzer vorhanden
