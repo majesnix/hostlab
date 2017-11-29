@@ -17,6 +17,10 @@ const svn = require('./vcs/svn');
 const admin = require('./admin');
 
 module.exports = (app) => {
+
+
+
+
   app.use('/login', login);
 
   /**
@@ -27,6 +31,7 @@ module.exports = (app) => {
   app.use('/logout', logout);
 
   app.use(exposeReqInfos);
+
 
   app.use('/', dashboard);
 
