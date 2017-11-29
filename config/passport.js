@@ -52,7 +52,7 @@ module.exports = (passport) => {
            * Wenn User LDAP User war, aber die LDAP Authentifizierung nicht erfolgreich war,
            * dann darf er sich nicht einloggen
            */
-          if (!user.localuser) {
+          if (user.isLdapUser) {
             return done(null, false);
           }
 

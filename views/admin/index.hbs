@@ -16,7 +16,7 @@
         <input type="password" name="password" id="password" required class="form-control">
     </div>
     <div class="form-check">
-        <label class="form-check-label"> <input type="checkbox" name="admin" id="admin" class="form-check-input ">Admin</label>
+        <label class="form-check-label"> <input type="checkbox" name="isAdmin" id="isAdmin" class="form-check-input ">Admin</label>
     </div>
     <button id="addUser" class="btn btn-default">Submit</button>
 </form>
@@ -35,7 +35,7 @@
         $('#username').val("");
         $('#email').val("");
         $('#password').val("");
-        $('#admin').prop('checked', false);
+        $('#isAdmin').prop('checked', false);
     }
 
     $('#addUser').on('click', function(e) {
@@ -44,13 +44,13 @@
         const username = $('#username').val();
         const email = $('#email').val();
         const password = $('#password').val();
-        const admin = $('#admin').is(':checked');
+        const isAdmin = $('#isAdmin').is(':checked');
 
         let jsonForm = {
             username: username,
             email: email,
             password: password,
-            admin: admin
+            isAdmin: isAdmin
         };
 
 

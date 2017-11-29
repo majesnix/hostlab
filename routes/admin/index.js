@@ -22,8 +22,8 @@ router.post('/user', (req, res) => {
     username: req.body.username,
     password: req.body.password,
     email: req.body.email,
-    admin: req.body.admin,
-    localuser: true,
+    isAdmin: req.body.isAdmin,
+    isLdapUser: false,
 
   };
 

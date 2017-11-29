@@ -29,7 +29,7 @@ router.post('/password', (req, res, next) => {
           }
 
           // Nutzer ist nicht Localuser (er darf sein PW also nicht ändern)
-          else if (!user.localuser) {
+          else if (user.isLdapUser) {
             req.flash('feedback',
                 'Only local users can change their password here.');
             res.redirect('/settings');
@@ -89,7 +89,7 @@ router.post('/password', (req, res, next) => {
 router.delete('/account', (req, res, next) => {
 
   // Man darf seinen Account nur dann löschen, wenn man kein Admin ist
-  if (!req.user.admin) {
+  if (!req.user.isAdmin) {
 
     deleteUser({username: req.user.username}, (err) => {
       if (err) {

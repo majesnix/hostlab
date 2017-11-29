@@ -96,8 +96,8 @@ require('./databases/mongodb/models/user').count(function(err, userCount) {
     const initUser = {
       username: 'admin',
       password: '12345',
-      admin: true,
-      localuser: true,
+      isAdmin: true,
+      isLdapUser: false,
     };
     require('./tasks/createUser')(initUser, function(err, user) {
       if (err) {

@@ -8,24 +8,6 @@ const createUser = (opts, callback) => {
   newUser.username = opts.username;
   newUser.email = opts.email;
 
-  // gitlab optionen die zur Nutzergenerierung benötigt werden
-  let gitlabopts = {
-      email: opts.email,
-      username: opts.username,
-      name: opts.username,
-      password: opts.password,
-      admin: opts.admin,
-      skip_confirmation: "true"// E-Mail Zertifizierung überspringen
-  };
-  // gitlab post request zur Erstellunge des Gitlab Nutzer
-  // Token wird aus der Env Varialbe "GITLAB_TOKEN" geladen
-  request.post({url:'http://gitlab.local/api/v4/users?private_token='+process.env.GITLAB_TOKEN, formData: gitlabopts}, function (err, httpResponse, body) {
-      if (err) {
-          return console.error('Git User creation failed', err);
-      }
-      console.log('Git User Created:', body);
-  });
-
   newUser.generateHash(opts.password, function(err, hash) {
     if (err) {
       return callback(err);
@@ -33,47 +15,68 @@ const createUser = (opts, callback) => {
     newUser.password = hash;
   });
 
-  newUser.admin = opts.admin;
-  newUser.localuser = opts.localuser;
+  newUser.isAdmin = opts.isAdmin;
+  newUser.isLdapUser = opts.isLdapUser;
 
-  newUser.save(function(err) {
+  // gitlab optionen die zur Nutzergenerierung benötigt werden
+  let gitlabopts = {
+    email: opts.email,
+    username: opts.username,
+    name: opts.username,
+    password: opts.password,
+    admin: opts.isAdmin,
+    skip_confirmation: "true"// E-Mail Zertifizierung überspringen
+  };
+  // gitlab post request zur Erstellunge des Gitlab Nutzer
+  // Token wird aus der Env Varialbe "GITLAB_TOKEN" geladen
+  request.post({url:'http://gitlab.local/api/v4/users?private_token='+process.env.GITLAB_TOKEN, formData: gitlabopts}, function (err, httpResponse, body) {
     if (err) {
-      return callback(err);
+      return console.error('Git User creation failed', err);
     }
+    console.log('Git User Created:', body);
 
-    /**
-     * Skip system user operations while testing on other OS than Linux
-     */
-    const linuxUser = process.platform === 'linux'
-        ? require('linux-user')
-        : {
-          addUser: () => {
-            console.info('Not running on linux, did not create system user');
-            return callback(false, newUser);
-          },
-        };
+    //TODO: Gitlab ID holen und mit in DB schreiben
+    // newuser.gitlab_id = (response);
 
-    /**
-     * Erstelle Systemuser mit Homeverzeichnis
-     */
-    linuxUser.addUser(opts.username, (err, user) => {
+    newUser.save(function(err) {
       if (err) {
         return callback(err);
       }
 
       /**
-       * Setze Userpasswort
+       * Skip system user operations while testing on other OS than Linux
        */
-      linuxUser.setPassword(opts.username, opts.password, (err) => {
+      const linuxUser = process.platform === 'linux'
+          ? require('linux-user')
+          : {
+            addUser: () => {
+              console.info('Not running on linux, did not create system user');
+              return callback(false, newUser);
+            },
+          };
+
+      /**
+       * Erstelle Systemuser mit Homeverzeichnis
+       */
+      linuxUser.addUser(opts.username, (err, user) => {
         if (err) {
           return callback(err);
         }
 
-        return callback(false, newUser);
+        /**
+         * Setze Userpasswort
+         */
+        linuxUser.setPassword(opts.username, opts.password, (err) => {
+          if (err) {
+            return callback(err);
+          }
+
+          return callback(false, newUser);
+        });
+
       });
 
     });
-
   });
 
 };
