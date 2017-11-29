@@ -11,7 +11,7 @@ router.get('/', (req, res, next) => {
     body = JSON.parse(body);
     let repositories = [];
     body.forEach((project) => {
-      repositories.push(project.name);
+      repositories.push({path: project.path_with_namespace, repo_url: project.http_url_to_repo});
     });
     res.render('runtimes/nodejs', {repositories:repositories});
   }); 
