@@ -17,7 +17,7 @@
 
 @media(min-width:768px) {
     #wrapper {
-        padding-left: 225px;
+        padding-left: 180px;
     }
 
     #page-wrapper {
@@ -75,7 +75,7 @@
         position: fixed;
         top: 60px;
         left: 225px;
-        width: 225px;
+        width: 180px;
         margin-left: -225px;
         border: none;
         border-radius: 0;
@@ -89,7 +89,7 @@
     }
 
     .side-nav>li>a {
-        width: 225px;
+        width: 180px;
         border-bottom: 1px rgba(0,0,0,.3) solid;
     }
 
