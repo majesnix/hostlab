@@ -18,7 +18,6 @@ const admin = require('./admin');
 const container = require('./api/container');
 
 module.exports = (app) => {
-
   app.use('/login', login);
 
   /**
@@ -28,9 +27,9 @@ module.exports = (app) => {
 
   app.use('/logout', logout);
 
-  app.use(exposeReqInfos);
-
   app.use('/api/container', container);
+
+  app.use(exposeReqInfos);
 
   app.use('/', dashboard);
 
@@ -51,8 +50,8 @@ module.exports = (app) => {
   app.use('/settings', settings);
 
   app.use('/vcs', vcs);
-  app.use('/vcs/nodejs', gitlab);
-  app.use('/vcs/php', svn);
+  app.use('/vcs/git', gitlab);
+  app.use('/vcs/svn', svn);
 
   /**
    * Ab hier können die Routen nur noch als Administrator aufgerufen werden
@@ -71,6 +70,7 @@ function isRegistered(req, res, next) {
     // Reiche das User-Objekt an die nächsten Routen weiter
     res.locals.user = req.user;
 
+    // Weitermachen
     return next();
   }
   res.redirect('/login');
@@ -80,7 +80,11 @@ function isRegistered(req, res, next) {
  * Helferfunktion um Administrator zu identifizieren
  */
 function isAdmin(req, res, next) {
-  if (req.isAuthenticated() && req.user.isAdmin) {
+  if (req.user.isAdmin) {
+    // Zeige Adminansicht statt Nutzeransicht
+    res.locals.layout = 'admin';
+
+    // Weitermachen
     return next();
   }
   res.redirect('/');

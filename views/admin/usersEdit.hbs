@@ -1,0 +1,64 @@
+{{#with user}}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a class="btn btn-default" href="/admin/users/{{username}}">&laquo; BACK</a>
+        </div>
+        <form id="form-user-update">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <th><label for="input-username">Username</label></th>
+                    <td><input id="input-username" class="form-control" type="text" value="{{username}}"></td>
+                </tr>
+                <tr>
+                    <th><label for="input-email">E-Mail</label></th>
+                    <td><input id="input-email" class="form-control" type="text" value="{{email}}"></td>
+                </tr>
+                <tr>
+                    <th><label for="input-isAdmin">Admin</label></th>
+                    <td>
+                        <label class="btn btn-default btn-block">
+                            <input id="input-isAdmin" type="checkbox" {{#if isAdmin}}checked{{/if}}>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <th>LDAP</th>
+                    <td>{{#if isLdapUser}}✓{{else}}✗{{/if}}</td>
+                </tr>
+                <tr>
+                    <th>Registration</th>
+                    <td>{{registeredDate}}</td>
+                </tr>
+                <tr>
+                    <th>Last Login</th>
+                    <td>{{#if lastLogin}}{{lastLogin}}{{else}}-{{/if}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="panel-footer">
+                <button class="btn btn-warning btn-block">UPDATE USER</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        $(function() {
+            $('#form-user-update').submit(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    type: 'PUT',
+                    url: '/admin/users/{{username}}',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        username: $('#input-username').val(),
+                        email: $('#input-email').val(),
+                        isAdmin: $('#input-isAdmin').is(':checked'),
+                    }),
+                    success: function(res) {
+                        console.log(res);
+                    },
+                });
+            });
+        });
+    </script>
+{{/with}}

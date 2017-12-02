@@ -1,0 +1,47 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a class="btn btn-success" href="/admin/users/new">NEW USER</a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Actions</th>
+            <th>Username</th>
+            <th>LDAP</th>
+            <th>Admin</th>
+            <th>Last Login</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each users}}
+            <tr>
+                <td>
+                    <a class="btn btn btn-info" href="/admin/users/{{username}}">SHOW</a>
+                    <a class="btn btn btn-warning" href="/admin/users/{{username}}/edit">EDIT</a>
+                    <button class="btn btn btn-danger user-delete" data-username="{{username}}">DESTROY</button>
+                </td>
+                <td>{{username}}</td>
+                <td>{{#if isLdapUser}}✓{{else}}✗{{/if}}</td>
+                <td>{{#if isAdmin}}✓{{else}}✗{{/if}}</td>
+                <td>{{#if lastLogin}}{{lastLogin}}{{else}}-{{/if}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+    <script>
+        $(function() {
+            $('.user-delete').click(function(event) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/admin/users/' + $(event.target).data('username'),
+                    contentType: 'application/json',
+                    data: JSON.stringify({}),
+                    success: function(res) {
+                        console.log(res);
+                        $(event.target).parent().parent().remove();
+                    },
+                });
+            });
+        });
+    </script>
+</div>

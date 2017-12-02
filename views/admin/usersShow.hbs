@@ -1,0 +1,52 @@
+{{#with user}}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a class="btn btn-default" href="/admin/users">&laquo; BACK</a>
+            <a class="btn btn-warning" href="/admin/users/{{username}}/edit">EDIT</a>
+            <button class="btn btn-danger" id="user-delete">DESTROY</button>
+        </div>
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <th>Username</th>
+                <td>{{username}}</td>
+            </tr>
+            <tr>
+                <th>E-Mail</th>
+                <td>{{#if email}}{{email}}{{else}}-{{/if}}</td>
+            </tr>
+            <tr>
+                <th>LDAP</th>
+                <td>{{#if isLdapUser}}✓{{else}}✗{{/if}}</td>
+            </tr>
+            <tr>
+                <th>Admin</th>
+                <td>{{#if isAdmin}}✓{{else}}✗{{/if}}</td>
+            </tr>
+            <tr>
+                <th>Registration</th>
+                <td>{{registeredDate}}</td>
+            </tr>
+            <tr>
+                <th>Last Login</th>
+                <td>{{#if lastLogin}}{{lastLogin}}{{else}}-{{/if}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(function() {
+            $('#user-delete').click(function() {
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/admin/users/{{username}}',
+                    contentType: 'application/json',
+                    data: JSON.stringify({}),
+                    success: function(res) {
+                        console.log(res);
+                    },
+                });
+            });
+        });
+    </script>
+{{/with}}
