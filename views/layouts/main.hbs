@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>HostLab | Dashboard</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>HostLab</title>
 
     <link rel="stylesheet" href="/assets/bootstrap-3.3.0/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/font-awesome-4.7.0/font-awesome.min.css">
     <link rel="stylesheet" href="/stylesheets/stylesheet.css">
-
     <script src="/assets/jquery-3.2.1.min.js"></script>
     <script src="/assets/bootstrap-3.3.0/bootstrap.min.js"></script>
 </head>
@@ -30,14 +32,17 @@
                 <h1>HostLab</h1>
             </a>
         </div>
-        <!-- Top Menu Items -->
-        <ul class="nav navbar-right top-nav">
-            {{#if user.isAdmin}}
+        {{#if user.isAdmin}}
+            <!-- Navigation oben links -->
+            <ul class="nav navbar-left top-nav">
                 <li>
-                    <a href="/admin"><i class="fa fa-fw fa-gears"></i> Adminpanel</a>
+                    <a href="/admin" title="Click to change to admin view">
+                        <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View: User</a>
                 </li>
-            {{/if}}
-
+            </ul>
+        {{/if}}
+        <!-- Navigation oben rechts -->
+        <ul class="nav navbar-right top-nav">
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="fa fa-fw fa-user-o"></i> {{user.username}}<span class="caret"></span>
@@ -117,17 +122,6 @@
     <!-- /#page-wrapper -->
     <div id="versionnumber">{{> versionnumber}}</div>
 </div><!-- /#wrapper -->
-
-<script>
-    $(function() {
-//        var navPath = location.pathname.split('/')[1];
-//        var submenu = $('#submenu-' + navPath);
-//        if (submenu) {
-//            submenu.toggleClass('in');
-//        }
-        $('a[href="' + location.pathname + '"]').attr('href', '#');
-    });
-</script>
 
 </body>
 </html>
