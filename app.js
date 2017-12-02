@@ -23,7 +23,7 @@ const app = express();
  * Handlebars Konfiguration
  */
 app.engine('hbs', handlebars({
-  defaultLayout: 'main',
+  defaultLayout: 'user',
   extname: '.hbs',
   layoutsDir: 'views/layouts/',
   partialsDir: 'views/partials/',
