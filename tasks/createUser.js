@@ -24,7 +24,7 @@ module.exports = (opts, callback) => {
     username: opts.username,
     name: opts.username,
     password: opts.password,
-    admin: '' + opts.isAdmin,
+    admin: String(opts.isAdmin),
     skip_confirmation: 'true'// E-Mail Zertifizierung überspringen
   };
   console.log(gitlabopts);
