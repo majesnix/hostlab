@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const log = require('debug')('hostlab:route:admin');
-const createUser = require('../../tasks/createUser');
-const deleteUser = require('../../tasks/deleteUser');
-const User = require('../../databases/mongodb/models/user');
+const createUser = require('../tasks/createUser');
+const deleteUser = require('../tasks/deleteUser');
+const User = require('../databases/mongodb/models/user');
 
 /**
  * GET  /admin
@@ -94,8 +94,8 @@ router.post('/users', (req, res, next) => {
           }
           return next(err);
         }// else
-        // Erfolgreich erstellt --> Status 201
         log(user);
+        // Erfolgreich erstellt --> 201 Created
         res.status(201).send(user);
       });
 });
@@ -116,6 +116,7 @@ router.put('/users/:username', (req, res, next) => {
       return next(err);
     }
     log(user);
+    // Erfolgreich geändert --> 200 OK
     res.status(200).send(user);
   });
 });
@@ -136,8 +137,8 @@ router.delete('/users/:username', (req, res, next) => {
       if (err) {
         return next(err);
       }// else
-      // Anfrage erfolgreich --> Satus 200
-      res.status(200).send();
+      // Erfolgreich gelöscht --> 204 No Content
+      res.status(204).send();
     });
   }
 });
