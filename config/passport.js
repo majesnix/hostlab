@@ -68,12 +68,7 @@ module.exports = (passport) => {
             /**
              * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
              */
-            user.lastLogin = new Date();
-            user.save((err) => {
-              if (err) {
-                console.log('Error on updating Last Login field');
-              }
-            });
+            user.updateLastLogin();
 
             /**
              * Bei erfolgreichem Login weiterleiten

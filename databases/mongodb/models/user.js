@@ -71,4 +71,10 @@ userSchema.methods.validatePassword = function(password, callback) {
   });
 };
 
+userSchema.methods.updateLastLogin = function() {
+  this.update({lastLogin: new Date()}, function(err, raw) {
+    log('updateLastLogin %o', raw);
+  });
+};
+
 module.exports = mongoose.model('User', userSchema);
