@@ -11,9 +11,9 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const debug = require('debug')('hostlab:app');
+const connections = require('./config/connections');
 
-const configDB = require('./config/mongoDB.js');
-mongoose.connect(configDB.url, {
+mongoose.connect(connections.mongo.url, {
   useMongoClient: true,
 });
 
@@ -83,7 +83,6 @@ require('./config/passport')(passport);
 // mount routes
 require('./routes')(app);
 
-
 /**
  * Erstelle initialen Administrator falls noch keine Nutzer vorhanden
  */
@@ -95,8 +94,8 @@ require('./databases/mongodb/models/user').count(function(err, userCount) {
   if (userCount === 0) {
     debug('Creating initial user...');
     const initUser = {
-      email: 'admin@hostlab.hsrw.eu',
-      username: 'hsrwadmin',
+      email: 'admin@hostlab.local',
+      username: 'hostlab',
       password: '12345678',
       isAdmin: true,
       isLdapUser: false,
