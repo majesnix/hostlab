@@ -1,3 +1,4 @@
+const log = require('debug')('hostlab:mongo:user');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 
@@ -6,15 +7,16 @@ const userSchema = mongoose.Schema({
     type: String,
     unique: true,
   },
+  password: {
+    type: String,
+  },
   email: {
     type: String,
   },
-  password: String,
   isAdmin: {
     type: Boolean,
     default: false,
   },
-  gitlab_id: Number,
   isLdapUser: {
     type: Boolean,
     default: true,
@@ -42,10 +44,11 @@ const userSchema = mongoose.Schema({
       {
         type: String,
       }],
-  }
+  },
+  gitlab_id: Number,
 });
 
-userSchema.methods.generateHash = function(password, callback) {
+userSchema.methods.hashPassword = function(password, callback) {
   bcrypt.genSalt(10, function(err, salt) {
     if (err) {
       return callback(err, null);
@@ -59,12 +62,12 @@ userSchema.methods.generateHash = function(password, callback) {
   });
 };
 
-userSchema.methods.validPassword = function(password, callback) {
-  bcrypt.compare(password, this.password, function(err, res) {
+userSchema.methods.validatePassword = function(password, callback) {
+  bcrypt.compare(password, this.password, function(err, valid) {
     if (err) {
       return callback(err, null);
     }
-    return callback(null, res);
+    return callback(null, valid);
   });
 };
 

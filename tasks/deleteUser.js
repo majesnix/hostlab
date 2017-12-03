@@ -1,38 +1,36 @@
+const log = require('debug')('hostlab:task:deleteUser');
 const User = require('../databases/mongodb/models/user');
 
-const deleteUser = (opts, callback) => {
+module.exports = (opts, callback) => {
+  // Extrahiere Nutzernamen
+  const {username} = opts;
 
-  User.deleteOne({'username': opts.username}, function(err) {
+  User.deleteOne({username}, function(err) {
     if (err) {
-      console.error(err);
+      log(err);
       return callback(err);
     }
 
     /**
-     * Skip system user operations while testing on other OS than Linux
+     * Wenn kein Linux-System, dann Systemnutzerverwaltung überspringen
      */
     const linuxUser = process.platform === 'linux'
         ? require('linux-user')
         : {
           removeUser: function() {
-            console.info('Not running on linux, did not delete system user');
-            return callback(false);
+            log('Kein Linux-System, überspringe Systemnutzerverwaltung');
+            return callback(null);
           },
         };
 
     /**
      * Entferne Systemuser mit Homeverzeichnis
      */
-    linuxUser.removeUser(opts.username, (err) => {
+    linuxUser.removeUser(username, (err) => {
       if (err) {
         return callback(err);
       }
-
-      return callback(false);
+      return callback(null);
     });
-
   });
-
 };
-
-module.exports = deleteUser;

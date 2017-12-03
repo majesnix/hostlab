@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const debug = require('debug')('hostlab:route:admin');
+const log = require('debug')('hostlab:route:admin');
 const createUser = require('../../tasks/createUser');
 const deleteUser = require('../../tasks/deleteUser');
 const User = require('../../databases/mongodb/models/user');
@@ -22,7 +22,7 @@ router.get('/users', (req, res, next) => {
     if (err) {
       return next(err);
     }
-    debug(users);
+    log(users);
     // Zeige alle Nutzer
     res.render('admin/users', {users});
   });
@@ -35,13 +35,13 @@ router.get('/users/new', (req, res, next) => {
 });
 
 router.get('/users/:username', (req, res, next) => {
-  const username = req.params.username;
+  const {username} = req.params;
   // Hole bestimmten Nutzer
   User.findOne({username}, function(err, user) {
     if (err) {
       return next(err);
     }
-    debug(user);
+    log(user);
     if (!user) {
       return next();
     }
@@ -52,13 +52,13 @@ router.get('/users/:username', (req, res, next) => {
 });
 
 router.get('/users/:username/edit', (req, res, next) => {
-  const username = req.params.username;
+  const {username} = req.params;
   // Hole bestimmten Nutzer
   User.findOne({username}, function(err, user) {
     if (err) {
       return next(err);
     }
-    debug(user);
+    log(user);
     if (!user) {
       return next();
     }
@@ -77,24 +77,27 @@ router.post('/users', (req, res, next) => {
   if (!req.is('json')) {
     return res.status(415).send();
   }
-  // Erhalte Nutzer-Objekt
-  const user = req.body;
-  user.isLdapUser = false;
-  if (!user.username || !user.password) {
+  // Hole Nutzerdaten
+  log(req.body);
+  const {username, password, email, isAdmin} = req.body;
+  // Fehler falls username oder password leer
+  if (!username || !password) {
     return res.status(422).send();
   }
-  // Erstelle neuen Nutzer in der DB
-  User.create(user, function(err, user) {
-    if (err) {
-      debug(err.toString());
-      if (err.errmsg.includes('duplicate key error')) {
-        return res.status(409).send();
-      }
-      return next(err);
-    }
-    debug(user);
-    res.status(201).send(user);
-  });
+  // Erstelle neuen Nutzer
+  createUser({username, password, email, isAdmin, isLdapUser: false},
+      function(err, user) {
+        if (err) {
+          log(err.errmsg);
+          if (err.errmsg.includes('username_1 dup key')) {
+            return res.status(409).send('Please try another username');
+          }
+          return next(err);
+        }// else
+        // Erfolgreich erstellt --> Status 201
+        log(user);
+        res.status(201).send(user);
+      });
 });
 
 router.put('/users/:username', (req, res, next) => {
@@ -102,17 +105,17 @@ router.put('/users/:username', (req, res, next) => {
   if (!req.is('json')) {
     return res.status(415).send();
   }
-  // Erhalte Nutzer-Objekt
-  const username = req.params.username;
+  // Hole Nutzerdaten
+  log(req.params);
+  const {username} = req.params;
+  log(req.body);
   const update = req.body;
   // Ändere bestehenden Nutzer in der DB
   User.findOneAndUpdate({username}, update, {new: true}, function(err, user) {
     if (err) {
       return next(err);
     }
-    debug(user);
-    debug(req.params);
-    debug(req.body);
+    log(user);
     res.status(200).send(user);
   });
 });
@@ -122,18 +125,18 @@ router.delete('/users/:username', (req, res, next) => {
   if (!req.is('json')) {
     return res.status(415).send();
   }
-  // Erhalte Nutzer-Objekt
-  const username = req.params.username;
+  // Hole Nutzerdaten
+  const {username} = req.params;
   // Prüfe ob Admin sich selbst löschen möchte
   if (username === req.user.username) {
     res.status(405).send();
   } else {
-    // Lösche bestehenden Nutzer aus der DB
-    User.remove({username}, function(err, doc) {
+    // Lösche bestehenden Nutzer
+    deleteUser({username}, function(err) {
       if (err) {
         return next(err);
-      }
-      debug(doc);
+      }// else
+      // Anfrage erfolgreich --> Satus 200
       res.status(200).send();
     });
   }

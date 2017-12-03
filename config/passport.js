@@ -3,7 +3,6 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../databases/mongodb/models/user');
 
 module.exports = (passport) => {
-
   /**
    * Diese Funktion wird bei erfolgreichem Login mit dem user Objekt aufgerufen
    * Der Callback done(null, user.id) gibt an, welche Daten des Nutzers im Cookie gespeichert werden
@@ -59,20 +58,19 @@ module.exports = (passport) => {
           /**
            * Passwort in Userdatenbank überprüfen und nur bei korrektem Passwort weiterleiten
            */
-          user.validPassword(password, function(err, res) {
+          user.validatePassword(password, function(err, valid) {
             if (err) {
               return done(err);
             }
-            if (res === false) {
+            if (!valid) {
               return done(null, false);
             }
             /**
              * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
-             * @type {Date}
              */
             user.lastLogin = new Date();
             user.save((err) => {
-              if(err){
+              if (err) {
                 console.log('Error on updating Last Login field');
               }
             });
@@ -83,7 +81,8 @@ module.exports = (passport) => {
             return done(null, user);
           });
         });
-      }));
+      },
+  ));
 
   passport.use('ldapauth', new LdapStrategy({
         server: {
@@ -95,7 +94,6 @@ module.exports = (passport) => {
         },
       },
       function(req, user, done) {
-
         User.findOne({'username': user}, function(err, user) {
           console.log(user);
           if (err) {
@@ -106,12 +104,8 @@ module.exports = (passport) => {
             // TODO: Konto anlegen und LDAP Tag einfügen
             // TODO: Dann weiterleiten mit "done"
           }
-
           return done(null, user);
-
         });
-
-      }),
-  );
-
+      },
+  ));
 };
