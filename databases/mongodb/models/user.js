@@ -46,6 +46,17 @@ const userSchema = mongoose.Schema({
       }],
   },
   gitlab_id: Number,
+  nodeJS: {
+    maxNumServer: {
+      type: Number,
+      default: 5
+    },
+    serverRunning: {
+      type: Number,
+      default: 0
+    }
+  }
+
 });
 
 userSchema.methods.hashPassword = function(password, callback) {
