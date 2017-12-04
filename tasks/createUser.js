@@ -50,37 +50,8 @@ module.exports = (opts, callback) => {
         log(err);
         return callback(err);
       }
+      return callback(false, newUser);
 
-      /**
-       * Wenn kein Linux-System, dann Systemnutzerverwaltung überspringen
-       */
-      const linuxUser = process.platform === 'linux'
-          ? require('linux-user')
-          : {
-            addUser: () => {
-              log('Kein Linux-System, überspringe Systemnutzerverwaltung');
-              return callback(null, newUser);
-            },
-          };
-
-      /**
-       * Erstelle Systemuser mit Homeverzeichnis
-       */
-      linuxUser.addUser(opts.username, (err, user) => {
-        if (err) {
-          return callback(err);
-        }
-
-        /**
-         * Setze Userpasswort
-         */
-        linuxUser.setPassword(opts.username, opts.password, (err) => {
-          if (err) {
-            return callback(err);
-          }
-          return callback(null, newUser);
-        });
-      });
     });
   });
 };

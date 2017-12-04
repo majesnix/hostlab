@@ -10,27 +10,5 @@ module.exports = (opts, callback) => {
       log(err);
       return callback(err);
     }
-
-    /**
-     * Wenn kein Linux-System, dann Systemnutzerverwaltung überspringen
-     */
-    const linuxUser = process.platform === 'linux'
-        ? require('linux-user')
-        : {
-          removeUser: function() {
-            log('Kein Linux-System, überspringe Systemnutzerverwaltung');
-            return callback(null);
-          },
-        };
-
-    /**
-     * Entferne Systemuser mit Homeverzeichnis
-     */
-    linuxUser.removeUser(username, (err) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null);
-    });
   });
 };
