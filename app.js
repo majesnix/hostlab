@@ -99,6 +99,7 @@ require('./databases/mongodb/models/user').count(function(err, userCount) {
       password: '12345678',
       isAdmin: true,
       isLdapUser: false,
+      initialGitlabCreation: true,
     };
     require('./tasks/createUser')(initUser, function(err, user) {
       if (err) {
