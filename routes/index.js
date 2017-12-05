@@ -3,17 +3,18 @@ const logout = require('./logout');
 const dashboard = require('./dashboard');
 const settings = require('./settings');
 const help = require('./help');
-const filemanager = require('./filemanager');
+
 const cronjobs = require('./cronjobs');
-const databases = require('./databases');
-const postgres = require('./databases/postgres');
-const mongodb = require('./databases/mongodb');
+
+const mongoExpressConfig = require('../config/mongoExpress');
+const mongoExpress = require('mongo-express/lib/middleware');
+
 const runtimes = require('./runtimes');
 const nodejs = require('./runtimes/nodejs');
-const php = require('./runtimes/php');
+
 const vcs = require('./vcs');
 const gitlab = require('./vcs/gitlab');
-const svn = require('./vcs/svn');
+
 const admin = require('./admin');
 const container = require('./api/container');
 
@@ -35,23 +36,18 @@ module.exports = (app) => {
 
   app.use('/cronjobs', cronjobs);
 
-  app.use('/databases', databases);
-  app.use('/databases/mongodb', mongodb);
-  app.use('/databases/postgresql', postgres);
+  app.use('/databases/mongodb', mongoExpress(mongoExpressConfig));
 
-  app.use('/filemanager', filemanager);
 
   app.use('/help', help);
 
   app.use('/runtimes', runtimes);
   app.use('/runtimes/nodejs', nodejs);
-  app.use('/runtimes/php', php);
 
   app.use('/settings', settings);
 
   app.use('/vcs', vcs);
   app.use('/vcs/git', gitlab);
-  app.use('/vcs/svn', svn);
 
   /**
    * Ab hier können die Routen nur noch als Administrator aufgerufen werden
@@ -96,7 +92,8 @@ function isAdmin(req, res, next) {
 function exposeReqInfos(req, res, next) {
   // Damit die Rendering-Engine weiß auf welchem Navigationselement wir uns
   // befinden, stellen wir ihr eine entsprechende Variable zur Verfügung.
-  const navPath = req.path.split('/')[1] || 'dashboard';
+  const splitURL = req.path.split('/');
+  const navPath = splitURL[splitURL.length - 1] || 'dashboard';
   const activeNav = 'nav-' + navPath;
   res.locals[activeNav] = true;
   next();

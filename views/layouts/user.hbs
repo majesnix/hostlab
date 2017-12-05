@@ -59,41 +59,14 @@
                 <li {{#if nav-dashboard}}class="active"{{/if}}>
                     <a href="/"><i class="fa fa-fw fa-tachometer"></i> Dashboard</a>
                 </li>
-                <li {{#if nav-filemanager}}class="active"{{/if}}>
-                    <a href="/filemanager"><i class="fa fa-fw fa-folder"></i> Filemanager</a>
+                <li {{#if nav-mongodb}}class="active"{{/if}}>
+                    <a href="/databases/mongodb"><i class="fa fa-database"></i> MongoDB</a>
                 </li>
-                <li {{#if nav-databases}}class="active"{{/if}}>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-databases">
-                        <i class="fa fa-fw fa-database"></i>
-                        <span>Databases</span>
-                        <i class="fa fa-fw fa-angle-down pull-right"></i>
-                    </a>
-                    <ul id="submenu-databases" class="collapse {{#if nav-databases}}in{{/if}}">
-                        <li><a href="/databases/postgresql"><i class="fa fa-angle-double-right"></i> PostgreSQL</a></li>
-                        <li><a href="/databases/mongodb"><i class="fa fa-angle-double-right"></i> MongoDB</a></li>
-                    </ul>
+                <li {{#if nav-nodejs}}class="active"{{/if}}>
+                    <a href="/runtimes/nodejs"><i class="fa fa-play"></i> Node.js</a>
                 </li>
-                <li {{#if nav-runtimes}}class="active"{{/if}}>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-runtimes">
-                        <i class="fa fa-fw fa-play"></i>
-                        <span>Runtimes</span>
-                        <i class="fa fa-fw fa-angle-down pull-right"></i>
-                    </a>
-                    <ul id="submenu-runtimes" class="collapse {{#if nav-runtimes}}in{{/if}}">
-                        <li><a href="/runtimes/nodejs"><i class="fa fa-angle-double-right"></i> Node.js</a></li>
-                        <li><a href="/runtimes/php"><i class="fa fa-angle-double-right"></i> PHP</a></li>
-                    </ul>
-                </li>
-                <li {{#if nav-vcs}}class="active"{{/if}}>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-vcs">
-                        <i class="fa fa-fw fa-code-fork"></i>
-                        <span>Version Control</span>
-                        <i class="fa fa-fw fa-angle-down pull-right"></i>
-                    </a>
-                    <ul id="submenu-vcs" class="collapse {{#if nav-vcs}}in{{/if}}">
-                        <li><a href="/vcs/git"><i class="fa fa-angle-double-right"></i> git</a></li>
-                        <li><a href="/vcs/svn"><i class="fa fa-angle-double-right"></i> svn</a></li>
-                    </ul>
+                <li>
+                    <a href="http://gitlab.local" target="_blank"><i class="fa fa-gitlab"></i> git</a>
                 </li>
                 <li {{#if nav-cronjobs}}class="active"{{/if}}>
                     <a href="/cronjobs"><i class="fa fa-fw fa-clock-o"></i> Cronjobs</a>
