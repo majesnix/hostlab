@@ -24,14 +24,14 @@ router.get('/users', (req, res, next) => {
     }
     log(users);
     // Zeige alle Nutzer
-    res.render('admin/users', {users});
+    res.render('users', {users});
   });
 
 });
 
 router.get('/users/new', (req, res, next) => {
   // Zeige Erstellungsseite für Nutzer
-  res.render('admin/usersNew');
+  res.render('usersNew');
 });
 
 router.get('/users/:username', (req, res, next) => {
@@ -46,7 +46,7 @@ router.get('/users/:username', (req, res, next) => {
       return next();
     }
     // Zeige Nutzerdaten
-    res.render('admin/usersShow', {user});
+    res.render('usersShow', {user});
 
   });
 });
@@ -63,7 +63,7 @@ router.get('/users/:username/edit', (req, res, next) => {
       return next();
     }
     // Zeige Editierseite für bestimmten Nutzer
-    res.render('admin/usersEdit', {user});
+    res.render('usersEdit', {user});
   });
 });
 

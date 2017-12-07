@@ -19,7 +19,7 @@
             <div class="modal-body">
                 <ul>
                     {{#each repositories}}
-                    <li data-url='{{repo_url}}'><u>{{path}}</u></li>
+                        <li data-url='{{repo_url}}'><u>{{path}}</u></li>
                     {{/each}}
                 </ul>
             </div>
@@ -130,13 +130,11 @@
 
 <script>
     $('.modal-body').on('click', 'li', function() {
-        let gitlab_url = $(this).data("url");
-        $.post( "/api/container", { http_url_to_repo: gitlab_url, type: 'nodejs' })
-        .done(function() {
-            console.log( "Post  api/container send ", gitlab_url );
-        })
-        .fail(function() {
-            console.log( "error posting to api/container ", gitlab_url );
+        let gitlab_url = $(this).data('url');
+        $.post('/api/container', {http_url_to_repo: gitlab_url, type: 'nodejs'}).done(function() {
+            console.log('POST on api/container', gitlab_url);
+        }).fail(function() {
+            console.error('error POSTing on api/container', gitlab_url);
         });
     });
 </script>

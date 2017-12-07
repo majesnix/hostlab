@@ -5,9 +5,9 @@ const {exec} = require('child_process');
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
-const {docker, dockerfile} = require('../../config/docker');
+const {docker, dockerfile} = require('../config/docker');
 
-router.post('/', (req, res, next) => {
+router.post('/container', (req, res, next) => {
   log('Erfolgreich in der Post');
   log(req.body);
   const {http_url_to_repo, type} = req.body;

@@ -9,14 +9,10 @@ const cronjobs = require('./cronjobs');
 const mongoExpressConfig = require('../config/mongoExpress');
 const mongoExpress = require('mongo-express/lib/middleware');
 
-const runtimes = require('./runtimes');
-const nodejs = require('./runtimes/nodejs');
-
-const vcs = require('./vcs');
-const gitlab = require('./vcs/gitlab');
+const node = require('./node');
 
 const admin = require('./admin');
-const container = require('./api/container');
+const api = require('./api');
 
 module.exports = (app) => {
   app.use('/login', login);
@@ -28,7 +24,7 @@ module.exports = (app) => {
 
   app.use('/logout', logout);
 
-  app.use('/api/container', container);
+  app.use('/api', api);
 
   app.use(exposeReqInfos);
 
@@ -36,18 +32,13 @@ module.exports = (app) => {
 
   app.use('/cronjobs', cronjobs);
 
-  app.use('/databases/mongodb', mongoExpress(mongoExpressConfig));
-
+  app.use('/mongo', mongoExpress(mongoExpressConfig));
 
   app.use('/help', help);
 
-  app.use('/runtimes', runtimes);
-  app.use('/runtimes/nodejs', nodejs);
+  app.use('/node', node);
 
   app.use('/settings', settings);
-
-  app.use('/vcs', vcs);
-  app.use('/vcs/git', gitlab);
 
   /**
    * Ab hier können die Routen nur noch als Administrator aufgerufen werden
