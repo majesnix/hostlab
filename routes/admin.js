@@ -2,7 +2,7 @@ const router = require('express').Router();
 const log = require('debug')('hostlab:route:admin');
 const createUser = require('../tasks/createUser');
 const deleteUser = require('../tasks/deleteUser');
-const User = require('../databases/mongodb/models/user');
+const User = require('../models/user');
 
 /**
  * GET  /admin

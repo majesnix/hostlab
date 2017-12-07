@@ -86,7 +86,7 @@ require('./routes')(app);
 /**
  * Erstelle initialen Administrator falls noch keine Nutzer vorhanden
  */
-require('./databases/mongodb/models/user').count(function(err, userCount) {
+require('./models/user').count(function(err, userCount) {
   if (err) {
     return console.error(err);
   }

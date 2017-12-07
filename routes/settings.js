@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const deleteUser = require('../tasks/deleteUser');
-const User = require('../databases/mongodb/models/user');
+const User = require('../models/user');
 
 router.get('/', (req, res, next) => {
   res.render('settings', {

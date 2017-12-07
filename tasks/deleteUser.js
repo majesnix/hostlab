@@ -1,5 +1,5 @@
 const log = require('debug')('hostlab:task:deleteUser');
-const User = require('../databases/mongodb/models/user');
+const User = require('../models/user');
 
 module.exports = (opts, callback) => {
   // Extrahiere Nutzernamen

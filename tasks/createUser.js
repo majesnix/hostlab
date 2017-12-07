@@ -1,5 +1,5 @@
 const log = require('debug')('hostlab:task:createUser');
-const User = require('../databases/mongodb/models/user');
+const User = require('../models/user');
 const request = require('request');  // Request-Modul ermöglicht das POSTen an den Gitlab-Server
 const util = require('util');
 

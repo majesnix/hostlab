@@ -1,6 +1,6 @@
 const LdapStrategy = require('passport-ldapauth').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../databases/mongodb/models/user');
+const User = require('../models/user');
 
 module.exports = (passport) => {
   /**
