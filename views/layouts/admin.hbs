@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>HostLab</title>
-
-    <link rel="stylesheet" href="/assets/bootstrap-3.3.0/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/font-awesome-4.7.0/font-awesome.min.css">
-    <link rel="stylesheet" href="/stylesheets/stylesheet.css">
-    <script src="/assets/jquery-3.2.1.min.js"></script>
-    <script src="/assets/bootstrap-3.3.0/bootstrap.min.js"></script>
-</head>
-<body>
-
+{{> header}}
 <div id="throbber" style="display:none; min-height:120px;"></div>
 <div id="noty-holder"></div>
 <div id="wrapper">
@@ -77,9 +61,5 @@
         <!-- /.container-fluid -->
     </div>
     <!-- /#page-wrapper -->
-    <div id="versionnumber">{{> versionnumber}}</div>
 </div><!-- /#wrapper -->
-
-</body>
-
-</html>
+{{> footer}}
