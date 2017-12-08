@@ -57,25 +57,21 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
                 <li {{#if nav-dashboard}}class="active"{{/if}}>
-                    <a href="/"><i class="fa fa-fw fa-tachometer"></i> Dashboard</a>
-                </li>
-                <li {{#if nav-mongodb}}class="active"{{/if}}>
-                    <a href="/mongo"><i class="fa fa-database"></i> MongoDB</a>
+                    <a href="/dashboard"><i class="fa fa-fw fa-tachometer"></i> Dashboard</a>
                 </li>
                 <li {{#if nav-nodejs}}class="active"{{/if}}>
-                    <a href="/node"><i class="fa fa-play"></i> Node.js</a>
+                    <a href="/node"><i class="fa fa-fw fa-play"></i> Node.js</a>
+                </li>
+                <li {{#if nav-mongodb}}class="active"{{/if}}>
+                    <a href="/mongo"><i class="fa fa-fw fa-database"></i> MongoDB</a>
                 </li>
                 <li>
-                    <a href="//gitlab.local" target="_blank"><i class="fa fa-gitlab"></i> git</a>
-                </li>
-                <li {{#if nav-cronjobs}}class="active"{{/if}}>
-                    <a href="/cronjobs"><i class="fa fa-fw fa-clock-o"></i> Cronjobs</a>
+                    <a href="//gitlab.local" target="_blank"><i class="fa fa-fw fa-gitlab"></i> GitLab</a>
                 </li>
                 <li {{#if nav-help}}class="active"{{/if}}>
                     <a href="/help"><i class="fa fa-fw fa-question-circle"></i> Help</a>
                 </li>
             </ul>
-
         </div>
         <!-- /.navbar-collapse -->
     </nav>
