@@ -1,8 +1,7 @@
 const router = require('express').Router();
+const log = require('debug')('hostlab:route:node');
 const request = require('request');
-
 const util = require('util');
-
 const gitlab_token = process.env.GITLAB_TOKEN ||
     require('../config/gitlab_token').gitlab_token;
 
@@ -14,19 +13,22 @@ router.get('/', (req, res, next) => {
         gitlab_id, gitlab_token),
   }, function(err, httpResponse, body) {
     if (err) {
-      return console.error('Git get User Repositries failed', err);
+      log('Request failed', err);
+      return next(err);
     }
-    console.log('Got Git User Repositories');
-    console.log(body);
-    body = JSON.parse(body);
-    let repositories = [];
-    body.forEach((project) => {
+    log(httpResponse);
+    log('Request finished');
+    log(body);
+    projects = JSON.parse(body);
+    log(projects);
+    const repositories = [];
+    for (let project of projects) {
       repositories.push({
         path: project.path_with_namespace,
         repo_url: project.http_url_to_repo,
       });
-    });
-    res.render('runtimes/nodejs', {repositories});
+    }
+    res.render('node', {repositories});
   });
 });
 
