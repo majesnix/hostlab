@@ -1,0 +1,78 @@
+html
+    include head
+
+    body.hold-transition.skin-black
+        .wrapper
+            include ../includes/header
+            if !hideSidebar
+                include ../includes/sidebar/sidebar
+            .content-wrapper
+                if pageheader
+                    section.content-header
+                        h1= headerTitle
+                section.content.container-fluid
+                    block content
+
+        .modal.fade.in#createProjectModal
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        button.close(data-dismiss="modal" aria-label="Close")
+                            span(aria-hidden="true")
+                        h4.modal-title Create Project
+                    form(action="/api/createproject", method="post")
+                        .modal-body
+                            .form-group
+                                label Project Name
+                                input.form-control(type="text" name="name" placeholder="Project Name...")
+                        .modal-footer
+                            button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
+                            button.btn.btn-primary Create Project
+        if(activeProject)
+            .modal.fade.in#createApplicationModal
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            button.close(data-dismiss="modal" aria-label="Close")
+                                span(aria-hidden="true")
+                            h4.modal-title Create Application
+                        form(action="/api/createapplication", method="post")
+                            .modal-body
+                                .form-group
+                                    label Application Name
+                                    input.form-control(type="text" name="name" placeholder="Application Name...")
+                                .form-group
+                                    label Application Type
+                                    select.form-control(name="type")
+                                        option NodeJS
+                                        option Test
+                                .form-group
+                                    label Port
+                                    input.form-control(type="text" name="port" placeholder="Application Port...")
+                            .modal-footer
+                                button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
+                                button.btn.btn-primary(name="id" value=`${activeProject.id ||
+                                activeProject.projectid}`) Create Application
+        if(activeProject)
+            .modal.fade.in#createDatabaseModal
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            button.close(data-dismiss="modal" aria-label="Close")
+                                span(aria-hidden="true")
+                            h4.modal-title Create Database
+                        form(action="/api/createdatabase", method="post")
+                            .modal-body
+                                .form-group
+                                    label Database Name
+                                    input.form-control(type="text" name="name" placeholder="Database Name...")
+                                .form-group
+                                    label Database Type
+                                    select.form-control(name="type")
+                                        option PostgreSQL
+                                        option MongoDB
+                            .modal-footer
+                                button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
+                                button.btn.btn-primary(name="id" value=`${activeProject.id ||
+                                activeProject.projectid}`) Create Database
+        include scripts

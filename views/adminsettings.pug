@@ -1,0 +1,66 @@
+extends global/master
+
+block content
+    h1 Administration
+    .row
+        .col-md-12
+            if (message.error)
+                .alert.alert-danger
+                    p= message.error
+            if (message.info)
+                .alert.alert-success
+                    p= message.info
+            .box.box-info
+                .box-header.with-border
+                    a(href=link)
+                        h3.box-title= 'Create User'
+                    .box-body
+                        form.form-horizontal(action="/api/createuser", method="post")
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2 Firstname
+                                .col-sm-10
+                                    input.form-control#inputFirstName(type="text", name="firstname" placeholder="Firstname", required)
+                                    span.fa.fa-user-circle-o.form-control-feedback
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2 Lastname
+                                .col-sm-10
+                                    input.form-control#inputLastName(type="text", name="lastname" placeholder="Lastname", required)
+                                    span.fa.fa-user-circle-o.form-control-feedback
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2 Email
+                                .col-sm-10
+                                    input.form-control#inputEmail(type="email", name="email" placeholder="E-Mail", required)
+                                    span.fa.fa-envelope-o.form-control-feedback
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2 Password
+                                .col-sm-10
+                                    input.form-control#inputPassword(type="password", name="password" placeholder="Password", required)
+                                    span.fa.fa-lock.form-control-feedback
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2 Repeat Password
+                                .col-sm-10
+                                    input.form-control#inputRepeatPassword(type="password", name="password2" placeholder="Repeat Password", required)
+                                    span.fa.fa-lock.form-control-feedback
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2 Administrator
+                                .col-sm-10
+                                    input#inputAdmin(type="checkbox", name="admin")
+                            .row
+                                .col-xs-4
+                                    button.btn.btn-primary.btn-blockbtn-flat(type="submit") Create
+        .col-md-12
+            .box.box-info
+                .box-header.with-border
+                    a(href=link)
+                        h3.box-title= 'Change user activation status'
+                    .box-body
+                        form.form-horizontal(action="/api/deactivateuser", method="post")
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2 Matrikelnummer
+                                .col-sm-10
+                                    input.form-control#inputFirstName(type="text", name="matrnr" placeholder="", required)
+                                    span.fa.fa-id-card-o.form-control-feedback
+                            .row
+                                .col-xs-4
+                                    button.btn.btn-primary.btn-blockbtn-flat(type="submit") Change Userstatus
+

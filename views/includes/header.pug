@@ -1,0 +1,31 @@
+header.main-header
+    a.logo(href="/dashboard")
+        span.logo-mini SLAB
+        span.logo-lg Softwarelabor
+
+    nav.navbar.navbar-static-top
+        a.sidebar-toggle(href="#", data-toggle="push-menu" role="button")
+            span.sr-only "Toggle Navigation
+        ul.nav.navbar-nav
+            li.pull-left
+                a(href="#", data-toggle="modal" data-target="#createProjectModal") Create Project
+            if (user.isadmin)
+                li.pull-left
+                    a(href='/adminsettings') Administration
+        .navbar-custom-menu
+            ul.nav.navbar-nav
+                li.dropdown.user.user-menu
+                    a.dropdown-toggle(href="#", data-toggle="dropdown")
+                        img.user-image(src=`vendor/assets/${user.avatar}`, alt="User Image")
+                        span.hidden-xs= user.firstname
+                    ul.dropdown-menu
+                        li.user-header
+                            img.img-circle(src=`vendor/assets/${user.avatar}`, alt="User Image")
+                            p= user.firstname
+                        li.user-footer
+                            .pull-left
+                                a.btn.btn-default.btn-flat(href="/usersettings") Settings
+                            .pull-right
+                                a.btn.btn-default.btn-flat(href="/logout") Logout
+                
+

@@ -5,32 +5,34 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const handlebars = require('express-handlebars');
-const passport = require('passport');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const debug = require('debug')('hostlab:app');
-const connections = require('./config/connections');
+const mongoConnections = require('./config/connections').mongo;
+const configPassport = require('./config/passport');
+const mountRoutes = require('./routes');
 
-mongoose.connect(connections.mongo.url, {
+mongoose.connect(mongoConnections.url, {
   useMongoClient: true,
 });
 
 const app = express();
 
-/**
- * Handlebars Konfiguration
- */
-app.engine('hbs', handlebars({
-  defaultLayout: 'user',
-  extname: '.hbs',
-  layoutsDir: 'views/layouts/',
-  partialsDir: 'views/partials/',
-}));
+// /**
+//  * Handlebars Konfiguration
+//  */
+// app.engine('hbs', handlebars({
+//   defaultLayout: 'user',
+//   extname: '.hbs',
+//   layoutsDir: 'views/layouts/',
+//   partialsDir: 'views/partials/',
+// }));
 
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -39,78 +41,33 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(session(
-    {
-      secret: 'lol',
-      store: new MongoStore(
-          {
-            mongooseConnection: mongoose.connection,
-
-            // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
-            touchAfter: 5 // time period in seconds
-          }),
-
+app.use(session({
+  secret: 'keyboard cat',
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
+    touchAfter: 5 // time period in seconds
+  }),
       // Cookies werden nach der maxAge Zeit gelöscht, auch bei Nutzerinteraktion
       // Durch rolling: true wird bei jedem Request das maxAge neu gesetzt
       rolling: true,
-
       // Wenn die Session nicht modifiziert wurde wird sie nicht bei jedem Request neu gespeichert
       resave: false,
-
       // Bei jedem Request werden Cookies erzeugt, auch wenn nicht eingeloggt wird.
       // Durch saveUninitialized: false werden diese Cookies nicht gespeichert und die SessionDB wird nicht vollgemüllt
       saveUninitialized: false,
-
       // Setzt die CookiespeicherDAUER auf eine festgelegte Zeit
       cookie: {maxAge: 24 * 60 * 60 * 1000} // 24 Stunden
-
     },
 ));
 
-app.use(passport.initialize());
-/**
- * Passport modifiziert nachdem Express die Session geladen hat diverse Parameter,
- * wie z.B req.user
- */
-app.use(passport.session());
-
 app.use(flash());
 
-// configure passport
-require('./config/passport')(passport);
+// Initialize und configure Passport
+configPassport(app);
 
-// mount routes
-require('./routes')(app);
-
-/**
- * Erstelle initialen Administrator falls noch keine Nutzer vorhanden
- */
-require('./models/user').count(function(err, userCount) {
-  if (err) {
-    return console.error(err);
-  }
-  debug('Got %d user(s) on start', userCount);
-  if (userCount === 0) {
-    debug('Creating initial user...');
-    const initUser = {
-      email: 'admin@hostlab.local',
-      username: 'hostlab',
-      password: '12345678',
-      isAdmin: true,
-      isLdapUser: false,
-      initialGitlabCreation: true,
-    };
-    require('./tasks/createUser')(initUser, function(err, user) {
-      if (err) {
-        console.error('Error while creating initial user:',
-            err.message);
-        process.exit(err.code);
-      }
-      debug('Created initial user: %o', initUser);
-    });
-  }
-});
+// Mount routes
+mountRoutes(app);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

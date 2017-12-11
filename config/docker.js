@@ -9,13 +9,13 @@ log(docker);
 
 const dockerfile = {
   node: file => `\
-FROM node:alpine
+FROM node:carbon-alpine
 WORKDIR /app
 ADD ${file} .
 RUN mv */* .
 RUN npm install
-ENV PORT=80
-EXPOSE 80`,
+ENV PORT=8080
+EXPOSE 8080`,
 };
 
 module.exports = {docker, dockerfile};

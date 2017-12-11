@@ -1,0 +1,34 @@
+html(lang="en")
+    include global/head
+    body.hold-transition.login-page
+        .login-box
+            .login-logo HostLab
+            .login-box-body
+                p.login-box-msg Sign in
+                if (message && message.error)
+                    .alert.alert-danger
+                        p= message.error
+                form(method="post")
+                    .form-group.has-feedback
+                        input.form-control#inputEmail(type="text", name="email" placeholder="E-Mail", required, autofocus)
+                        span.fa.fa-envelope-o.form-control-feedback
+                    .form-group.has-feedback
+                        input.form-control#inputPassword(type="password", name="password" placeholder="Password", required)
+                        span.fa.fa-lock.form-control-feedback
+                    .row
+                        .col-xs-8
+                            .checkbox.icheck
+                                label
+                                    input(type="checkbox" name="remember")
+                                    | Remember Me
+                        .col-xs-4
+                            button.btn.btn-primary.btn-blockbtn-flat(type="submit") Sign in
+    include global/scripts
+    script.
+      $(function() {
+        $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' // optional
+        });
+      });

@@ -3,23 +3,23 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 
 const userSchema = mongoose.Schema({
-  username: {
+  email: {
     type: String,
     unique: true,
+    alias: 'username',
   },
   password: {
     type: String,
   },
-  email: {
-    type: String,
-  },
+  firstname: String,
+  lastname: String,
   isAdmin: {
     type: Boolean,
     default: false,
   },
-  isLdapUser: {
+  isLdap: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   registeredDate: {
     type: Date,
@@ -28,35 +28,11 @@ const userSchema = mongoose.Schema({
   lastLogin: {
     type: Date,
   },
-  mongodb: {
-    maxNumDBs: {
-      type: Number,
-      default: 5,
-    },
-    urls: [
-      {
-        type: String,
-      }],
-  },
-  gitlab: {
-    url: String,
-    repositorys: [
-      {
-        type: String,
-      }],
-  },
   gitlab_id: Number,
-  nodeJS: {
-    maxNumServer: {
-      type: Number,
-      default: 5
-    },
-    serverRunning: {
-      type: Number,
-      default: 0
-    }
-  }
-
+  avatar: {
+    type: String,
+    default: 'default.png',
+  },
 });
 
 userSchema.methods.hashPassword = function(password, callback) {

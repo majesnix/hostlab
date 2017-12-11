@@ -1,18 +1,14 @@
-const login = require('./login');
-const logout = require('./logout');
-const dashboard = require('./dashboard');
-const settings = require('./settings');
-const help = require('./help');
-
-const cronjobs = require('./cronjobs');
-
-const mongoExpressConfig = require('../config/mongoExpress');
-const mongoExpress = require('mongo-express/lib/middleware');
-
-const node = require('./node');
-
 const admin = require('./admin');
 const api = require('./api');
+const dashboard = require('./dashboard');
+const help = require('./help');
+const login = require('./login');
+const logout = require('./logout');
+const mongoExpress = require('mongo-express/lib/middleware');
+const mongoExpressConfig = require('../config/mongoExpress');
+const node = require('./node');
+const postgres = require('./postgres');
+const settings = require('./settings');
 
 module.exports = (app) => {
   app.use('/login', login);
@@ -21,32 +17,22 @@ module.exports = (app) => {
    * Ab hier können die Routen nur noch als registrierter Benutzer aufgerufen werden
    */
   app.use(isRegistered);
-
   app.use('/logout', logout);
-
   app.use('/api', api);
 
   app.use(exposeReqInfos);
-
   app.use('/', dashboard);
-
-  app.use('/cronjobs', cronjobs);
-
-  app.use('/mongo', mongoExpress(mongoExpressConfig));
-
   app.use('/help', help);
-
+  app.use('/mongo', mongoExpress(mongoExpressConfig));
   app.use('/node', node);
-
+  app.use('/postgres', postgres);
   app.use('/settings', settings);
 
   /**
    * Ab hier können die Routen nur noch als Administrator aufgerufen werden
    */
   app.use(isAdmin);
-
   app.use('/admin', admin);
-
 };
 
 /**

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const passport = require('passport');
 
 router.get('/', (req, res, next) => {
-  res.render('login', {layout: 'empty'});
+  res.render('login');
 });
 
 /**
@@ -10,13 +10,11 @@ router.get('/', (req, res, next) => {
  * sofern er erfolgreich war an die nächste Funktion weiter.
  * Anderenfalls wird wieder auf /login zurückgeleitet.
  */
-router.post('/', passport.authenticate('local-login',
-    {
-      failureRedirect: '/login',
-    }),
-    function(req, res) {
-      res.redirect('/');
-    },
-);
+router.post('/', passport.authenticate(['local'], {
+  failureRedirect: '/login',
+  failureFlash: 'Invalid username or password.',
+}), (req, res) => {
+  res.redirect('/dashboard');
+});
 
 module.exports = router;

@@ -1,0 +1,38 @@
+html(lang="en")
+    include global/head
+    body.hold-transition.login-page
+        .login-box
+            .login-logo
+                a(href="#") Softwarelab Sign Up
+            .login-box-body
+                p.login-box-msg Sign up
+                if (message)
+                    p= message
+                form(action="/signup", method="post")
+                    .form-group.has-feedback
+                        input.form-control#inputFirstname(type="text", name="firstname" placeholder="Firstname", required, autofocus)
+                        span.fa.fa-user-circle-o.form-control-feedback
+                    .form-group.has-feedback
+                        input.form-control#inputLastname(type="text", name="lastname" placeholder="Lastname", required)
+                        span.fa.fa-user-circle-o.form-control-feedback
+                    .form-group.has-feedback
+                        input.form-control#inputEmail(type="email", name="email" placeholder="E-Mail", required)
+                        span.fa.fa-envelope-o.form-control-feedback
+                    .form-group.has-feedback
+                        input.form-control#inputPassword(type="password", name="password" placeholder="Password", required)
+                        span.fa.fa-lock.form-control-feedback
+                    .form-group.has-feedback
+                        input.form-control#inputPassword2(type="password", name="password2" placeholder="Repeat Password", required)
+                        span.fa.fa-lock.form-control-feedback
+                    .row
+                        .col-xs-4
+                            button.btn.btn-primary.btn-blockbtn-flat(type="submit") Sign up
+    include global/scripts
+    script.
+      $(function() {
+        $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' // optional
+        });
+      });

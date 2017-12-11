@@ -1,0 +1,18 @@
+extends global/master
+include includes/box
+
+block content
+    .row
+        .col-md-12
+            if (message.error)
+                .alert.alert-danger
+                    p= message.error
+            if (message.info)
+                .alert.alert-success
+                    p= message.info
+            .box.box-info
+                .box-header.with-border
+                    a(href=link)
+                        h3.box-title= user.firstname + '\'s Dashboard'
+                .box-body
+                    | Willkommen im Projektportal des Softwarelabors

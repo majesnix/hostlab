@@ -14,7 +14,7 @@ module.exports = (opts, callback) => {
   newUser.username = opts.username;
   newUser.email = opts.email;
   newUser.isAdmin = opts.isAdmin;
-  newUser.isLdapUser = opts.isLdapUser;
+  newUser.isLdap = opts.isLdap;
 
   newUser.hashPassword(opts.password, function(err, hash) {
     if (err) {
@@ -58,7 +58,7 @@ module.exports = (opts, callback) => {
           log(err);
           return callback(err);
         }
-        return callback(false, newUser);
+        return callback(null, newUser);
 
       });
     });
@@ -71,7 +71,7 @@ module.exports = (opts, callback) => {
         log(err);
         return callback(err);
       }
-      return callback(false, newUser);
+      return callback(null, newUser);
 
     });
   }
