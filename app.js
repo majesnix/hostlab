@@ -10,11 +10,11 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const debug = require('debug')('hostlab:app');
-const mongoConnections = require('./config/connections').mongo;
-const configPassport = require('./config/passport');
+const mongoConnection = require('./config/connections').mongo;
+const initPassport = require('./config/passport');
 const mountRoutes = require('./routes');
 
-mongoose.connect(mongoConnections.url, {
+mongoose.connect(mongoConnection.url, {
   useMongoClient: true,
 });
 
@@ -64,7 +64,7 @@ app.use(session({
 app.use(flash());
 
 // Initialize und configure Passport
-configPassport(app);
+initPassport(app);
 
 // Mount routes
 mountRoutes(app);
