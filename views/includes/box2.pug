@@ -1,0 +1,9 @@
+mixin box2(title, texts, link)
+    .box.box-solid
+        .box-header.with-border
+            a(href=link)
+                h3.box-title= title
+        .box-body
+            if(texts)
+                each text in texts
+                    p= text

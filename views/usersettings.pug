@@ -1,0 +1,48 @@
+extends global/master
+
+block content
+    h1 Settings
+    .row
+        .col-md-12
+            if (message.error)
+                .alert.alert-danger
+                    p= message.error
+            if (message.info)
+                .alert.alert-success
+                    p= message.info
+            .box.box-info
+                .box-header.with-border
+                    a(href=link)
+                        h3.box-title= 'Change avatar'
+                    .box-body
+                        form.form-horizontal(action="/api/changeavatar", enctype="multipart/form-data" ,method="post")
+                            .form-group.has-feedback
+                                label.control-label.col-sm-2(for='avatar') 
+                                .col-sm-10
+                                    input.form-control#inputOldPassword(type='file', name="avatar")
+                            .row
+                                .col-xs-4
+                                    button.btn.btn-primary.btn-blockbtn-flat(type="submit") Submit
+    if (!user.ldap)
+        .box.box-info
+            .box-header.with-border
+                a(href=link)
+                    h3.box-title= 'Change password'
+                .box-body
+                    form.form-horizontal(action="/api/changepassword", method="post")
+                        .form-group.has-feedback
+                            label.control-label.col-sm-2(for='inputoldpassword') Old password
+                            .col-sm-10
+                                input.form-control#inputOldPassword(type='password', name="inputoldpassword")
+                        .form-group.has-feedback
+                            label.control-label.col-sm-2(for='inputNewPassword') New password
+                            .col-sm-10
+                                input.form-control#inputNewPassword(type='password', name="inputnewpassword")
+                        .form-group.has-feedback
+                            label.control-label.col-sm-2(for='inputnewpassword2') Repeat new password
+                            .col-sm-10
+                                input.form-control#inputNewPassword2(type='password', name="inputnewpassword2")
+                        .row
+                            .col-xs-4
+                                button.btn.btn-primary.btn-blockbtn-flat(type="submit") Change Password
+

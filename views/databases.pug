@@ -1,0 +1,31 @@
+extends global/master
+
+block content
+    h1 My first Database
+    p Internal IP: 192.168.1.15
+    .row
+        .col-md-12
+            .box.box-info
+                .box-header.with-border
+                    a(href=link)
+                        h3.box-title= 'Status'
+                .box-body
+                    .callout.callout-success Seems like the server is running without problems
+
+    .row
+        .col-md-12
+            .btn-group
+                .btn.btn-success Start
+                .btn.btn-danger Stop
+                .btn.btn-warning(style="margin-bottom:20px;") Restart
+
+    .row
+        .col-md-12
+            .box.box-danger
+                .box-header.with-border
+                    a(href=link)
+                        h3.box-title= 'Delete this Database'
+                    form(action="/api/deletedatabase", method="POST")
+                        .box-body
+                            input(type="hidden" name="project" value=`${activeProject}`)
+                            button.btn.btn-danger(type="submit" name="dbid" value=`${activeDB}`) Delete

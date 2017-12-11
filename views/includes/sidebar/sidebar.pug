@@ -1,0 +1,15 @@
+aside.main-sidebar
+    section.sidebar
+        ul.sidebar-menu(data-widget="tree")
+            li
+                a.nav-link.active(href="/dashboard") Dashboard
+            li
+                a.nav-link.active(href="https://git.majesnix.org" target="_blank") Gitlab-Login
+            li
+                a.nav-link.active(href="https://127.0.0.1:4330" target="_blank") phpMyAdmin-Login
+            if (projects)
+                li.header Projects
+                include sidebar_projects
+            if (participations)
+                li.header Participations
+                include sidebar_participations

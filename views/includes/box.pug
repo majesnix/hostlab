@@ -1,0 +1,10 @@
+mixin box(title, text, link)
+    .box.box-info.box-solid
+        .box-header.with-border
+            a(href=link)
+                h3.box-title= title
+            .box-tools.pull-right
+                button.btn.btn-box-tool(type="button" data-widget="collapse")
+                    i.fa.fa-minus
+        .box-body
+            = text

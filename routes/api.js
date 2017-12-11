@@ -1,72 +1,53 @@
-const router = require('express').Router();
-const log = require('debug')('hostlab:route:api');
-const util = require('util');
-const {exec} = require('child_process');
-const request = require('request');
-const fs = require('fs');
+const express = require('express');
+const router = express.Router();
 const path = require('path');
-const {docker, dockerfile} = require('../config/docker');
+const { changePassword, changeAvatar, deactivateUser, createUser } = require('../app/controller/userController');
+const { createProject, deleteProject, changeProjectName, addParticipant, removeParticipant, createApplication, deleteApplication, createDatabase, deleteDatabase } = require('../app/controller/projectController');
+const asyncHandler = require('express-async-handler');
 
-router.post('/container', (req, res, next) => {
-  log('Erfolgreich in der Post');
-  log(req.body);
-  const {http_url_to_repo, type} = req.body;
+// File upload handler
+const multer = require('multer');
 
-  exec('mktemp -d', (error, tmp_folder, stderr) => {
-    if (error) {
-      log(`exec error: ${error}`);
-      return next(error);
-    }
-    tmp_folder = tmp_folder.trim();
-    log(`stdout: ${tmp_folder}`);
-    log(`stderr: ${stderr}`);
-    /*
-    request.get({url:'http://gitlab.local/api/v4/projects/2/repository/archive?private_token='+process.env.GITLAB_TOKEN}, function (err, httpResponse, body) {
-      if (err) {
-        return console.error('Git get User Repositries failed', err);
-      }
-      let buff = new Buffer(body);
-      fs.writeFile('/home/student/archive', buff,'binary', (err) =>{
-        if (err) throw err;
-        log('File has been saved');
-      });
-    });
-    */
-
-    if (type.includes('node')) {
-      const archive = 'archive.tar.gz';
-      exec(util.format(
-          'wget http://gitlab.local/api/v4/projects/2/repository/archive?' +
-          'private_token=%s -O %s',
-          process.env.GITLAB_TOKEN, path.join(tmp_folder, archive)),
-          function(error, stdout, stderr) {
-            if (error) {
-              console.error(`exec error: ${error}`);
-              return next(error);
-            }
-            log(`Repo Saved`);
-            fs.writeFile(path.join(tmp_folder, 'Dockerfile'),
-                dockerfile.node(archive), 'utf-8', function(err) {
-                  if (err) {
-                    log('writeFile:', err);
-                    return next(err);
-                  }// Kein Fehler beim Schreiben
-                  docker.buildImage({
-                    context: tmp_folder,
-                    src: ['Dockerfile', archive],
-                  }, {t: 'nodeimage'}, function(err, output) {
-                    if (err) {
-                      log('buildImage', err);
-                      return next(err);
-                    }// Kein Fehler beim Image erstellen
-                    output.pipe(process.stdout);
-                    // Erfolgreich erstellt --> 201 Created
-                    res.status(201).end();
-                  });
-                });
-          });
-    }// else
-  });
+// where should the file be save and under what name
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/vendor/assets');
+  },
+  filename: (req, file, cb) => {
+    // ENHANCEMENT: do not hardcode filextension, but adjust accordingly
+    cb(null, `${req.user.user.matrnr}.png`/*${path.extname(file.originalname).toLowerCase()}`*/);
+  }
 });
+
+// apply storage configuration and add filetype check
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = (/jpe?g|png|bmp/);
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+
+    req.flash('error', 'Wrong filetype');
+    cb(null, false);
+  } 
+});
+
+router.post('/changepassword', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(changePassword));
+router.post('/changeavatar', require('connect-ensure-login').ensureLoggedIn('/'), upload.single('avatar'), asyncHandler(changeAvatar));
+router.post('/deactivateuser', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(deactivateUser));
+router.post('/createuser', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(createUser));
+router.post('/createproject', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(createProject));
+router.post('/deleteproject', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(deleteProject));
+router.post('/changeprojectname', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(changeProjectName));
+router.post('/addparticipant', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(addParticipant));
+router.post('/removeparticipant', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(removeParticipant));
+router.post('/createapplication', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(createApplication));
+router.post('/deleteapplication', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(deleteApplication));
+router.post('/createdatabase', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(createDatabase));
+router.post('/deletedatabase', require('connect-ensure-login').ensureLoggedIn('/'), asyncHandler(deleteDatabase));
 
 module.exports = router;

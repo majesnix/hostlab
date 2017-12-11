@@ -1,0 +1,30 @@
+const config = {
+    //Can be ldaps (636)
+    'url': 'ldap://s1.classennetwork.com:389',
+
+    //CN => Administrator USER, OU => Organization Unit, DC => Domain controller
+    'bindDn': 'cn=Administrator,ou=Administratoren,dc=classennetwork,dc=com',
+
+    //PASSWORD
+    'bindCredentials': '',
+
+    //In which Organization Unit shall we search?
+    'searchBase': 'dc=classennetwork,dc=com',
+
+    //Search based on this input
+    'searchFilter': '(userPrincipalName={{username}})',
+
+    // URL for postgres login (for sequelize)
+    'dbURL': 'postgres://homestead:secret@127.0.0.1:5432/homestead',
+
+    // Quotas (NOT IMPLEMENTED)
+    'dbQuota': 5,
+    'appQuota': 5,
+
+    // Gitlab Token and Admin User
+    'gitlabURL': '',
+    'gitlabToken': '',
+    'gitlabAdmin': '',
+};
+
+module.exports = config;

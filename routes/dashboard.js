@@ -1,12 +1,15 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  // Leite weiter auf dashboard
-  res.redirect('/dashboard');
-});
-
-router.get('/dashboard', (req, res, next) => {
-  res.render('dashboard');
+router.get('/', require('connect-ensure-login').ensureLoggedIn('/'), (req, res, next) => {
+  res.locals.message = req.flash();
+  res.render('dashboard', {
+    title: 'Dashboard',
+    user: req.user.user,
+    projects: req.user.projects,
+    participations: req.user.participations,
+    message: res.locals.message
+  });
 });
 
 module.exports = router;

@@ -1,0 +1,13 @@
+li.treeview
+    a(href="#")
+        i.fa.fa-fw.fa-database
+        span Databases
+        span.pull-right-container
+            i.fa.fa-angle-left.pull-right
+    ul.treeview-menu
+    //if (dbs)
+        each db in dbs
+            li
+                a(href="/databases")
+                    i.fa.fa-fw.fa-database
+                    span db.name

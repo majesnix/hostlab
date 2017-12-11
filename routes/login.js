@@ -1,22 +1,27 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 const passport = require('passport');
 
 router.get('/', (req, res, next) => {
-  res.render('login', {layout: 'empty'});
+  res.locals.message = req.flash();
+  res.render('login', {message: res.locals.message});
 });
 
-/**
- * Route für Login: Passport als Middleware verarbeitet den Login und leitet
- * sofern er erfolgreich war an die nächste Funktion weiter.
- * Anderenfalls wird wieder auf /login zurückgeleitet.
- */
-router.post('/', passport.authenticate('local-login',
-    {
-      failureRedirect: '/login',
-    }),
-    function(req, res) {
-      res.redirect('/');
-    },
-);
+router.post('/', passport.authenticate(['ldapauth', 'local'], {
+  failureRedirect: '/',
+  failureFlash: 'Invalid username or password.'
+}), (req, res, next) => {
+  if (!req.user.user.active) {
+    req.flash('error', 'Invalid username or password');
+    req.logout();
+    return res.redirect('/');
+  }
+  req.session.save((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/dashboard');
+  });
+});
 
 module.exports = router;
