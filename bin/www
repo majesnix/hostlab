@@ -12,12 +12,6 @@ const http = require('http');
  * Get port from environment and store in Express.
  */
 
-const fp = require('find-free-port');
-
-fp(3000, 4000, function(err, freePort) {
-  debug('Found free port:', freePort);
-});
-
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 

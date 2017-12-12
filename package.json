@@ -20,7 +20,6 @@
     "express": "~4.15.5",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
-    "find-free-port": "^1.0.2",
     "form-data": "^2.3.1",
     "hbs": "~4.0.1",
     "mongo-express": "^0.44.0",
