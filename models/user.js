@@ -16,12 +16,14 @@ const userSchema = mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false,
+    alias: 'isadmin',
   },
   isLdap: {
     type: Boolean,
     default: false,
+    alias: 'isldap',
   },
-  registeredDate: {
+  created: {
     type: Date,
     default: Date.now,
   },
