@@ -1,15 +1,14 @@
 const router = require('express').Router();
 const log = require('debug')('hostlab:route:admin');
 const createUser = require('../tasks/createUser');
-const deleteUser = require('../tasks/deleteUser');
 const User = require('../models/user');
 
 /**
  * GET  /admin
  * GET  /admin/users
- * GET  /admin/users/new
- * GET  /admin/users/:username
- * GET  /admin/users/:username/edit
+ * GET  /admin/users/create
+ * GET  /admin/users/:id
+ * GET  /admin/users/:id/edit
  */
 router.get('/', (req, res, next) => {
   // Leite weiter auf ersten Navigationspunkt
@@ -29,15 +28,15 @@ router.get('/users', (req, res, next) => {
 
 });
 
-router.get('/users/new', (req, res, next) => {
+router.get('/users/create', (req, res, next) => {
   // Zeige Erstellungsseite für Nutzer
-  res.render('usersNew');
+  res.render('usersCreate');
 });
 
-router.get('/users/:username', (req, res, next) => {
-  const {username} = req.params;
+router.get('/users/:id', (req, res, next) => {
+  const {id} = req.params;
   // Hole bestimmten Nutzer
-  User.findOne({username}, function(err, user) {
+  User.findById(id, function(err, user) {
     if (err) {
       return next(err);
     }
@@ -51,10 +50,10 @@ router.get('/users/:username', (req, res, next) => {
   });
 });
 
-router.get('/users/:username/edit', (req, res, next) => {
-  const {username} = req.params;
+router.get('/users/:id/edit', (req, res, next) => {
+  const {id} = req.params;
   // Hole bestimmten Nutzer
-  User.findOne({username}, function(err, user) {
+  User.findById(id, function(err, user) {
     if (err) {
       return next(err);
     }
@@ -69,78 +68,77 @@ router.get('/users/:username/edit', (req, res, next) => {
 
 /**
  * POST   /admin/users
- * PUT    /admin/users/:username
- * DELETE /admin/users/:username
+ * PUT    /admin/users/:id
+ * DELETE /admin/users/:id
  */
 router.post('/users', (req, res, next) => {
   // Verarbeite nur JSON-Objekte
   if (!req.is('json')) {
-    return res.status(415).send();
+    return res.sendStatus(415);
   }
   // Hole Nutzerdaten
   log(req.body);
-  const {username, password, email, isAdmin} = req.body;
-  // Fehler falls username oder password leer
-  if (!username || !password) {
-    return res.status(422).send();
+  const {email, password, isAdmin} = req.body;
+  // Fehler falls email oder password leer
+  if (!email || !password) {
+    return res.sendStatus(422);
   }
   // Erstelle neuen Nutzer
-  createUser({username, password, email, isAdmin, isLdapUser: false},
+  createUser({email, password, isAdmin},
       function(err, user) {
         if (err) {
           log(err.errmsg);
-          if (err.errmsg.includes('username_1 dup key')) {
-            return res.status(409).send('Please try another username');
+          if (err.name === 'MongoError' && err.code === 11000) {
+            return res.status(409).end('There was a duplicate key error');
           }
           return next(err);
         }// else
         log(user);
         // Erfolgreich erstellt --> 201 Created
-        res.status(201).send(user);
+        res.status(201).end(user);
       });
 });
 
-router.put('/users/:username', (req, res, next) => {
+router.put('/users/:id', (req, res, next) => {
   // Verarbeite nur JSON-Objekte
   if (!req.is('json')) {
-    return res.status(415).send();
+    return res.sendStatus(415);
   }
   // Hole Nutzerdaten
   log(req.params);
-  const {username} = req.params;
+  const {id} = req.params;
   log(req.body);
   const update = req.body;
   // Ändere bestehenden Nutzer in der DB
-  User.findOneAndUpdate({username}, update, {new: true}, function(err, user) {
+  User.findByIdAndUpdate(id, update, {new: true}, function(err, user) {
     if (err) {
       return next(err);
     }
     log(user);
     // Erfolgreich geändert --> 200 OK
-    res.status(200).send(user);
+    res.status(200).end(user);
   });
 });
 
-router.delete('/users/:username', (req, res, next) => {
+router.delete('/users/:id', (req, res, next) => {
   // Verarbeite nur JSON-Objekte
   if (!req.is('json')) {
-    return res.status(415).send();
+    return res.sendStatus(415);
   }
   // Hole Nutzerdaten
-  const {username} = req.params;
+  const {id} = req.params;
   // Prüfe ob Admin sich selbst löschen möchte
-  if (username === req.user.username) {
-    res.status(405).send();
-  } else {
-    // Lösche bestehenden Nutzer
-    deleteUser({username}, function(err) {
-      if (err) {
-        return next(err);
-      }// else
-      // Erfolgreich gelöscht --> 204 No Content
-      res.status(204).send();
-    });
+  if (id === req.user.id) {
+    return res.sendStatus(405);
   }
+  // Lösche bestehenden Nutzer
+  User.findByIdAndDelete(id, function(err) {
+    if (err) {
+      return next(err);
+    }// else
+    // Erfolgreich gelöscht --> 204 No Content
+    res.sendStatus(204);
+  });
 });
 
 module.exports = router;
