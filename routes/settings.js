@@ -1,6 +1,4 @@
 const router = require('express').Router();
-
-const deleteUser = require('../tasks/deleteUser');
 const User = require('../models/user');
 
 router.get('/', (req, res, next) => {
@@ -17,7 +15,7 @@ router.post('/password', (req, res, next) => {
 
       // Serverseitiger Check, ob die neuen Passwörter übereinstimmen
       if (newPassword === newPasswordConfirm) {
-        User.findOne({'username': req.user.username}, function(err, user) {
+        User.findOne({'email': req.user.username}, function(err, user) {
           if (err) {
             console.error(err);
           }
@@ -29,14 +27,14 @@ router.post('/password', (req, res, next) => {
           }
 
           // Nutzer ist nicht Localuser (er darf sein PW also nicht ändern)
-          else if (user.isLdapUser) {
+          else if (user.isLdap) {
             req.flash('feedback',
                 'Only local users can change their password here.');
             res.redirect('/settings');
           }
           // Passwortänderung nur, wenn altes Passwort korrekt war
           else {
-            user.validPassword(oldPassword, function(err, response) {
+            user.validatePassword(oldPassword, function(err, response) {
               if (err) {
                 console.error(err);
                 req.flash('feedback', 'Error on updating your password.');
@@ -49,7 +47,7 @@ router.post('/password', (req, res, next) => {
               }
               else {
                 // Neues Passwort gehasht abspeichern
-                user.generateHash(newPassword, (err, hash) => {
+                user.hashPassword(newPassword, (err, hash) => {
                   if (err) {
                     console.error(err);
                     req.flash('feedback', 'Error on updating your password.');
@@ -89,24 +87,19 @@ router.post('/password', (req, res, next) => {
 router.delete('/account', (req, res, next) => {
 
   // Man darf seinen Account nur dann löschen, wenn man kein Admin ist
-  if (!req.user.isAdmin) {
-
-    deleteUser({username: req.user.username}, (err) => {
-      if (err) {
-        console.error(err);
-        // Servererror
-        res.sendStatus(500);
-      }
-      else {
-        // ok
-        res.sendStatus(200);
-      }
-    });
-  }
-  else {
+  if (req.user.isAdmin) {
     // forbidden
-    res.sendStatus(403);
+    return res.sendStatus(403);
   }
+  req.user.remove((err, user) => {
+    if (err || !user.isDeleted()) {
+      console.error(err);
+      // Servererror
+      return res.sendStatus(500);
+    }
+    // Erfolgreich gelöscht --> 204 No Content
+    return res.sendStatus(204);
+  });
 });
 
 module.exports = router;

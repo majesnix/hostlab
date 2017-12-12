@@ -16,8 +16,8 @@ module.exports = (app) => {
    * Der Callback done(null, user.id) gibt an, welche Daten des Nutzers im Cookie gespeichert werden
    * um ihn später wieder zu identifizieren
    */
-  passport.serializeUser(function(user, done) {
-    console.log('Serialize User ', user);
+  passport.serializeUser((user, done) => {
+    log('Serialize User ', user);
     done(null, user.id);
   });
 
@@ -25,8 +25,8 @@ module.exports = (app) => {
    * User wird bei einem Request mit der in serializeUser definierten Paramater in der Datenbank
    * gesucht und als Objekt in req.user gespeichert.
    */
-  passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
+  passport.deserializeUser((id, done) => {
+    User.findById(id, (err, user) => {
       done(err, user);
     });
   });
@@ -166,7 +166,6 @@ module.exports = (app) => {
             log('Creating initial user...');
             const createUser = require('../tasks/createUser');
             await createUser({
-              username: email,
               email: email,
               firstname: 'Administrator',
               lastname: '',
