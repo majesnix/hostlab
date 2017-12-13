@@ -1,5 +1,5 @@
 html(lang="en")
-    include global/head
+    include includes/head
     body.hold-transition.login-page
         .login-box
             .login-logo HostLab
@@ -23,7 +23,7 @@ html(lang="en")
                                     | Remember Me
                         .col-xs-4
                             button.btn.btn-primary.btn-blockbtn-flat(type="submit") Sign in
-    include global/scripts
+    include includes/scripts
     script.
       $(function() {
         $('input').iCheck({

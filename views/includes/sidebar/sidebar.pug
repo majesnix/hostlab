@@ -2,14 +2,17 @@ aside.main-sidebar
     section.sidebar
         ul.sidebar-menu(data-widget="tree")
             li
+                i.fa.fa-fw.fa-tachometer
                 a.nav-link.active(href="/dashboard") Dashboard
             li
-                a.nav-link.active(href="//git.majesnix.org" target="_blank") Gitlab-Login
+                i.fa.fa-fw.fa-play
+                a.nav-link.active(href="/node") Node.js
             li
-                a.nav-link.active(href="//127.0.0.1:4330" target="_blank") phpMyAdmin-Login
-            if (projects)
-                li.header Projects
-                include sidebar_projects
-            if (participations)
-                li.header Participations
-                include sidebar_participations
+                i.fa.fa-fw.fa-database
+                a.nav-link.active(href="/mongo") MongoDB
+            li
+                i.fa.fa-fw.fa-gitlab
+                a.nav-link.active(href="//git.majesnix.org" target="_blank") GitLab
+            li
+                i.fa.fa-fw.fa-question-circle
+                a.nav-link.active(href="/help") Help

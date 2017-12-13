@@ -1,4 +1,4 @@
-extends global/master
+extends layouts/main
 
 block content
     h1 My first Database
@@ -11,14 +11,12 @@ block content
                         h3.box-title= 'Status'
                 .box-body
                     .callout.callout-success Seems like the server is running without problems
-
     .row
         .col-md-12
             .btn-group
                 .btn.btn-success Start
                 .btn.btn-danger Stop
                 .btn.btn-warning(style="margin-bottom:20px;") Restart
-
     .row
         .col-md-12
             .box.box-danger
