@@ -6,12 +6,6 @@ header.main-header
     nav.navbar.navbar-static-top
         a.sidebar-toggle(href="#", data-toggle="push-menu" role="button")
             span.sr-only "Toggle Navigation
-        ul.nav.navbar-nav
-            li.pull-left
-                a(href="#", data-toggle="modal" data-target="#createProjectModal") Create Project
-            if (user.isadmin)
-                li.pull-left
-                    a(href='/adminsettings') Administration
         .navbar-custom-menu
             ul.nav.navbar-nav
                 li.dropdown.user.user-menu
