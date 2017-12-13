@@ -15,6 +15,7 @@ const databases = require('./databases');
 const usersettings = require('./usersettings');
 
 module.exports = (app) => {
+  app.use(exposeFlashMessages);
   app.use('/login', login);
 
   app.use(ensureAuthentication);
@@ -22,7 +23,6 @@ module.exports = (app) => {
   app.use('/api', api);
 
   app.use(activateNavElems);
-  app.use(passFlashMessages);
   app.use('/', dashboard);
   app.use('/help', help);
   app.use('/mongo', mongoExpress(mongoExpressConfig));
@@ -69,7 +69,7 @@ function activateNavElems(req, res, next) {
   next();
 }
 
-function passFlashMessages(req, res, next) {
+function exposeFlashMessages(req, res, next) {
   res.locals['message'] = req.flash();
   next();
 }
