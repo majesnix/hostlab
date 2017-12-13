@@ -15,7 +15,7 @@ block content
                     a(href=link)
                         h3.box-title= 'Create User'
                     .box-body
-                        form.form-horizontal(action="/api/createuser", method="post")
+                        form.form-horizontal(action="/api/users", method="post")
                             .form-group.has-feedback
                                 label.control-label.col-sm-2 Firstname
                                 .col-sm-10
@@ -47,7 +47,7 @@ block content
                                     input#inputAdmin(type="checkbox", name="admin")
                             .row
                                 .col-xs-4
-                                    button.btn.btn-primary.btn-blockbtn-flat(type="submit") Create
+                                    button.btn.btn-primary.btn-block.btn-flat(type="submit") Create
         .col-md-12
             .box.box-info
                 .box-header.with-border
@@ -62,4 +62,4 @@ block content
                                     span.fa.fa-id-card-o.form-control-feedback
                             .row
                                 .col-xs-4
-                                    button.btn.btn-primary.btn-blockbtn-flat(type="submit") Change Userstatus
+                                    button.btn.btn-primary.btn-block.btn-flat(type="submit") Change Userstatus

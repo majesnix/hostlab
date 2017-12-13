@@ -1,0 +1,26 @@
+extends layouts/main
+
+block content
+    .panel.panel-default
+        .panel-heading
+            a.btn.btn-block.btn-flat.btn-success(href='/admin/users/create') New User
+        table.table.table-striped
+            thead: tr
+                th Actions
+                th E-Mail
+                th LDAP
+                th Admin
+                th Last Login
+            for user in users
+                tr
+                    td
+                        a.btn.btn-block.btn-flat.btn.btn-block.btn-info(href= `/admin/users/${user.id}`) Show
+                        a.btn.btn-block.btn-flat.btn.btn-block.btn-warning(href= `/admin/users/${user.id}/edit`) Edit
+                        button.btn.btn-block.btn-flat.btn.btn-block.btn-danger.user-delete(data-id= user.id) Destroy
+                    td= user.email
+                    td= user.isLdap
+                    td= user.isAdmin
+                    if user.lastLogin
+                        td= user.lastLogin
+                    else
+                        td -
