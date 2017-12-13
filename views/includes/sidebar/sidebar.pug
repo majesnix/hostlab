@@ -4,24 +4,30 @@ aside.main-sidebar
             li
                 a.nav-link(href="/dashboard")
                     i.fa.fa-fw.fa-tachometer
-                    | Dashboard
+                    |  Dashboard
             li
                 a.nav-link(href="/node")
                     i.fa.fa-fw.fa-play
-                    | Node.js
+                    |  Node.js
             li
                 a.nav-link(href="/mongo")
                     i.fa.fa-fw.fa-database
-                    | MongoDB
+                    |  MongoDB
             li
                 a.nav-link(href="/postgres")
                     i.fa.fa-fw.fa-database
-                    | PostgreSQL
+                    |  PostgreSQL
             li
                 a.nav-link(href="//git.majesnix.org" target="_blank")
                     i.fa.fa-fw.fa-gitlab
-                    | GitLab
+                    |  GitLab
             li
                 a.nav-link(href="/help")
                     i.fa.fa-fw.fa-question-circle
-                    | Help
+                    |  Help
+            if user.isAdmin
+                li.header Administration
+                li
+                    a.nav-link(href="/admin/users")
+                        i.fa.fa-fw.fa-users
+                        |  Users
