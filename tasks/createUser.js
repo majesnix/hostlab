@@ -1,72 +1,52 @@
 const log = require('debug')('hostlab:task:createUser');
 const User = require('../models/user');
-const request = require('request');  // Request-Modul ermöglicht das POSTen an den Gitlab-Server
-const util = require('util');
+//const request = require('request');  // Request-Modul ermöglicht das POSTen an den Gitlab-Server
+//const util = require('util');
+const snek = require('snekfetch');
 
 const gitlab_token = process.env.GITLAB_TOKEN ||
     require('../config/gitlab_token').gitlab_token;
+const gitlab_url = process.env.GITLAB_URL;
 
-log(gitlab_token);
-
-module.exports = (opts, callback) => {
+module.exports = async (opts, callback) => {
   // Erstelle neuen Nutzer aus Schema
-  let newUser = new User();
-  newUser.email = opts.email;
-  newUser.isAdmin = opts.isAdmin;
-  newUser.isLdap = opts.isLdap;
+  // Erstellt ein neues Promise
+  return new Promise( async (resolve,reject) => {
+    let newUser = new User();
+    newUser.email = opts.email;
+    newUser.isAdmin = opts.isAdmin;
+    newUser.isLdap = opts.isLdap;
 
-  newUser.hashPassword(opts.password, function(err, hash) {
-    if (err) {
-      return callback(err);
-    }
-    newUser.password = hash;
-  });
-
-  // Gitlab-Optionen, die zur Nutzererstellung benötigt werden
-  const gitlabopts = {
-    email: opts.email,
-    username: opts.email,
-    name: opts.email,
-    password: opts.password,
-    admin: String(opts.isAdmin),
-    skip_confirmation: 'true',  // E-Mail-Überprüfung überspringen
-  };
-  log(gitlabopts);
-
-  // Bei Erstellung des Initialen Hostlab Admins wird die Gitlab ID 1 vergeben
-  if (opts.initialGitlabCreation) {
-    newUser.gitlab_id = 1;
-    newUser.save(function(err) {
+    newUser.hashPassword(opts.password, (err, hash) => {
       if (err) {
-        log(err);
-        return callback(err);
+        return reject(err);
       }
-      return callback(null, newUser);
+      newUser.password = hash;
     });
-  }
-  // POST-Request zur Erstellung eines Gitlab-Nutzers
-  // Token wird aus der Env-Variable "GITLAB_TOKEN" gelesen
-  request.post({
-    url: util.format('http://gitlab.local/api/v4/users?private_token=%s',
-        gitlab_token),
-    formData: gitlabopts,
-  }, function(err, httpResponse, body) {
-    if (err) {
-      log('Gitlab-Nutzererstellung fehlgeschlagen:', err);
-      return callback(err);
-    }
-    log('Gitlab-Nutzer erstellt:', JSON.parse(body));
 
-    // Gitlab-Nutzer-ID an Nutzer anhängen
-    newUser.gitlab_id = JSON.parse(body).id;
+    // POST-Request zur Erstellung eines Gitlab-Nutzers
+    // Token wird aus der Env-Variable "GITLAB_TOKEN" gelesen
+    // GitlabURL wird aus der Env-Variable "GITLAB_URL" gelesen
 
-    // Nutzer in die Datenbank schreiben
-    newUser.save(function(err) {
+    // gets ALL gitlab users
+    const {text} = await snek.get(`https://${gitlab_url}/api/v4/users?private_token=${gitlab_token}`);
+
+    // parse Gitlab response to json
+    const users = JSON.parse(text);
+
+    // filter users by email (should return the wanted user, because emails should be unique)
+    const foundUser = users.filter(u => u.email === opts.email);
+
+    // save gitlab_id to database
+    newUser.gitlab_id = foundUser.id;
+
+    newUser.save(function (err) {
       if (err) {
         log(err);
-        return callback(err);
+        return reject(err);
       }
-      return callback(null, newUser);
+      // Resolve Promise and return created User
+      return resolve(newUser);
     });
   });
 };

@@ -1,6 +1,8 @@
 const log = require('debug')('hostlab:mongo:user');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
+// Fixes deprecation warning
+mongoose.Promise = Promise;
 
 const userSchema = mongoose.Schema({
   email: {

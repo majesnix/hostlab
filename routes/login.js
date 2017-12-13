@@ -10,7 +10,7 @@ router.get('/', (req, res, next) => {
  * sofern er erfolgreich war an die nächste Funktion weiter.
  * Anderenfalls wird wieder auf /login zurückgeleitet.
  */
-router.post('/', passport.authenticate(['local'], {
+router.post('/', passport.authenticate([/*'ldapauth',*/'local'], {
   failureRedirect: '/login',
   failureFlash: 'Invalid username or password.',
 }), (req, res) => {
