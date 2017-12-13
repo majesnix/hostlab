@@ -14,6 +14,8 @@ module.exports = async (opts, callback) => {
   return new Promise( async (resolve,reject) => {
     let newUser = new User();
     newUser.email = opts.email;
+    newUser.firstname = opts.firstname;
+    newUser.lastname = opts.lastname;
     newUser.isAdmin = opts.isAdmin;
     newUser.isLdap = opts.isLdap;
 

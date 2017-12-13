@@ -107,7 +107,7 @@ module.exports = (app) => {
               isAdmin: true,
               password: password,
             })
-            
+            log('Created initial user: %o', newUser);
             return done(null, newUser);
             /*, (err, newUser) => {
               if (err) {
@@ -115,7 +115,6 @@ module.exports = (app) => {
                 process.exit(err.code);
               }
               user = newUser;
-              log('Created initial user: %o', user);
             });*/
           } else {
             // Search user in db
