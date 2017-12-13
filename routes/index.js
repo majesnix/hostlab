@@ -20,7 +20,7 @@ module.exports = (app) => {
 
   app.use(ensureAuthentication);
   app.use('/logout', logout);
-  app.use('/api', api);
+  app.use('/api/v1', api);
 
   app.use(activateNavElems);
   app.use('/', dashboard);
@@ -39,6 +39,8 @@ module.exports = (app) => {
   app.use(ensureBeingAdmin);
   app.use('/admin', admin);
   app.use('/adminsettings', adminsettings);
+
+
 };
 
 function ensureAuthentication(req, res, next) {
