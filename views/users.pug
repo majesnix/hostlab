@@ -14,9 +14,9 @@ block content
             for user in users
                 tr
                     td
-                        a.btn.btn-block.btn-flat.btn.btn-block.btn-info(href= `/admin/users/${user.id}`) Show
-                        a.btn.btn-block.btn-flat.btn.btn-block.btn-warning(href= `/admin/users/${user.id}/edit`) Edit
-                        button.btn.btn-block.btn-flat.btn.btn-block.btn-danger.user-delete(data-id= user.id) Destroy
+                        a.btn.btn-block.btn-flat.btn-info(href= `/admin/users/${user.id}`) Show
+                        a.btn.btn-block.btn-flat.btn-warning(href= `/admin/users/${user.id}/edit`) Edit
+                        button.btn.btn-block.btn-flat.btn-danger.user-delete(data-id= user.id) Destroy
                     td= user.email
                     td= user.isLdap
                     td= user.isAdmin
