@@ -3,5 +3,12 @@ node_modules/
 
 # IntelliJ project files
 .idea/
+
+# eslint config
+.eslintrc.json
+
+# gulp compiled css and assets
 public/vendor/
-public/vendor/
+
+# ignore dev host files
+hostlab-docker.sh

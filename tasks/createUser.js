@@ -8,7 +8,7 @@ const gitlab_token = process.env.GITLAB_TOKEN ||
     require('../config/gitlab_token').gitlab_token;
 const gitlab_url = process.env.GITLAB_URL;
 
-module.exports = async (opts, callback) => {
+module.exports = async (opts) => {
   // Erstelle neuen Nutzer aus Schema
   // Erstellt ein neues Promise
   return new Promise( async (resolve,reject) => {
