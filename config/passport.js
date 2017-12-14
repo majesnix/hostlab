@@ -106,7 +106,7 @@ module.exports = (app) => {
               lastname: '',
               isAdmin: true,
               password: password,
-            })
+            });
             log('Created initial user: %o', newUser);
             return done(null, newUser);
             /*, (err, newUser) => {
@@ -130,7 +130,8 @@ module.exports = (app) => {
              */
             // if no user was found, return error
             if (!user || user.isLdap) {
-              return done(null, false, {message: 'Incorrect credentials.'});
+              req.flash('error', 'Incorrect credentials');
+              return done(null, false);
             }
 
             /**
@@ -142,7 +143,8 @@ module.exports = (app) => {
                 return done(err);
               }
               if (!valid) {
-                return done(null, false, {message: 'Incorrect credentials.'});
+                req.flash('error', 'Incorrect credentials');
+                return done(null, false);
               }
               /**
                * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
@@ -157,7 +159,8 @@ module.exports = (app) => {
             });
           }
         } catch (err) {
-          console.error(err);
+          req.flash('error', err);
+          return done(null, false);
         }
       }));
 

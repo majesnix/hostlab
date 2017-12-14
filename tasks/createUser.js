@@ -12,7 +12,7 @@ module.exports = async (opts) => {
   // Erstelle neuen Nutzer aus Schema
   // Erstellt ein neues Promise
   return new Promise( async (resolve,reject) => {
-    let newUser = new User();
+    const newUser = new User();
     newUser.email = opts.email;
     newUser.firstname = opts.firstname;
     newUser.lastname = opts.lastname;
@@ -39,10 +39,16 @@ module.exports = async (opts) => {
     // filter users by email (should return the wanted user, because emails should be unique)
     const foundUser = users.filter(u => u.email === opts.email);
 
+    log(foundUser);
+
+    if (foundUser.length === 0) {
+      return reject(`You need to have a valid Gitlab account at https://${gitlab_url} to use this service`);
+    }
+
     // save gitlab_id to database
     newUser.gitlab_id = foundUser.id;
 
-    newUser.save(function (err) {
+    newUser.save(err => {
       if (err) {
         log(err);
         return reject(err);

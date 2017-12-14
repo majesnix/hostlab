@@ -12,7 +12,6 @@ router.get('/', (req, res, next) => {
  */
 router.post('/', passport.authenticate([/*'ldapauth',*/'local'], {
   failureRedirect: '/login',
-  failureFlash: 'Invalid username or password.',
 }), (req, res) => {
   res.redirect('/dashboard');
 });
