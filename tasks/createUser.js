@@ -31,7 +31,7 @@ module.exports = async (opts) => {
     // GitlabURL wird aus der Env-Variable "GITLAB_URL" gelesen
 
     // gets ALL gitlab users
-    const {text} = await snek.get(`https://${gitlab_url}/api/v4/users?private_token=${gitlab_token}`);
+    const {text} = await snek.get(`${gitlab_url}/api/v4/users?private_token=${gitlab_token}`);
 
     // parse Gitlab response to json
     const users = JSON.parse(text);
