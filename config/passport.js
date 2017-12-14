@@ -95,7 +95,6 @@ module.exports = (app) => {
           const userCount = await User.count();
           log('Got %d user(s)', userCount);
 
-          let user;
           if (userCount === 0) {
             log('Creating initial user...');
 
@@ -118,10 +117,9 @@ module.exports = (app) => {
             });*/
           } else {
             // Search user in db
-            user = await User.findOne({email});
+            const user = await User.findOne({email});
             log('found user %o', user);
           
-
             /**
              * Wenn kein User vorhanden ist schlägt der Login fehl und der Callback
              * wird ohne User aufgerufen

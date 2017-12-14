@@ -12,7 +12,7 @@ router.get('/', async (req, res, next) => {
     const gitlab_id = req.user.gitlab_id;
 
     if (gitlab_id) {
-      const { text } = await snek.get(`https://${gitlab_url}/api/v4/users/${gitlab_id}/projects?private_token=${gitlab_token}`);
+      const { text } = await snek.get(`${gitlab_url}/api/v4/users/${gitlab_id}/projects?private_token=${gitlab_token}`);
 
       const projects = JSON.parse(text);
       
