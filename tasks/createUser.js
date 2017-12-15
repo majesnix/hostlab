@@ -7,7 +7,7 @@ const gitlab_token = process.env.GITLAB_TOKEN ||
 const gitlab_url = process.env.GITLAB_URL;
 
 module.exports = async (opts) => {
-  // Erstellt ein neues Promise
+  // Create new Promise
   return new Promise( async (resolve,reject) => {
 
     // Erstelle neuen Nutzer aus Schema
@@ -45,7 +45,7 @@ module.exports = async (opts) => {
     }
 
     // save gitlab_id to database
-    newUser.gitlab_id = foundUser.id;
+    newUser.gitlab_id = foundUser[0].id;
 
     newUser.save(err => {
       if (err) {
