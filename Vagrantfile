@@ -55,6 +55,7 @@ Vagrant.configure("2") do |config|
   #
   #   # Customize the amount of memory on the VM:
     vb.memory = "3072"
+    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/home_ubuntu_hostlab", "1"]
   end
   #
   # View the documentation for the provider you are using for more
@@ -68,7 +69,7 @@ Vagrant.configure("2") do |config|
 	curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 	sudo apt-get install -y nodejs
 	sudo usermod -aG docker ubuntu
-	sudo npm -g i node-gyp node-pre-gyp
+	sudo npm -g i node-gyp node-pre-gyp gulp
 	sudo curl -sL https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && chmod ugo+x /usr/local/bin/docker-compose
   SHELL
 end
