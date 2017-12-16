@@ -4,6 +4,8 @@ node_modules/
 # IntelliJ project files
 .idea/
 
+.vagrant/
+
 # eslint config
 .eslintrc.json
 
@@ -12,3 +14,5 @@ public/vendor/
 
 # ignore dev host files
 hostlab-docker.sh
+
+*.env
