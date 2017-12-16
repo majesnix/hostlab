@@ -3,8 +3,8 @@ const User = require('../models/user');
 const snek = require('snekfetch'); // Handles all http requests
 
 const gitlab_token = process.env.GITLAB_TOKEN ||
-    require('../config/gitlab_token').gitlab_token;
-const gitlab_url = process.env.GITLAB_URL;
+    require('../config/gitlab').gitlab_token;
+const gitlab_url = process.env.GITLAB_URL || require('../config/gitlab').gitlab_url;
 
 module.exports = async (opts) => {
   // Create new Promise
@@ -35,6 +35,7 @@ module.exports = async (opts) => {
 
       // parse Gitlab response to json
       const users = JSON.parse(text);
+      log(users)
 
       // filter users by email (should return the wanted user, because emails should be unique)
       const foundUser = users.filter(u => u.email === opts.email);
