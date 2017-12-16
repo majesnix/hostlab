@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: hostlab
+    ports:
+     - "8080:8080"
+    environment:
+      - MONGO_URL=mongodb://mongo/hostlab
+      - GITLAB_TOKEN=testtest
+      - GITLAB_URL=http://gitlab
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: node
+  mongo:
+    image: "mongo:latest"
+  gitlab:
+    image: "gitlab/gitlab-ce"
+    hostname: gitlab
+    volumes:
+      - /srv/gitlab/config:/etc/gitlab
+      - /srv/gitlab/logs:/var/log/gitlab
+      - /srv/gitlab/data:/var/opt/gitlab
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2200:22"

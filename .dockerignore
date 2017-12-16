@@ -1,0 +1,13 @@
+# Dependency directories
+node_modules/
+
+# IntelliJ project files
+.idea/
+
+# gulp compiled css and assets
+public/vendor/
+
+# ignore dev host files
+hostlab-docker.sh
+
+*.env
