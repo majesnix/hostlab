@@ -15,7 +15,7 @@ block content
                     a(href=link)
                         h3.box-title= 'Create User'
                     .box-body
-                        form.form-horizontal(action="/api/users", method="post")
+                        form.form-horizontal(action="/api/v1/users", method="post")
                             .form-group.has-feedback
                                 label.control-label.col-sm-2 Firstname
                                 .col-sm-10
@@ -54,7 +54,7 @@ block content
                     a(href=link)
                         h3.box-title= 'Change user activation status'
                     .box-body
-                        form.form-horizontal(action="/api/deactivateuser", method="post")
+                        form.form-horizontal(action="/api/v1/deactivateuser", method="post")
                             .form-group.has-feedback
                                 label.control-label.col-sm-2 Matrikelnummer
                                 .col-sm-10
