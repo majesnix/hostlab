@@ -16,7 +16,3 @@ aside.main-sidebar
             if user.isAdmin
                 li.header Administration
                 +menuItem("Users", '/admin/users').fas.fa-users
-
-block scripts
-    script.
-        console.log(JSON.parse(!{JSON.stringify(locals)}))
