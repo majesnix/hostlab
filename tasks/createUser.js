@@ -48,6 +48,7 @@ module.exports = async (opts) => {
 
       // save gitlab_id to database
       newUser.gitlab_id = foundUser[0].id;
+      newUser.avatar = foundUser[0].avatar_url;
 
       newUser.save(err => {
         if (err) {

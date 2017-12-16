@@ -100,11 +100,11 @@ module.exports = (app) => {
 
             const createUser = require('../tasks/createUser');
             const newUser = await createUser({
-              email: email,
+              email,
               firstname: 'Administrator',
               lastname: '',
               isAdmin: true,
-              password: password,
+              password,
             });
             log('Created initial user: %o', newUser);
             return done(null, newUser);
