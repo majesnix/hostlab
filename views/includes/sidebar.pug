@@ -1,33 +1,22 @@
+mixin menuItem(name, route, icon)
+    li(class=(route===locals.path ? "active":""))
+        a.nav-link(href=route)
+            i(class=attributes.class, style="width: 20px;")
+            span= name
+
 aside.main-sidebar
     section.sidebar
-        ul.sidebar-menu(data-widget="tree")
-            li
-                a.nav-link(href="/dashboard")
-                    i.fas.fa-fw.fa-tachometer-alt
-                    |  Dashboard
-            li
-                a.nav-link(href="/node")
-                    i.fas.fa-fw.fa-play
-                    |  Node.js
-            li
-                a.nav-link(href="/mongo")
-                    i.fas.fa-fw.fa-database
-                    |  MongoDB
-            li
-                a.nav-link(href="/postgres")
-                    i.fas.fa-fw.fa-database
-                    |  PostgreSQL
-            li
-                a.nav-link(href="//git.majesnix.org" target="_blank")
-                    i.fab.fa-fw.fa-gitlab
-                    |  GitLab
-            li
-                a.nav-link(href="/help")
-                    i.fas.fa-fw.fa-question-circle
-                    |  Help
+        ul.sidebar-menu.tree(data-widget="tree")
+            +menuItem("Dashboard", '/dashboard').fas.fa-tachometer-alt
+            +menuItem("Node.js", '/node').fas.fa-play
+            +menuItem("MongoDB", '/mongo').fas.fa-database
+            +menuItem("PostgreSQL", '/postgres').fas.fa-database
+            +menuItem("GitLab", '//git.majesnix.org').fab.fa-gitlab
+            +menuItem("Help", '/help').fas.fa-question-circle
             if user.isAdmin
                 li.header Administration
-                li
-                    a.nav-link(href="/admin/users")
-                        i.fas.fa-fw.fa-users
-                        |  Users
+                +menuItem("Users", '/admin/users').fas.fa-users
+
+block scripts
+    script.
+        console.log(JSON.parse(!{JSON.stringify(locals)}))

@@ -22,7 +22,7 @@ module.exports = (app) => {
   app.use('/logout', logout);
   app.use('/api/v1', api);
 
-  app.use(activateNavElems);
+  app.use(addCurrentPathToLocals);
   app.use('/', dashboard);
   app.use('/help', help);
   app.use('/mongo', mongoExpress(mongoExpressConfig));
@@ -61,13 +61,8 @@ function ensureBeingAdmin(req, res, next) {
   res.redirect('/');
 }
 
-function activateNavElems(req, res, next) {
-  // Damit die Rendering-Engine weiß auf welchem Navigationselement wir uns
-  // befinden, stellen wir ihr eine entsprechende Variable zur Verfügung.
-  const splitURL = req.path.split('/');
-  const navPath = splitURL[splitURL.length - 1] || 'dashboard';
-  const activeNav = 'nav-' + navPath;
-  res.locals[activeNav] = true;
+function addCurrentPathToLocals(req, res, next) {
+  res.locals.path = req.path;
   next();
 }
 
