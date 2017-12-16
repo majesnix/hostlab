@@ -10,7 +10,7 @@ node_modules/
 .eslintrc.json
 
 # gulp compiled css and assets
-public/vendor/
+public/vendor/*
 
 # ignore dev host files
 hostlab-docker.sh
