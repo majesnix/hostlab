@@ -108,13 +108,6 @@ module.exports = (app) => {
             });
             log('Created initial user: %o', newUser);
             return done(null, newUser);
-            /*, (err, newUser) => {
-              if (err) {
-                log('Error while creating initial user:', err.stack);
-                process.exit(err.code);
-              }
-              user = newUser;
-            });*/
           } else {
             // Search user in db
             const user = await User.findOne({email});
@@ -157,7 +150,7 @@ module.exports = (app) => {
             });
           }
         } catch (err) {
-          req.flash('error', err);
+          req.flash('error', err.message);
           return done(null, false);
         }
       }));

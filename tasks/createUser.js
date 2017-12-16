@@ -41,7 +41,7 @@ module.exports = async (opts) => {
     log(foundUser);
 
     if (foundUser.length === 0) {
-      return reject(`You need to have a valid Gitlab account at ${gitlab_url} to use this service`);
+      return reject(new Error(`You need to have an active Account at ${gitlab_url} to use this service`));
     }
 
     // save gitlab_id to database
