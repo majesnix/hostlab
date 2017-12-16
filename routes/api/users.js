@@ -24,33 +24,26 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-  // Verarbeite nur JSON-Objekte
-  if (!req.is('json')) {
-    return res.sendStatus(415);
-  }
   // Hole Nutzerdaten
   log(req.body);
-  const {email, password, isAdmin} = req.body;
+  const {email, firstname, lastname, password, isAdmin} = req.body;
   // Fehler falls email oder password leer
-  if (!email || !password) {
+  if (!email || !password || !firstname || !lastname) {
+    // Unprocessable Entity
     return res.sendStatus(422);
   }
   // Erstelle neuen Nutzer
-  createUser({email, password, isAdmin},
-      function(err, user) {
-        if (err) {
-          log(err.errmsg);
-          if (err.name === 'MongoError' && err.code === 11000) {
-            return res.status(409).end('There was a duplicate key error');
-          }
-          return next(err);
-        }// else
-        log(user);
-        // Erfolgreich erstellt --> 201 Created
-        res.status(201).end(user);
-      });
+  createUser({email, firstname, lastname, password, isAdmin}).then((user) => {
+    log(user);
+    // Erfolgreich erstellt --> 201 Created
+    res.status(201).json(user);
+  }, (err) => {
+    if (err.name === 'MongoError' && err.code === 11000) {
+      return res.status(409).end('There was a duplicate key error');
+    }
+    return next(err);
+  });
 });
-
 
 router.get('/:id', (req, res, next) => {
   const {id} = req.params;
@@ -64,8 +57,7 @@ router.get('/:id', (req, res, next) => {
       return next();
     }
     // Sende Nutzerdaten
-    res.status(201).end(user);
-
+    res.status(200).json(user);
   });
 });
 
@@ -110,6 +102,5 @@ router.delete('/:id', (req, res, next) => {
     res.sendStatus(204);
   });
 });
-
 
 module.exports = router;
