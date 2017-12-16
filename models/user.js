@@ -35,7 +35,7 @@ const userSchema = mongoose.Schema({
   gitlab_id: Number,
   avatar: {
     type: String,
-    default: 'avatar.png',
+    default: '',
   },
 });
 

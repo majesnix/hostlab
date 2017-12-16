@@ -10,19 +10,6 @@ block content
             if (message.info)
                 .alert.alert-success
                     p= message.info
-            .box.box-info
-                .box-header.with-border
-                    a(href=link)
-                        h3.box-title= 'Change avatar'
-                    .box-body
-                        form.form-horizontal(action="/api/changeavatar", enctype="multipart/form-data" ,method="post")
-                            .form-group.has-feedback
-                                label.control-label.col-sm-2(for='avatar')
-                                .col-sm-10
-                                    input.form-control#inputOldPassword(type='file', name="avatar")
-                            .row
-                                .col-xs-4
-                                    button.btn.btn-primary.btn-block.btn-flat(type="submit") Submit
     if (!user.ldap)
         .box.box-info
             .box-header.with-border
