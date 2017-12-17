@@ -47,6 +47,8 @@ function ensureAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
     // Reiche das User-Objekt an die nächsten Routen weiter
     res.locals.user = req.user;
+    res.locals.gitlab_url = process.env.GITLAB_URL ||
+        require('../config/gitlab').gitlab_url;
     return next();
   }
   res.redirect('/login');
