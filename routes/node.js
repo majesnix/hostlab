@@ -18,12 +18,17 @@ router.get('/', async (req, res, next) => {
       
       const repositories = [];
       for (let project of projects) {
-        repositories.push({
-          path: project.path_with_namespace,
-          repo_url: project.http_url_to_repo,
-        });
+        if (!project.archived) {
+          repositories.push({
+            name: project.name,
+            path: project.path_with_namespace,
+            repo_url: project.http_url_to_repo,
+          });
+        }
       }
-
+      if (repositories.length === 0) {
+        res.locals.message.info = 'You got no repositories';
+      }
       res.render('node', { repositories });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';
