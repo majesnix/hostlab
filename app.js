@@ -3,7 +3,6 @@ const path = require('path');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-//const handlebars = require('express-handlebars');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
@@ -18,16 +17,6 @@ mongoose.connect(mongoConnection.url, {
 });
 
 const app = express();
-
-// /**
-//  * Handlebars Konfiguration
-//  */
-// app.engine('hbs', handlebars({
-//   defaultLayout: 'user',
-//   extname: '.hbs',
-//   layoutsDir: 'views/layouts/',
-//   partialsDir: 'views/partials/',
-// }));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
