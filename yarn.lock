@@ -3282,8 +3282,8 @@ module-deps@^4.0.8:
     xtend "^4.0.0"
 
 moment@^2.10.6, moment@^2.18.1, moment@^2.9.0:
-  version "2.19.4"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.4.tgz#17e5e2c6ead8819c8ecfad83a0acccb312e94682"
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.0.tgz#53396358994dd3a551e966a66af715ecb6c30ad0"
 
 mongo-express@^0.44.0:
   version "0.44.0"
