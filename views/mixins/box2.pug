@@ -7,6 +7,6 @@ mixin box2(title, texts, link)
             if(texts)
                 each text in texts
                     p= text
-            label(for="slider").switch
+            label.switch
                 input(id=title type="checkbox")
-                span.slider
+                span.slider.round
