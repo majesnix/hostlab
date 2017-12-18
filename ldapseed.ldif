@@ -1,0 +1,6 @@
+dn: cn=test,dc=hostlab,dc=local
+cn: test
+objectclass: organizationalRole
+objectclass: simpleSecurityObject
+objectclass: top
+userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
