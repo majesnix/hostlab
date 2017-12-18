@@ -1,7 +1,5 @@
 const router = require('express').Router();
 const log = require('debug')('hostlab:route:node');
-//const request = require('request');
-//const util = require('util');
 const snek = require('snekfetch');
 const gitlab_token = process.env.GITLAB_TOKEN ||
     require('../config/gitlab_token').gitlab_token;

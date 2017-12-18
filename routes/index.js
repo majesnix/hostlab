@@ -40,7 +40,6 @@ module.exports = (app) => {
   app.use('/admin', admin);
   app.use('/adminsettings', adminsettings);
 
-
 };
 
 function ensureAuthentication(req, res, next) {

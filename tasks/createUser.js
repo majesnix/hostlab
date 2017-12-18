@@ -17,14 +17,6 @@ module.exports = async (opts) => {
       newUser.firstname = opts.firstname;
       newUser.lastname = opts.lastname;
       newUser.isAdmin = opts.isAdmin;
-      newUser.isLdap = opts.isLdap;
-
-      newUser.hashPassword(opts.password, (err, hash) => {
-        if (err) {
-          return reject(err);
-        }
-        newUser.password = hash;
-      });
 
       // POST-Request zur Erstellung eines Gitlab-Nutzers
       // Token wird aus der Env-Variable "GITLAB_TOKEN" gelesen
@@ -35,7 +27,7 @@ module.exports = async (opts) => {
 
       // parse Gitlab response to json
       const users = JSON.parse(text);
-      log(users)
+      log(users);
 
       // filter users by email (should return the wanted user, because emails should be unique)
       const foundUser = users.filter(u => u.email === opts.email);
@@ -48,7 +40,7 @@ module.exports = async (opts) => {
 
       // save gitlab_id to database
       newUser.gitlab_id = foundUser[0].id;
-      newUser.avatar = foundUser[0].avatar_url;
+      newUser.avatar_url = foundUser[0].avatar_url;
 
       newUser.save(err => {
         if (err) {

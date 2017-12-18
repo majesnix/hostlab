@@ -10,14 +10,11 @@ header.main-header
             ul.nav.navbar-nav
                 li.dropdown.user.user-menu
                     a.dropdown-toggle(href="#", data-toggle="dropdown")
-                        img.user-image(src=user.avatar, alt="User Image")
+                        img.user-image(src=user.avatar_url, alt="User Image")
                         span.hidden-xs= user.firstname
                     ul.dropdown-menu
                         li.user-header
-                            img.img-circle(src=user.avatar, alt="User Image")
+                            img.img-circle(src=user.avatar_url, alt="User Image")
                             p= user.firstname
                         li.user-footer
-                            .pull-left
-                                a.btn.btn-default.btn-flat(href="/usersettings") Settings
-                            .pull-right
-                                a.btn.btn-default.btn-flat(href="/logout") Logout
+                            a.btn.btn-default.btn-flat.btn-block(href="/logout") Logout

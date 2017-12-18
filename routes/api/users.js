@@ -5,10 +5,8 @@ const User = require('../../models/user');
 
 /**
  * GET    /api/users
- * POST   /api/users
  * GET    /api/users/:id
  * PUT    /api/users/:id
- * DELETE /api/users/:id
  */
 
 router.get('/', (req, res, next) => {
@@ -20,28 +18,6 @@ router.get('/', (req, res, next) => {
     log(users);
     // Zeige alle Nutzer
     res.status(200).json(users);
-  });
-});
-
-router.post('/', (req, res, next) => {
-  // Hole Nutzerdaten
-  log(req.body);
-  const {email, firstname, lastname, password, isAdmin} = req.body;
-  // Fehler falls email oder password leer
-  if (!email || !password || !firstname || !lastname) {
-    // Unprocessable Entity
-    return res.sendStatus(422);
-  }
-  // Erstelle neuen Nutzer
-  createUser({email, firstname, lastname, password, isAdmin}).then((user) => {
-    log(user);
-    // Erfolgreich erstellt --> 201 Created
-    res.status(201).json(user);
-  }, (err) => {
-    if (err.name === 'MongoError' && err.code === 11000) {
-      return res.status(409).end('There was a duplicate key error');
-    }
-    return next(err);
   });
 });
 
@@ -79,27 +55,6 @@ router.put('/:id', (req, res, next) => {
     log(user);
     // Erfolgreich geändert --> 200 OK
     res.status(200).end(user);
-  });
-});
-
-router.delete('/:id', (req, res, next) => {
-  // Verarbeite nur JSON-Objekte
-  if (!req.is('json')) {
-    return res.sendStatus(415);
-  }
-  // Hole Nutzerdaten
-  const {id} = req.params;
-  // Prüfe ob Admin sich selbst löschen möchte
-  if (id === req.user.id) {
-    return res.sendStatus(405);
-  }
-  // Lösche bestehenden Nutzer
-  User.findByIdAndDelete(id, function(err) {
-    if (err) {
-      return next(err);
-    }// else
-    // Erfolgreich gelöscht --> 204 No Content
-    res.sendStatus(204);
   });
 });
 
