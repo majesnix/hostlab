@@ -1,6 +1,45 @@
+dn: ou=administrator,dc=hostlab,dc=local
+objectClass: organizationalUnit
+objectClass: top
+ou: administrator
+
 dn: cn=test,dc=hostlab,dc=local
 cn: test
-objectclass: organizationalRole
-objectclass: simpleSecurityObject
-objectclass: top
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+mail: test@hostlab.local
+sn: test
+userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
+
+dn: cn=hans,dc=hostlab,dc=local
+cn: hans
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+mail: hans@hostlab.local
+sn: test
+userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
+
+dn: cn=susi,dc=hostlab,dc=local
+cn: susi
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+mail: susi@hostlab.local
+sn: test
+userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
+
+dn: cn=dominic,dc=hostlab,dc=local
+cn: dominic
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+ou: administrator
+mail: dominic@hostlab.local
+sn: test
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==

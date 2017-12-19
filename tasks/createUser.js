@@ -27,29 +27,31 @@ module.exports = async (opts) => {
 
       // parse Gitlab response to json
       const users = JSON.parse(text);
-      log(users);
-
+      
       // filter users by email (should return the wanted user, because emails should be unique)
+      // TODO: NEEDS TO BE CHANGED BACK, WHEN OPENLDAP CHECKS WITH EMAIL
       const foundUser = users.filter(u => u.email === opts.email);
 
       log(foundUser);
 
-      if (foundUser.length === 0) {
-        return reject(new Error(`You need to have an active Account at ${gitlab_url} to use this service`));
-      }
+      //if (foundUser.length === 0) {
+      //  return reject(new Error(`You need to have an active Account at ${gitlab_url} to use this service`));
+      //}
 
       // save gitlab_id to database
-      newUser.gitlab_id = foundUser[0].id;
-      newUser.avatar_url = foundUser[0].avatar_url;
+      if (foundUser.length === 1) {
+        newUser.gitlab_id = foundUser[0].id;
+        // TODO: Gitlab return null as avatar url when no avatar is set, needs fix
+        newUser.avatar_url = foundUser[0].avatar_url;
+      } else {
+        newUser.gitlab_id = null;
+        newUser.avatar_url = '/vendor/assets/default.png';
+      }
 
-      newUser.save(err => {
-        if (err) {
-          log(err);
-          return reject(err);
-        }
-        // Resolve Promise and return created User
-        return resolve(newUser);
-      });
+      const dbUser = await newUser.save();
+      log(dbUser);
+
+      return resolve(dbUser);
     } catch (err) {
       log(err);
       if (err.message.includes('getaddrinfo ENOTFOUND')) {

@@ -39,27 +39,38 @@ module.exports = (app) => {
         handleErrorsAsFailures: true,
         usernameField: 'email',
         passwordField: 'password',
+        // Req is needed for req.flash()
+        passReqToCallback: true,
       },
-      async (user, done) => {
+      async (req, user, done) => {
         // Try to create a DB Entry
         try {
-          const createUser = require('../tasks/createUser');
+          log(user);
+          // TODO: change to actual email when openLDAP returns this propertie
+          const hostlabUser = await User.findOne({email: user.cn});
 
-          const newUser = await createUser({
-            email,
-            firstname: user.givenName,
-            lastname: user.sn,
-          });
+          if (!hostlabUser) {
+            const createUser = require('../tasks/createUser');
 
-          // ONLY needed when pw should be seperate to LDAP account.
-          //req.flash('info', 'An Gitlab Account with the same credentials has been created.');
+            const newUser = await createUser({
+              email: user.mail,
+              firstname: user.cn,
+              lastname: user.cn,
+              isAdmin: (user.ou === 'administrator') ? true : false
+            });
+          
 
-          /**
-          * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
-          */
-          newUser.updateLastLogin();
-  
-          return done(null, newUser);
+            /**
+            * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
+            */
+            newUser.updateLastLogin();
+    
+            return done(null, newUser);
+          } else {
+            // DISCUSS: Or check for Unique key constraint error
+            hostlabUser.updateLastLogin();
+            return done(null, hostlabUser);
+          }
         } catch (err) {
           req.flash('error', err.message);
           return done(null, false);
