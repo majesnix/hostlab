@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
  */
 router.post('/', passport.authenticate('ldapauth', {
   failureRedirect: '/login',
-  failureFlash: 'Incorrect credentials'
+  failureFlash: true
 }), (req, res) => {
   res.redirect('/');
 });
