@@ -47,7 +47,7 @@ module.exports = (app) => {
         try {
           log(user);
           // TODO: change to actual email when openLDAP returns this propertie
-          const hostlabUser = await User.findOne({email: user.cn});
+          const hostlabUser = await User.findOne({email: user.mail});
 
           if (!hostlabUser) {
             const createUser = require('../tasks/createUser');

@@ -1,6 +1,5 @@
 dn: ou=administrator,dc=hostlab,dc=local
 objectClass: organizationalUnit
-objectClass: top
 ou: administrator
 
 dn: cn=test,dc=hostlab,dc=local
