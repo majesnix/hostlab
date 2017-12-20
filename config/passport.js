@@ -65,15 +65,15 @@ module.exports = (app) => {
             const users = JSON.parse(text);
 
             // filter users by email (should return the wanted user, because emails should be unique)
-            const foundUser = users.filter(u => u.email === user.email);
+            const foundUser = users.filter(u => u.email === user.mail);
 
             // User has a gitlab account
             if (foundUser.length === 1) {
               // Erstelle neuen Nutzer aus Schema
               const newUser = new User();
               newUser.email = user.email;
-              newUser.firstname = user.cn.firstname;
-              newUser.lastname = user.sn.lastname;
+              newUser.firstname = user.cn;
+              newUser.lastname = user.sn;
               newUser.isAdmin = (user.ou)
                   ? (user.ou.includes('administrator'))
                   : false;

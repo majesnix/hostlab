@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const log = require('debug')('hostlab:route:api:users');
-const createUser = require('../../tasks/createUser');
 const User = require('../../models/user');
 
 /**
