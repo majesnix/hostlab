@@ -68,7 +68,7 @@ module.exports = (app) => {
 
             // Erstelle neuen Nutzer aus Schema
             const newUser = new User();
-            newUser.email = user.email;
+            newUser.email = user.mail;
             newUser.firstname = user.cn;
             newUser.lastname = user.sn;
             newUser.isAdmin = (user.ou)
@@ -87,7 +87,7 @@ module.exports = (app) => {
                */
               newUser.updateLastLogin();
 
-              done(null, newUser, req.flash('message','Hostlab account created'));
+              done(null, newUser, req.flash('info', 'Hostlab account created'));
             }
             // user has NO Gitlab account
             else {
@@ -107,7 +107,7 @@ module.exports = (app) => {
 
               newUser.updateLastLogin();
 
-              done(null, newUser, req.flash('message', `Hostlab account created. We also created a Gitlab account at ${gitlab_url} for you!`));
+              done(null, newUser, req.flash('info', `Hostlab account created. We also created a Gitlab account at ${gitlab_url} for you!`));
             }
           }
           // user has a hostlab account
