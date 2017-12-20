@@ -30,11 +30,11 @@ module.exports = (app) => {
   // Strategy LDAP
   passport.use(new LdapStrategy({
         server: {
-          url: process.env.LDAP_URL,
-          bindDn: process.env.BINDDN,
-          bindCredentials: process.env.BINDCREDENTIALS,
-          searchBase: process.env.SEARCHBASE,
-          searchFilter: process.env.SEARCHFILTER,
+          url: process.env.LDAP_URL || require('./ldap').url,
+          bindDn: process.env.BINDDN || require('./ldap').bindDn,
+          bindCredentials: process.env.BINDCREDENTIALS || require('./ldap').bindCredentials,
+          searchBase: process.env.SEARCHBASE || require('./ldap').searchBase,
+          searchFilter: process.env.SEARCHFILTER || require('./ldap').searchFilter,
         },
         handleErrorsAsFailures: true,
         usernameField: 'email',
@@ -73,8 +73,8 @@ module.exports = (app) => {
             return done(null, hostlabUser);
           }
         } catch (err) {
-          req.flash('error', err.message);
-          return done(null, false);
+
+          return done(null, false, {message: err.message});
         }
       },
   ))};
