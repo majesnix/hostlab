@@ -107,7 +107,7 @@ module.exports = (app) => {
 
               newUser.updateLastLogin();
 
-              done(null, newUser, {message: `Hostlab account created. We also created a Gitlab account at ${gitlab_url} for you!`});
+              done(null, newUser, req.flash('message', `Hostlab account created. We also created a Gitlab account at ${gitlab_url} for you!`));
             }
           }
           // user has a hostlab account
