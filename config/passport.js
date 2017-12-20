@@ -4,10 +4,8 @@ const LdapStrategy = require('passport-ldapauth').Strategy;
 const User = require('../models/user');
 const snek = require('snekfetch'); // Handles all http requests
 const passwordgen = require('passwordgen');
-const gitlab_token = process.env.GITLAB_TOKEN ||
-    require('../config/gitlab').gitlab_token;
-const gitlab_url = process.env.GITLAB_URL ||
-    require('../config/gitlab').gitlab_url;
+const gitlab_token = process.env.GITLAB_TOKEN;
+const gitlab_url = process.env.GITLAB_URL;
 
 module.exports = (app) => {
   app.use(passport.initialize());
@@ -36,11 +34,11 @@ module.exports = (app) => {
   // Strategy LDAP
   passport.use(new LdapStrategy({
         server: {
-          url: process.env.LDAP_URL || require('./ldap').url,
-          bindDn: process.env.BINDDN || require('./ldap').bindDn,
-          bindCredentials: process.env.BINDCREDENTIALS || require('./ldap').bindCredentials,
-          searchBase: process.env.SEARCHBASE || require('./ldap').searchBase,
-          searchFilter: process.env.SEARCHFILTER || require('./ldap').searchFilter,
+          url: process.env.LDAP_URL,
+          bindDn: process.env.BINDDN,
+          bindCredentials: process.env.BINDCREDENTIALS,
+          searchBase: process.env.SEARCHBASE,
+          searchFilter: process.env.SEARCHFILTER,
         },
         handleErrorsAsFailures: true,
         usernameField: 'email',
@@ -89,13 +87,13 @@ module.exports = (app) => {
                */
               newUser.updateLastLogin();
 
-              done(null, newUser, {message: 'Hostlab account created'});
+              done(null, newUser, req.flash('message','Hostlab account created'));
             }
             // user has NO Gitlab account
             else {
               // CREATE new password for gitlab user
               const pass = passwordgen(8, false);
-      
+
               // CREATE Gitlab account with random pass
               const { text } = await snek.post(`${gitlab_url}/api/v4/users?private_token=${gitlab_token}&email=${user.mail}&password=${pass}&username=${user.cn}&name=${user.cn}&skip_confirmation=true&can_create_group=false`);
               const parsedRes = JSON.parse(text);
@@ -104,12 +102,12 @@ module.exports = (app) => {
               newUser.avatar_url = parsedRes.avatar_url
                   ? parsedRes.avatar_url
                   : '/vendor/assets/default.png';
-              
+
               await newUser.save();
 
               newUser.updateLastLogin();
 
-              done(null, newUser);
+              done(null, newUser, {message: `Hostlab account created. We also created a Gitlab account at ${gitlab_url} for you!`});
             }
           }
           // user has a hostlab account
