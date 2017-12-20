@@ -2,6 +2,11 @@ const passport = require('passport');
 const log = require('debug')('hostlab:passport');
 const LdapStrategy = require('passport-ldapauth').Strategy;
 const User = require('../models/user');
+const snek = require('snekfetch'); // Handles all http requests
+const gitlab_token = process.env.GITLAB_TOKEN ||
+    require('../config/gitlab').gitlab_token;
+const gitlab_url = process.env.GITLAB_URL ||
+    require('../config/gitlab').gitlab_url;
 
 module.exports = (app) => {
   app.use(passport.initialize());
@@ -47,34 +52,69 @@ module.exports = (app) => {
         try {
           log(user);
 
-          // Check if a account with this email exists
+          // Check if a HOSTLAB account with this email exists
           const hostlabUser = await User.findOne({email: user.mail});
 
+          // If user has no hostlab account
           if (!hostlabUser) {
-            const createUser = require('../tasks/createUser');
+            // gets ALL gitlab users
+            const {text} = await snek.get(
+                `${gitlab_url}/api/v4/users?private_token=${gitlab_token}`);
 
-            // Create a new account
-            const newUser = await createUser({
-              email: user.mail,
-              firstname: user.cn,
-              lastname: user.sn,
-              isAdmin: (user.ou) ? (user.ou.includes('administrator')) : false
-            });
+            // parse Gitlab response to json
+            const users = JSON.parse(text);
 
-            /**
-            * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
-            */
-            newUser.updateLastLogin();
-    
-            return done(null, newUser);
-          } else {
+            // filter users by email (should return the wanted user, because emails should be unique)
+            const foundUser = users.filter(u => u.email === user.email);
+
+            // User has a gitlab account
+            if (foundUser.length === 1) {
+              // Erstelle neuen Nutzer aus Schema
+              const newUser = new User();
+              newUser.email = user.email;
+              newUser.firstname = user.cn.firstname;
+              newUser.lastname = user.sn.lastname;
+              newUser.isAdmin = (user.ou)
+                  ? (user.ou.includes('administrator'))
+                  : false;
+              newUser.gitlab_id = foundUser[0].id;
+              newUser.avatar_url = foundUser[0].avatar_url
+                  ? foundUser[0].avatar_url
+                  : '/vendor/assets/default.png';
+
+              await newUser.save();
+              /**
+               * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
+               */
+              newUser.updateLastLogin();
+
+              done(null, newUser, {message: 'Hostlab account created'});
+            }
+            // user has NO Gitlab account
+            else {
+              done(null, false, {
+                message: 'You need an active Gitlab Account on ' + gitlab_url +
+                ' to use this service.',
+              });
+            }
+          }
+          // user has a hostlab account
+          else {
             // DISCUSS: Or check for Unique key constraint error
             hostlabUser.updateLastLogin();
             return done(null, hostlabUser);
           }
-        } catch (err) {
-
-          return done(null, false, {message: err.message});
         }
+            // Errorhandling
+        catch (err) {
+          if (err.message.includes('getaddrinfo ENOTFOUND')) {
+            return done(null, false,
+                {message: 'Gitlab is temporarily not available, please try again later'});
+          } else {
+            return done(null, false, {message: err.message});
+          }
+        }
+
       },
-  ))};
+  ));
+};
