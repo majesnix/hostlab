@@ -2,7 +2,7 @@
 #
 # reset ldap
 
-export LDAP_IP='192.168.56.101'
+export LDAP_IP='10.71.34.101'
 export LDAPSEED_FILE=/media/sf_gits/hostlab/ldapseed.ldif
 
 docker stop hostlab-ldap
@@ -17,7 +17,7 @@ docker run --name hostlab-ldap \
 -e LDAP_ADMIN_PASSWORD=12345 \
 -v /srv/openldap/data:/var/lib/ldap \
 -v /srv/openldap/config:/etc/ldap/slapd.d \
--p ${VM_HOSTLAB_IP}:389:389 \
+-p ${LDAP_IP}:389:389 \
 -v ${LDAPSEED_FILE}:/container/service/slapd/assets/config/bootstrap/ldif/custom/users.ldif:ro \
 osixia/openldap:1.1.11 \
 --copy-service

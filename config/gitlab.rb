@@ -198,8 +198,8 @@ gitlab_rails['ldap_enabled'] = true
 gitlab_rails['ldap_servers'] = YAML.load <<-EOS # remember to close this block with 'EOS' below
 main: # 'main' is the GitLab 'provider ID' of this LDAP server
 
-  label: 'LDAP'
-  host: '172.17.0.4'
+  label: 'HSRW'
+  host: '10.71.34.101'
   port: 389 # usually 636 for SSL
   uid: 'mail'
   bind_dn: 'cn=admin,dc=hostlab,dc=local'
@@ -207,7 +207,7 @@ main: # 'main' is the GitLab 'provider ID' of this LDAP server
   encryption: 'plain'
   timeout: 10
   active_directory: false
-  allow_username_or_email_login: true
+  allow_username_or_email_login: false
   block_auto_created_users: false
   base: 'dc=hostlab,dc=local'
   user_filter: ''

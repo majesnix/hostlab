@@ -3,6 +3,7 @@ const log = require('debug')('hostlab:passport');
 const LdapStrategy = require('passport-ldapauth').Strategy;
 const User = require('../models/user');
 const snek = require('snekfetch'); // Handles all http requests
+const passwordgen = require('passwordgen');
 const gitlab_token = process.env.GITLAB_TOKEN ||
     require('../config/gitlab').gitlab_token;
 const gitlab_url = process.env.GITLAB_URL ||
@@ -67,16 +68,16 @@ module.exports = (app) => {
             // filter users by email (should return the wanted user, because emails should be unique)
             const foundUser = users.filter(u => u.email === user.mail);
 
+            // Erstelle neuen Nutzer aus Schema
+            const newUser = new User();
+            newUser.email = user.email;
+            newUser.firstname = user.cn;
+            newUser.lastname = user.sn;
+            newUser.isAdmin = (user.ou)
+                ? (user.ou.includes('administrator'))
+                : false;
             // User has a gitlab account
             if (foundUser.length === 1) {
-              // Erstelle neuen Nutzer aus Schema
-              const newUser = new User();
-              newUser.email = user.email;
-              newUser.firstname = user.cn;
-              newUser.lastname = user.sn;
-              newUser.isAdmin = (user.ou)
-                  ? (user.ou.includes('administrator'))
-                  : false;
               newUser.gitlab_id = foundUser[0].id;
               newUser.avatar_url = foundUser[0].avatar_url
                   ? foundUser[0].avatar_url
@@ -92,10 +93,23 @@ module.exports = (app) => {
             }
             // user has NO Gitlab account
             else {
-              done(null, false, {
-                message: 'You need an active Gitlab Account on ' + gitlab_url +
-                ' to use this service.',
-              });
+              // CREATE new password for gitlab user
+              const pass = passwordgen(8, false);
+      
+              // CREATE Gitlab account with random pass
+              const { text } = await snek.post(`${gitlab_url}/api/v4/users?private_token=${gitlab_token}&email=${user.mail}&password=${pass}&username=${user.cn}&name=${user.cn}&skip_confirmation=true&can_create_group=false`);
+              const parsedRes = JSON.parse(text);
+
+              newUser.gitlab_id = parsedRes.id;
+              newUser.avatar_url = parsedRes.avatar_url
+                  ? parsedRes.avatar_url
+                  : '/vendor/assets/default.png';
+              
+              await newUser.save();
+
+              newUser.updateLastLogin();
+
+              done(null, newUser);
             }
           }
           // user has a hostlab account

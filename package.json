@@ -26,6 +26,7 @@
     "passport": "^0.4.0",
     "passport-ldapauth": "^2.0.0",
     "passport-saml": "^0.31.0",
+    "passwordgen": "^0.3.0",
     "pug": "^2.0.0-rc.4",
     "serve-favicon": "^2.4.5",
     "snekfetch": "^3.6.1"
