@@ -2,13 +2,22 @@ dn: ou=administrator,dc=hostlab,dc=local
 objectClass: organizationalUnit
 ou: administrator
 
-dn: cn=test,dc=hostlab,dc=local
-cn: test
-sn: testson
+dn: ou=student,dc=hostlab,dc=local
+objectClass: organizationalUnit
+ou: student
+
+dn: ou=prof,dc=hostlab,dc=local
+objectClass: organizationalUnit
+ou: prof
+
+dn: cn=willi,dc=hostlab,dc=local
+cn: Willi
+sn: Wichtig
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+ou: student
 mail: test@hostlab.local
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
 
@@ -19,6 +28,7 @@ objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+ou: student
 mail: hans@hostlab.local
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
 
@@ -29,6 +39,7 @@ objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+ou: student
 mail: susi@hostlab.local
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
 
@@ -40,7 +51,20 @@ objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
 ou: administrator
+ou: student
 mail: dominic@hostlab.local
+userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
+
+dn: cn=prof,dc=hostlab,dc=local
+cn: Prof
+sn: Essor
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+ou: administrator
+ou: prof
+mail: prof@hostlab.local
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
 
 dn: cn=Administrator,dc=hostlab,dc=local
@@ -50,5 +74,5 @@ objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
 ou: administrator
-mail: adminstrator@hostlab.local
+mail: admin@example.com
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==

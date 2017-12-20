@@ -47,16 +47,18 @@ module.exports = (app) => {
         try {
           log(user);
 
+          // Check if a account with this email exists
           const hostlabUser = await User.findOne({email: user.mail});
 
           if (!hostlabUser) {
             const createUser = require('../tasks/createUser');
 
+            // Create a new account
             const newUser = await createUser({
               email: user.mail,
               firstname: user.cn,
               lastname: user.sn,
-              isAdmin: (user.ou.includes('administrator')) ? true : false
+              isAdmin: (user.ou) ? (user.ou.includes('administrator')) : false
             });
 
             /**

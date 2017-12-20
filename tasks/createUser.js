@@ -29,7 +29,6 @@ module.exports = async (opts) => {
       const users = JSON.parse(text);
       
       // filter users by email (should return the wanted user, because emails should be unique)
-      // TODO: NEEDS TO BE CHANGED BACK, WHEN OPENLDAP CHECKS WITH EMAIL
       const foundUser = users.filter(u => u.email === opts.email);
 
       log(foundUser);
@@ -41,8 +40,12 @@ module.exports = async (opts) => {
       // save gitlab_id to database
       if (foundUser.length === 1) {
         newUser.gitlab_id = foundUser[0].id;
-        // TODO: Gitlab return null as avatar url when no avatar is set, needs fix
-        newUser.avatar_url = foundUser[0].avatar_url;
+        // when the user is created through the admin interface, the gitlab avatar_url is null, this show a default hostlab avatar
+        if (foundUser[0].avatar_url) {
+          newUser.avatar_url = foundUser[0].avatar_url;
+        } else {
+          newUser.avatar_url = '/vendor/assets/default.png';
+        }
       } else {
         newUser.gitlab_id = null;
         newUser.avatar_url = '/vendor/assets/default.png';
