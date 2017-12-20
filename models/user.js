@@ -17,16 +17,20 @@ const userSchema = mongoose.Schema({
     default: false,
     alias: 'isadmin',
   },
+  gitlab_id: Number,
+  avatar_url: {
+    type: String,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
   created: {
     type: Date,
     default: Date.now,
   },
   lastLogin: {
     type: Date,
-  },
-  gitlab_id: Number,
-  avatar_url: {
-    type: String,
   },
 });
 

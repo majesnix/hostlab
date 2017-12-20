@@ -46,7 +46,7 @@ module.exports = (app) => {
         // Try to create a DB Entry
         try {
           log(user);
-          // TODO: change to actual email when openLDAP returns this propertie
+
           const hostlabUser = await User.findOne({email: user.mail});
 
           if (!hostlabUser) {
@@ -55,10 +55,9 @@ module.exports = (app) => {
             const newUser = await createUser({
               email: user.mail,
               firstname: user.cn,
-              lastname: user.cn,
-              isAdmin: (user.ou === 'administrator') ? true : false
+              lastname: user.sn,
+              isAdmin: (user.ou.includes('administrator')) ? true : false
             });
-          
 
             /**
             * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
