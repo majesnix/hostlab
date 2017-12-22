@@ -18,6 +18,7 @@ router.get('/', async (req, res, next) => {
       for (let project of projects) {
         if (!project.archived) {
           repositories.push({
+            id: project.id,
             name: project.name,
             path: project.path_with_namespace,
             repo_url: project.http_url_to_repo,

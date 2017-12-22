@@ -10,6 +10,10 @@ dn: ou=prof,dc=hostlab,dc=local
 objectClass: organizationalUnit
 ou: prof
 
+dn: ou=disabled,dc=hostlab,dc=local
+objectClass: organizationalUnit
+ou: disabled
+
 dn: cn=willi,dc=hostlab,dc=local
 cn: Willi
 sn: Wichtig
