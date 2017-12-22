@@ -11,7 +11,7 @@ html(lang="en")
                 form(method="post")
                     .form-group.has-feedback
                         input.form-control#inputEmail(type="text", name="email" placeholder="E-Mail", required, autofocus)
-                        span.fa.fa-envelope-o.form-control-feedback
+                        span.fa.fa-envelope.form-control-feedback
                     .form-group.has-feedback
                         input.form-control#inputPassword(type="password", name="password" placeholder="Password", required)
                         span.fa.fa-lock.form-control-feedback
@@ -22,7 +22,7 @@ html(lang="en")
                                     input(type="checkbox" name="remember")
                                     | Remember Me
                         .col-xs-4
-                            button.btn.btn-primary.btn-blockbtn-flat(type="submit") Sign in
+                            button.btn.btn-primary.btn-block.btn-flat(type="submit") Sign in
     include includes/scripts
     script.
       $(function() {
