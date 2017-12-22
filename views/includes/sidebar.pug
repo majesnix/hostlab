@@ -1,8 +1,8 @@
 mixin menuItem(name, route, icon)
     li(class=(route === locals.path ? "active" : ""))
         a.nav-link(href=route)
-            i(class=attributes.class, style="width: 30px;")
-            span= name
+            i(class=attributes.class + " fa-fw")
+            span= " " + name
 
 aside.main-sidebar
     section.sidebar
