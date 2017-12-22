@@ -88,5 +88,5 @@ objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
 ou: disabled
-mail: disabled@example.com
+mail: disabled@hostlab.local
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==

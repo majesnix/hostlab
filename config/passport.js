@@ -54,6 +54,14 @@ module.exports = (app) => {
           // Check if a HOSTLAB account with this email exists
           const hostlabUser = await User.findOne({email: user.mail});
 
+          if (user.ou.includes('disabled') && hostlabUser) {
+            hostlabUser.active = false;
+            await hostlabUser.save();
+            return done(null, false, { message: 'Invalid username/password' });
+          } else if (user.ou.includes('disabled')) {
+            return done(null, false, { message: 'Invalid username/password' });
+          }
+
           // If user has no hostlab account
           if (!hostlabUser) {
             // gets ALL gitlab users
