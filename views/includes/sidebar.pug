@@ -1,18 +1,18 @@
 mixin menuItem(name, route, icon)
-    li(class=(route===locals.path ? "active":""))
+    li(class=(route === locals.path ? "active" : ""))
         a.nav-link(href=route)
-            i(class=attributes.class, style="width: 20px;")
+            i(class=attributes.class, style="width: 30px;")
             span= name
 
 aside.main-sidebar
     section.sidebar
         ul.sidebar-menu.tree(data-widget="tree")
-            +menuItem("Dashboard", '/dashboard').fas.fa-tachometer-alt
-            +menuItem("Node.js", '/node').fab.fa-node-js
-            +menuItem("MongoDB", '/mongo').fas.fa-database
-            +menuItem("PostgreSQL", '/postgres').fas.fa-database
+            +menuItem("Dashboard", "/dashboard").fas.fa-tachometer-alt
+            +menuItem("Node.js", "/node").fab.fa-node-js
+            +menuItem("MongoDB", "/mongo").fas.fa-database
+            +menuItem("PostgreSQL", "/postgres").fas.fa-database
             +menuItem("GitLab", `${gitlab_url}`).fab.fa-gitlab
-            +menuItem("Help", '/help').fas.fa-question-circle
+            +menuItem("Help", "/help").fas.fa-question-circle
             if user.isAdmin
                 li.header Administration
-                +menuItem("Users", '/admin/users').fas.fa-users
+                +menuItem("Users", "/admin/users").fas.fa-users
