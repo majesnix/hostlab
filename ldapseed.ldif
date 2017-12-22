@@ -80,3 +80,13 @@ objectClass: inetOrgPerson
 ou: administrator
 mail: admin@example.com
 userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
+
+dn: cn=disabled,dc=hostlab,dc=local
+sn: Disabled
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+ou: disabled
+mail: disabled@example.com
+userpassword: {MD5}gnzLDuqKcGxMNKFokfhOew==
