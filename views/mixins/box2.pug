@@ -1,4 +1,4 @@
-mixin box2(title, texts, link)
+mixin box2(title, id, texts, link)
     .box.box-solid
         .box-header.with-border
             a(href=link)
@@ -8,5 +8,5 @@ mixin box2(title, texts, link)
                 each text in texts
                     p= text
             label.switch
-                input.activation(id=title type="checkbox")
+                input.activation(id=id type="checkbox")
                 span.slider.round
