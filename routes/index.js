@@ -63,7 +63,7 @@ function ensureBeingAdmin(req, res, next) {
 }
 
 function addCurrentPathToLocals(req, res, next) {
-  res.locals.path = req.path;
+  res.locals.currentPath = req.path;
   next();
 }
 

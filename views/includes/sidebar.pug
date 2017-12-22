@@ -1,8 +1,8 @@
-mixin menuItem(name, route, icon)
-    li(class={active: route === locals.path})
-        a.nav-link(href=route)
+mixin menuItem(label, currentHref)
+    li(class={active: currentHref === currentPath})
+        a.nav-link(href=currentHref)
             i(class=attributes.class + " fa-fw")
-            span= " " + name
+            span= " " + label
 
 aside.main-sidebar
     section.sidebar
