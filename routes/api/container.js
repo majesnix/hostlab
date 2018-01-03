@@ -7,6 +7,12 @@ const {docker, dockerfile} = require('../../config/docker');
 const log = require('debug')('hostlab:route:api:container');
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
+const hostlab_address = process.env.HOSTLAB_ADDRESS;
+const proxy_port = process.env.PROXY_PORT;
+const proxy = require('../../config/connections').proxy;
+const fp = require("find-free-port")
+
+
 
 router.post('/:repositoryID', (req, res, next) => {
   const {repositoryID} = req.params;
@@ -47,25 +53,43 @@ router.post('/:repositoryID', (req, res, next) => {
                           end: true,
                         });
                         output.on('end', function() {
-                          docker.createContainer({
-                            Image: 'nodeimage',
-                            ExposedPorts: {
-                              '8080/tcp': {},
-                            },
-                            Hostconfig: {
-                              Privileged: true,
-                              PortBindings: {
-                                '8080/tcp': [
-                                  {
-                                    HostPort: '5000',
-                                  }],
+
+                          fp(5000, 5100, function(err, freePort){
+                            docker.createContainer({
+                              Image: 'nodeimage',
+                              ExposedPorts: {
+                                '8080/tcp': {},
                               },
-                            },
-                          }, function(err, container) {
-                            container.start(function(err, data) {
-                              if (err) return;
+                              Hostconfig: {
+                                Privileged: true,
+                                PortBindings: {
+                                  '8080/tcp': [
+                                    {
+                                      HostPort: freePort,
+                                    }],
+                                },
+                              },
+                            }, function(err, container) {
+                              container.start(function(err, data) {
+                                if (err){
+                                  return;
+                                }
+
+
+                                snek.get(`${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`)
+                                .then((response) => {
+                                  log(response)
+                                  const appName = JSON.parse(response.text).path;
+                                  proxy.register(`${hostlab_address}:${proxy_port}/apps/${appName}`, `http://localhost:${freePort}`);
+
+                                });
+
+                              });
                             });
                           });
+
+
+
                         });
                       });
                     });

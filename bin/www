@@ -15,6 +15,9 @@ const http = require('http');
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+const proxy = require('../config/connections').proxy;
+proxy.register(`http://localhost:${process.env.PROXY_PORT}`, `http://localhost:${port}`);
+
 /**
  * Create HTTP server.
  */
