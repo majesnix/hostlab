@@ -1,0 +1,30 @@
+extends layouts/main
+
+block content
+    .panel.panel-default
+        .box.box-warning
+            .box-header.with-border
+                h3.box-title= "Editing User " + user.email
+            form.form-horizontal
+                .box-body
+                        // TODO Activate/Admin
+                        .form-group
+                            label.col-sm-2.control-label(for="id") ID
+                            .col-sm-10: input.form-control#id(type="text", value=user._id, disabled)
+                        .form-group
+                            label.col-sm-2.control-label(for="gitlab") Gitlab ID
+                            .col-sm-10: input.form-control#gitlab(type="text", value=user.gitlab_id, disabled)
+                        .form-group
+                            label.col-sm-2.control-label(for="email") E-Mail
+                            .col-sm-10: input.form-control#email(type="email", value=user.email, disabled)
+                        .form-group
+                            label.col-sm-2.control-label(for="active") Active
+                            .col-sm-10: input#active(type="checkbox", checked=user.isActive)
+                        .form-group
+                            label.col-sm-2.control-label(for="admin") Admin
+                            .col-sm-10: input#admin(type="checkbox", checked=user.isAdmin)
+                        .form-group
+                            label.col-sm-2.control-label(for="created") Created at
+                            .col-sm-10: input.form-control#created(type="text", value=user.created, disabled)
+                .box-footer
+                    button.btn.btn-primary.btn-flat.btn-block(type="submit") Update User

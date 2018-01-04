@@ -1,66 +1,21 @@
 extends layouts/main
 
 mixin toggleIcon(state)
-    if state
-        i.text-green.fas.fa-check-circle
-    else
-        i.text-red.fas.fa-times-circle
+    span
+        if state
+            i.text-green.fas.fa-check-circle
+        else
+            i.text-red.fas.fa-times-circle
 
 block content
     .panel.panel-default
-        .panel-heading
-            a.btn.btn-block.btn-flat.btn-success(href='/admin/users/create') New User
         table.table.table-striped
             thead: tr
-                th ID
-                th Gitlab ID
                 th E-Mail
-                th LDAP
                 th Active
                 th Admin
-                th Created at
-                th Last Login
             for user in users
                 tr.user(data-id=user._id)
-                    td= user._id
-                    td= user.gitlab_id
-                    td= user.email
-                    td
-                        +toggleIcon(user.isLdap)
-                    td
-                        a.active.text-red(class=(user.isActive ? "enabled":"disabled") data-state=user.isEnabled style="cursor: pointer;")
-                            +toggleIcon(user.isActive) // TODO Implement isActive or rename all to implemented solution
-                    td
-                        a.admin.text-red(class=(user.isAdmin ? "enabled":"disabled") style="cursor: pointer;")
-                            +toggleIcon(user.isAdmin)
-                    if user.created
-                        td= user.created
-                    else
-                        td -
-                    if user.lastLogin
-                        td= user.lastLogin
-                    else
-                        td -
-
-block scripts
-    script.
-        $(document).ready(function(e) {
-            $('.user .active').on('click', function(e) {
-                e.preventDefault();
-                let currentlyActive = $(this).hasClass('enabled');
-                let userId = $(this).closest('.user').data('id');
-
-                console.log("Toggle Active State for user " + userId + ". Currently " + currentlyActive);
-
-                // TODO Toggle Lock
-            });
-
-            $('.user .admin').on('click', function(e) {
-                e.preventDefault();
-                let currentlyAdmin = $(this).hasClass('enabled');
-                let userId = $(this).closest('.user').data('id');
-                console.log("Toggle Admin Status for user " + userId + ". Currently " + currentlyAdmin);
-
-                // TODO Toggle Admin
-            });
-        });
+                    td: a(href="/admin/users/" + user._id)= user.email
+                    td: +toggleIcon(user.isActive)
+                    td: +toggleIcon(user.isAdmin)

@@ -38,7 +38,7 @@ router.get('/users/:id', (req, res, next) => {
         log(r.body);
         const user = r.body;
         // Zeige alle Nutzer
-        res.render('usersShow', {user});
+        res.render('usersEdit', {user});
       });
 });
 
