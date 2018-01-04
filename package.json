@@ -19,6 +19,7 @@
     "dockerode": "^2.5.3",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
+    "find-free-port": "^1.1.0",
     "icheck": "^1.0.2",
     "jquery": "^3.2.1",
     "mongo-express": "^0.44.0",
@@ -28,8 +29,10 @@
     "passport-saml": "^0.31.0",
     "passwordgen": "^0.3.0",
     "pug": "^2.0.0-rc.4",
+    "redbird": "^0.7.0",
     "serve-favicon": "^2.4.5",
-    "snekfetch": "^3.6.1"
+    "snekfetch": "^3.6.1",
+    "tmp": "0.0.33"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
