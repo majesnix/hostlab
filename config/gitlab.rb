@@ -199,7 +199,7 @@ gitlab_rails['ldap_servers'] = YAML.load <<-EOS # remember to close this block w
 main: # 'main' is the GitLab 'provider ID' of this LDAP server
 
   label: 'HSRW'
-  host: '10.71.34.101'
+  host: 'ldap'
   port: 389 # usually 636 for SSL
   uid: 'mail'
   bind_dn: 'cn=admin,dc=hostlab,dc=local'
