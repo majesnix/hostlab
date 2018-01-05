@@ -7,10 +7,10 @@ const {docker, dockerfile} = require('../../config/docker');
 const log = require('debug')('hostlab:route:api:container');
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
-const hostlab_address = process.env.HOSTLAB_ADDRESS;
+const hostlab_ip = process.env.VM_HOSTLAB_IP;
 const proxy_port = process.env.PROXY_PORT;
 const proxy = require('../../config/connections').proxy;
-const fp = require("find-free-port")
+const fp = require("find-free-port");
 
 
 
@@ -55,6 +55,10 @@ router.post('/:repositoryID', (req, res, next) => {
                         output.on('end', function() {
 
                           fp(5000, 5100, function(err, freePort){
+                            if(err){
+                              log(err);
+                              return;
+                            }
                             docker.createContainer({
                               Image: 'nodeimage',
                               ExposedPorts: {
@@ -65,13 +69,19 @@ router.post('/:repositoryID', (req, res, next) => {
                                 PortBindings: {
                                   '8080/tcp': [
                                     {
-                                      HostPort: freePort,
+                                      HostPort: freePort.toString(),
+                                      HostIP: "127.0.0.1",
                                     }],
                                 },
                               },
                             }, function(err, container) {
+                              if(err){
+                                log(err);
+                                return;
+                              }
                               container.start(function(err, data) {
                                 if (err){
+                                  log(err);
                                   return;
                                 }
 
@@ -80,7 +90,7 @@ router.post('/:repositoryID', (req, res, next) => {
                                 .then((response) => {
                                   log(response)
                                   const appName = JSON.parse(response.text).path;
-                                  proxy.register(`${hostlab_address}:${proxy_port}/apps/${appName}`, `http://localhost:${freePort}`);
+                                  proxy.register(`${hostlab_ip}:${proxy_port}/apps/${appName}`, `${hostlab_ip}:${freePort}`);
 
                                 });
 
