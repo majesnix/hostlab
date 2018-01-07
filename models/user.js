@@ -32,6 +32,11 @@ const userSchema = mongoose.Schema({
   lastLogin: {
     type: Date,
   },
+  containers: [{
+      name: String,
+      port: Number,
+      scriptLoc: String,
+  }],
 });
 
 userSchema.methods.updateLastLogin = function() {
