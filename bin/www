@@ -16,7 +16,7 @@ const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 const proxy = require('../config/connections').proxy;
-proxy.register(`${process.env.VM_HOSTLAB_IP}:${process.env.PROXY_PORT}`, `${process.env.VM_HOSTLAB_IP}:${port}`);
+proxy.register(`${process.env.VM_HOSTLAB_IP}:${process.env.PROXY_PORT}`, `localhost:${port}`);
 
 /**
  * Create HTTP server.

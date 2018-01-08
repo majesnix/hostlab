@@ -4,20 +4,10 @@ services:
   app:
     build: .
     ports:
-     - "80:80"
+     - "10.71.34.101:80:80"
      - "9229:9229"
-    environment:
-      - GITLAB_TOKEN=az1DQsouEazuJAve3VaD
-      - MONGO_URL=mongodb://mongo/hostlab
-      - GITLAB_URL=http://gitlab
-      - LDAP_URL=ldap://ldap
-      - BINDDN=cn=admin,dc=hostlab,dc=local
-      - BINDCREDENTIALS=12345
-      - SEARCHBASE=dc=hostlab,dc=local
-      - SEARCHFILTER=(mail={{username}})
-      - PROXY_PORT=80
-      - VM_HOSTLAB_IP=http://localhost
-      - DEBUG=hostlab:*
+    env_file:
+      - ./config/hostlab.env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/app
