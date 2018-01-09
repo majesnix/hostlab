@@ -70,13 +70,17 @@ router.post('/:repositoryID', async (req, res, next) => {
                     },
                 },
             });
-            container.start(async data => {
+            container.start(async () => {
                 const response = await snek.get(`${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`);
                 const appName = JSON.parse(response.text).path;
                 const projID = JSON.parse(response.text).id;
                 proxy.register(`${hostlab_ip}:${proxy_port}/apps/${appName}-${projID}`, `${hostlab_ip}:${freePort}`);
 
-                User.findByIdAndUpdate(req.user._id, {$push: {containers: {name: `${appName}-${projID}`, port: freePort, scriptLoc: '/a/path/'}}});
+                User.findByIdAndUpdate(req.user._id, {$push: {containers: {name: `${appName}-${projID}`, port: freePort, scriptLoc: '/a/path/'}}}, (err, user) => {
+                    if (err) {		
+                        return next(err);		
+                    }		
+                });
             });
         });
     } catch (err) {
