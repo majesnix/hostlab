@@ -17,6 +17,11 @@ block content
                 each repo in repositories
                     .col-sm-6.col-lg-3
                         +box2(`${repo.name}`, repo.id, [`Status: ${/*app.status*/'Running'}`] , '#')
+                    .row
+                    .col-sm12.col-lg-12
+                        h3 Console
+                        textarea.console(name="console",readonly) #{repo.logs}
+
 
 block scripts
     script.
