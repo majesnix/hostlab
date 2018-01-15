@@ -8,6 +8,7 @@ const gitlab_url = process.env.GITLAB_URL;
 
 // WIP: Container Log
 let cl = "";
+let container;
 router.get('/', async (req, res, next) => {
   // Example get MongoDB log
   let container = docker.getContainer('378d0392deb8');
@@ -58,7 +59,6 @@ function containerLogs(container) {
           repositories.push({
             id: project.id,
             name: project.name,
-            logs: cl,
             path: project.path_with_namespace,
             repo_url: project.http_url_to_repo,
           });
@@ -67,15 +67,19 @@ function containerLogs(container) {
       if (repositories.length === 0) {
         res.locals.message.info = 'You got no repositories';
       }
-      res.render('node', { repositories });
+        snek.get(`http://localhost:${req.app.settings.port}/api/v1/users/${req.user._id}`).set('cookie', req.headers.cookie).then((response) => {
+            users = response.body;
+            container = users.containers;
+            res.render('node', { repositories, container });
+        });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';
-      res.render('node');
+      res.render('node', { container});
     }
   } catch (err) {
     if (err.text) {
       res.locals.message.error = `[GITLAB] ${err.text}`;
-      res.render('node');
+      res.render('node', { container});
     }
     console.error(err);
     //return next(err);

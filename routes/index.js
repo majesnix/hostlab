@@ -7,7 +7,6 @@ const logout = require('./logout');
 const mongoExpress = require('mongo-express/lib/middleware');
 const mongoExpressConfig = require('../config/mongoExpress');
 const node = require('./node');
-const runningCont = require('./runningCont');
 const postgres = require('./postgres');
 const settings = require('./settings');
 
@@ -28,7 +27,6 @@ module.exports = (app) => {
   app.use('/help', help);
   app.use('/mongo', mongoExpress(mongoExpressConfig));
   app.use('/node', node);
-  app.use('/runningCont', runningCont);
   app.use('/postgres', postgres);
   app.use('/settings', settings);
 

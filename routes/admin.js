@@ -21,9 +21,9 @@ router.get('/users', (req, res, next) => {
   request.get(`http://localhost:${req.app.settings.port}/api/v1/users`).
       set('cookie', req.headers.cookie).
       then((r) => {
-        log(r.body);
         users = r.body;
         // Zeige alle Nutzer
+        log(users);
         res.render('users', {users});
       });
 

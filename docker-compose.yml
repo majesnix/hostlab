@@ -4,7 +4,7 @@ services:
   app:
     build: .
     ports:
-     - "10.71.34.101:80:80"
+     - "192.168.33.10:80:80"
      - "9229:9229"
     env_file:
       - ./config/hostlab.env
