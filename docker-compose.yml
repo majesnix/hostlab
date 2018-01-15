@@ -7,7 +7,7 @@ services:
      - "10.71.34.101:80:80"
      - "9229:9229"
     env_file:
-      - ./config/hostlab.env
+      - ./.env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/app
