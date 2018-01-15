@@ -14,8 +14,8 @@ WORKDIR /app
 ADD ${file} .
 RUN mv */* .
 RUN npm install
-ENV PORT=8080
-EXPOSE 8080
+ENV PORT=${process.env.CONTAINER_USER_PORT || '8080'}
+EXPOSE ${process.env.CONTAINER_USER_PORT || '8080'}
 CMD ["npm", "start"]`,
 };
 

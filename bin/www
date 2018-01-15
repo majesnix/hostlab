@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
 /**
+ * Configure Environment
+ */
+require('dotenv').config();
+
+/**
  * Module dependencies.
  */
 
@@ -15,7 +20,7 @@ const http = require('http');
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-const proxy = require('../config/connections').proxy;
+const proxy = require('../common/connections').proxy;
 proxy.register(`${process.env.VM_HOSTLAB_IP}:${process.env.PROXY_PORT}`, `localhost:${port}`);
 
 /**
