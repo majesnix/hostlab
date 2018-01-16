@@ -3,15 +3,15 @@ const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
 
 /**
- * Holt die PackageJSON vom übergebenen Gitlab Repository (ID) und der angegebenen Branch
+ * Holt die PackageJSON vom übergebenen Gitlab Repository (ID) und dem angegebenen Branch
  * @param {string} repositoryID The GitlabID of the repository
  * @param {string} [branch=master] The branch of the repository
  * @returns {Promise<Object>}
  * @example
- * //Holt die Package.json vom Projekt mit der ID 1 und der Branch 'master'
+ * // Holt die Package.json vom Projekt mit der ID 1 und dem Branch 'master'
  * const info = await getPackageJSON('1');
  * 
- * //Holt die Package.json vom Projekt mit der ID 1 und der Branch 'test'
+ * // Holt die Package.json vom Projekt mit der ID 1 und dem Branch 'test'
  * const info = await getPackageJSON('1','test');
  */
 module.exports.getPackageJSON = (repositoryID, branch = 'master') => {
