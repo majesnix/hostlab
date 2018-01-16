@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const log = require('debug')('hostlab:route:node');
 const snek = require('snekfetch');
-const {docker, dockerfile} = require('../config/docker');
+const {docker, dockerfile} = require('../common/docker');
 const stream = require('stream');
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
@@ -11,7 +11,7 @@ let cl = "";
 let container_user;
 router.get('/', async (req, res, next) => {
   // Example get MongoDB log
-  let container = docker.getContainer('2fd542784450');
+  let container = docker.getContainer('af7429b6d0fa');
   console.log(container);
  /**
  * Get logs from running container

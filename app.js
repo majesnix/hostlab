@@ -8,8 +8,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const debug = require('debug')('hostlab:app');
-const mongoConnection = require('./config/connections').mongo;
-const initPassport = require('./config/passport');
+const mongoConnection = require('./common/connections').mongo;
+const initPassport = require('./common/passport');
 const mountRoutes = require('./routes');
 
 mongoose.connect(mongoConnection.url, {

@@ -33,7 +33,8 @@ block content
                         span(aria-hidden="true")
                     h4.modal-title Create Application
 
-                form(action="/api/v1/container/" method="post")
+                // TODO Call with selected Repo
+                form(action="/api/v1/container/1" method="post")
                     .modal-body
                         .form-group
                             label Choose your Project
