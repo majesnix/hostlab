@@ -1,6 +1,6 @@
-mixin menuItem(label, currentHref)
+mixin menuItem(label, currentHref, currentTarget)
     li(class={active: currentHref === currentPath})
-        a.nav-link(href=currentHref)
+        a.nav-link(href=currentHref target=currentTarget)
             i(class=attributes.class + " fa-fw")
             span= " " + label
 
@@ -9,9 +9,9 @@ aside.main-sidebar
         ul.sidebar-menu.tree(data-widget="tree")
             +menuItem("Dashboard", "/dashboard").fas.fa-tachometer-alt
             +menuItem("Node.js", "/node").fab.fa-node-js
-            +menuItem("MongoDB", "/mongo").fas.fa-database
-            +menuItem("PostgreSQL", "/postgres").fas.fa-database
-            +menuItem("GitLab", gitlab_url).fab.fa-gitlab
+            +menuItem("MongoDB", "/mongo", "_blank").fas.fa-database
+            +menuItem("PostgreSQL", "/postgres", "_blank").fas.fa-database
+            +menuItem("GitLab", gitlab_url, "_blank").fab.fa-gitlab
             +menuItem("Help", "/help").fas.fa-question-circle
             if user.isAdmin
                 li.header Administration
