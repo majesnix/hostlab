@@ -11,7 +11,7 @@ let cl = "";
 let container_user;
 router.get('/', async (req, res, next) => {
   // Example get MongoDB log
-  let container = docker.getContainer('af7429b6d0fa');
+  let container = docker.getContainer('e706d86b6f70');
   console.log(container);
  /**
  * Get logs from running container
@@ -31,7 +31,8 @@ function containerLogs(container) {
     stderr: true
   }, function(err, stream){
     if(err) {
-      return logger.error(err.message);
+      //return logger.error(err.message);
+        return;
     }
     container.modem.demuxStream(stream, logStream, logStream);
     stream.on('end', function(){

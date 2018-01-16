@@ -13,7 +13,7 @@ block content
                     p= message.info
     .row
         .col-md-12
-            .btn.btn-success(data-toggle="modal" data-target="#createContainerModal") Start Container
+            .btn.btn-success.btn-block(data-toggle="modal" data-target="#createContainerModal") Start Container
     .row
         .col-md-12
             if (container)
@@ -34,15 +34,15 @@ block content
                     h4.modal-title Create Application
 
                 // TODO Call with selected Repo
-                form(action="/api/v1/container/1" method="post")
+                form(action="#" method="post", class="createApp")
                     .modal-body
                         .form-group
                             label Choose your Project
-                            select.form-control.projectSelect
+                            select.form-control.repo(name="repo")
                                 for repo in repositories
-                                    option #{repo.name}
-                            label Hostname
-                            input.form-control(type="text" name="name" placeholder="Hostname...")
+                                    option(value=repo.id)= repo.name
+                            label Name
+                            input.form-control(type="text" name="name" placeholder="Name...")
                             label Location of your Start-Script
                             input.form-control(type="text" name="startScript" placeholder="Start-Script...")
 
@@ -53,42 +53,21 @@ block content
 block scripts
     script.
         $(document).ready(function(){
-          $(function() {
-            $('.activation').on('change', function() {
-              var containerID = $(this).attr('id');
-              if ($(this).is(':checked')) {
-                console.log('Start container:', containerID);
+          $('.createApp').on('submit', function(e) {
+            e.preventDefault();
 
-                // Ajax to start container
-                $.ajax({
-                  url: '/api/v1/container/' + containerID,
-                  method: 'POST',
-                  success: function(response){
-
-                  },
-                  error: function(err){
-
-                  }
-                })
-              }
-              else {
-                console.log('Stop container:', containerID)
-
-                // Ajax to stop container
-                $.ajax({
-                  url: '/api/v1/container/' + containerID,
-                  method: 'DELETE',
-                  success: function(response) {
-
-                  },
-                  error: function(err) {
-
-                  }
-                })
+            let repoId = $('.createApp .repo option:selected').val();
+            console.log(repoId);
+            $.ajax({
+              url: '/api/v1/container/' + repoId,
+              method: 'POST',
+              data: $(this).serialize(),
+              success: function(res) {
+                location.reload();
+              },
+              error: function(err) {
+                // TODO Error Handling
               }
             })
           });
-         })
-
-
-
+        })

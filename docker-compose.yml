@@ -6,6 +6,7 @@ services:
     ports:
      - "192.168.33.10:80:80"
      - "9229:9229"
+     - "8080:8080"
     env_file:
       - ./.env
     volumes:
