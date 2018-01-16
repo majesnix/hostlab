@@ -8,7 +8,7 @@ const gitlab_url = process.env.GITLAB_URL;
  * @param {string} [branch=master] The branch of the repository
  * @returns {Promise<Object>}
  * @example
- * //Holt die Package.json vom Projekt mit der ID 2 und der Branch 'master'
+ * //Holt die Package.json vom Projekt mit der ID 1 und der Branch 'master'
  * const info = await getPackageJSON('1');
  * 
  * //Holt die Package.json vom Projekt mit der ID 1 und der Branch 'test'
