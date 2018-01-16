@@ -8,10 +8,10 @@ const gitlab_url = process.env.GITLAB_URL;
 
 // WIP: Container Log
 let cl = "";
-let container;
+let container_user;
 router.get('/', async (req, res, next) => {
   // Example get MongoDB log
-  let container = docker.getContainer('378d0392deb8');
+  let container = docker.getContainer('2fd542784450');
   console.log(container);
  /**
  * Get logs from running container
@@ -59,6 +59,7 @@ function containerLogs(container) {
           repositories.push({
             id: project.id,
             name: project.name,
+            logs: cl,
             path: project.path_with_namespace,
             repo_url: project.http_url_to_repo,
           });

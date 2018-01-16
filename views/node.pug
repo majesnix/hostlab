@@ -33,7 +33,7 @@ block content
                         span(aria-hidden="true")
                     h4.modal-title Create Application
 
-                form(action="/api/v1/container/1", method="post")
+                form(action="/api/v1/container/" method="post")
                     .modal-body
                         .form-group
                             label Choose your Project
@@ -47,46 +47,47 @@ block content
 
                     .modal-footer
                         button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
-                        button.btn.btn-primary.createProj Create Project
+                        button.btn.btn-primary.createProj Application
 
 block scripts
     script.
-      $(function() {
-        $('.activation').on('change', function() {
-          var containerID = $(this).attr('id');
-          if ($(this).is(':checked')) {
-            console.log('Start container:', containerID);
+        $(document).ready(function(){
+          $(function() {
+            $('.activation').on('change', function() {
+              var containerID = $(this).attr('id');
+              if ($(this).is(':checked')) {
+                console.log('Start container:', containerID);
 
-            // Ajax to start container
-            $.ajax({
-              url: '/api/v1/container/' + containerID,
-              method: 'POST',
-              success: function(response){
+                // Ajax to start container
+                $.ajax({
+                  url: '/api/v1/container/' + containerID,
+                  method: 'POST',
+                  success: function(response){
 
-              },
-              error: function(err){
+                  },
+                  error: function(err){
 
+                  }
+                })
+              }
+              else {
+                console.log('Stop container:', containerID)
+
+                // Ajax to stop container
+                $.ajax({
+                  url: '/api/v1/container/' + containerID,
+                  method: 'DELETE',
+                  success: function(response) {
+
+                  },
+                  error: function(err) {
+
+                  }
+                })
               }
             })
-          }
-          else {
-            console.log('Stop container:', containerID)
-
-            // Ajax to stop container
-            $.ajax({
-              url: '/api/v1/container/' + containerID,
-              method: 'DELETE',
-              success: function(response) {
-
-              },
-              error: function(err) {
-
-              }
-            })
-          }
-        })
-      });
-
+          });
+         })
 
 
 
