@@ -11,12 +11,14 @@ const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
 const hostlab_ip = process.env.VM_HOSTLAB_IP;
 const proxy_port = process.env.PROXY_PORT;
+const mongoose = require('mongoose');
 
 const User = require('../../models/user');
 
 
 router.post('/:repositoryID', async (req, res, next) => {
     try {
+        const mongoID = mongoose.Types.ObjectId();
         const {repositoryID} = req.params;
         log('Creating Container with Repository ID:', repositoryID);
         const archive = 'archive.tar.gz';
@@ -58,6 +60,7 @@ router.post('/:repositoryID', async (req, res, next) => {
 
             const container = await docker.createContainer({
                 Image: 'nodeimage',
+                name: mongoID.toString(),
                 ExposedPorts: {
                     [(process.env.CONTAINER_USER_PORT || '8080') + '/tcp']: {},
                 },
@@ -77,7 +80,7 @@ router.post('/:repositoryID', async (req, res, next) => {
                 const appName = req.body.name;
                 const projID = JSON.parse(response.text).id;
 
-                User.findByIdAndUpdate(req.user._id, {$push: {containers: {name: `${appName}`, port: freePort, scriptLoc: '/a/path/'}}}, (err, user) => {
+                User.findByIdAndUpdate(req.user._id, {$push: {containers: {_id: `${mongoID}`, name: `${appName}`, port: freePort, scriptLoc: '/a/path/'}}}, (err, user) => {
                     if (err) {		
                         return next(err);		
                     }
