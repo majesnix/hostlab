@@ -3,13 +3,14 @@ const { promisify } = require('util');
 const tmp = require('tmp-promise');
 const snek = require('snekfetch');
 const write = promisify(require('fs').writeFile);
-const {docker, dockerfile} = require('../../config/docker');
+const {docker, dockerfile} = require('../../common/docker');
+const proxy = require('../../common/connections').proxy;
 const log = require('debug')('hostlab:route:api:container');
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
 const hostlab_ip = process.env.VM_HOSTLAB_IP;
 const proxy_port = process.env.PROXY_PORT;
-const proxy = require('../../config/connections').proxy;
+
 const User = require('../../models/user');
 
 
@@ -57,12 +58,12 @@ router.post('/:repositoryID', async (req, res, next) => {
             const container = await docker.createContainer({
                 Image: 'nodeimage',
                 ExposedPorts: {
-                    '8080/tcp': {},
+                    [(process.env.CONTAINER_USER_PORT || '8080') + '/tcp']: {},
                 },
                 Hostconfig: {
                     Privileged: true,
                     PortBindings: {
-                        '8080/tcp': [
+                        [(process.env.CONTAINER_USER_PORT || '8080') + '/tcp']: [
                             {
                                 HostPort: freePort.toString(),
                                 HostIP: hostlab_ip,

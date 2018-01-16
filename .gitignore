@@ -16,6 +16,7 @@ public/vendor/*
 hostlab-docker.sh
 
 *.env
+.env
 
 # ignore mac ds_store file
 .DS_Store

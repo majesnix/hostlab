@@ -7,7 +7,7 @@ services:
      - "192.168.33.10:80:80"
      - "9229:9229"
     env_file:
-      - ./config/hostlab.env
+      - ./.env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/app
@@ -19,7 +19,7 @@ services:
       - LDAP_DOMAIN=hostlab.local
       - LDAP_ADMIN_PASSWORD=12345
     volumes:
-      - ./ldapseed.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/testuser.ldif:ro
+      - ./common/ldapseed.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/testuser.ldif:ro
     command: [--copy-service, --loglevel, debug]
   gitlab:
     image: "gitlab/gitlab-ce"
@@ -28,7 +28,7 @@ services:
       - /srv/gitlab/config:/etc/gitlab
       - /srv/gitlab/logs:/var/log/gitlab
       - /srv/gitlab/data:/var/opt/gitlab
-      - ./config/gitlab.rb:/etc/gitlab/gitlab.rb
+      - ./common/gitlab.rb:/etc/gitlab/gitlab.rb
     ports:
       - "9080:80"
       - "9443:443"
