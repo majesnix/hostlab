@@ -1,16 +1,25 @@
+block config
 html
-    include ../includes/head
+    include head
 
     body.hold-transition.skin-black.sidebar-mini
         .wrapper
-            include ../includes/header
+            include header
             if !hideSidebar
                 include ../includes/sidebar
             .content-wrapper
-                if pageheader
+                if headerTitle !== undefined
                     section.content-header
                         h1= headerTitle
                 section.content.container-fluid
+                    .row
+                        .col-md-12
+                            if (message.error)
+                                .alert.alert-danger
+                                    p= message.error
+                            if (message.info)
+                                .alert.alert-success
+                                    p= message.info
                     block content
-        include ../includes/scripts
+        include scripts
         block scripts

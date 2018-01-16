@@ -72,16 +72,16 @@ function containerLogs(container) {
         snek.get(`http://localhost:${req.app.settings.port}/api/v1/users/${req.user._id}`).set('cookie', req.headers.cookie).then((response) => {
             users = response.body;
             container = users.containers;
-            res.render('node', { repositories, container });
+            res.render('apps/overview', { repositories, container });
         });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';
-      res.render('node', { container});
+      res.render('apps/overview', { container});
     }
   } catch (err) {
     if (err.text) {
       res.locals.message.error = `[GITLAB] ${err.text}`;
-      res.render('node', { container});
+      res.render('apps/overview', { container});
     }
     console.error(err);
     //return next(err);

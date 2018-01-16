@@ -1,29 +1,42 @@
-extends layouts/main
-include mixins/box2
+extends ../layouts/main
+
+block config
+    - var headerTitle = "Node.js Applications"
+
 
 block content
-    h1 Node.js Applications
     .row
         .col-md-12
-            if (message.error)
-                .alert.alert-danger
-                    p= message.error
-            if (message.info)
-                .alert.alert-success
-                    p= message.info
+            .btn.btn-success.btn-block(data-toggle="modal" data-target="#createContainerModal") Create Application
+    h2.page-header Created Applications
     .row
         .col-md-12
-            .btn.btn-success.btn-block(data-toggle="modal" data-target="#createContainerModal") Start Container
-    .row
-        .col-md-12
-            if (container)
-                each cont in container
-                    .col-sm-6.col-lg-3
-                        +box2(`${cont.name}`, cont.id, [`Status: ${/*app.status*/'Running'}`] , '#')
+            if container
+                each containerObject in container
+                    .col-sm-6.col-lg-4
+                        .box.box-solid(id=containerObject.id)
+                            .box-header.with-border
+                                a(href="/")
+                                    h3.box-title= containerObject.name
+                                .pull-right.box-tools
+                                    // TODO Link to proxied container (/org/user/name)
+                                    a.btn.btn-box-tool(href=containerObject.proxyLink, target="_blank")
+                                        i.fas.fa-link
+                                    // TODO Add Details page
+                                    a.btn.btn-box-tool(href="#", target="_blank")
+                                        i.fas.fa-wrench
+                            .box-body
+                                // TODO Add Repo Name
+                                p= "Base Repository: " + containerObject.repoName
+                                hr
+                                label.switch
+                                    // TODO Add Running or not
+                                    input.activation(type="checkbox" checked=containerObject.isRunning)
+                                    span.slider
                     .row
                     .col-sm12.col-lg-12
                         h3 Console
-                        textarea.console(name="console",readonly) #{cont.logs}
+                        textarea.console(name="console",readonly) #{containerObject.logs}
 
     .modal.fade.in#createContainerModal
         .modal-dialog
