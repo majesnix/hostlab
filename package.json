@@ -33,6 +33,7 @@
     "pug": "^2.0.0-rc.4",
     "redbird": "^0.7.0",
     "serve-favicon": "^2.4.5",
+    "slugify": "^1.2.9",
     "snekfetch": "^3.6.1",
     "tmp-promise": "^1.0.4"
   },

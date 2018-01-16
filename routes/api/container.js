@@ -6,6 +6,7 @@ const write = promisify(require('fs').writeFile);
 const {docker, dockerfile} = require('../../common/docker');
 const proxy = require('../../common/connections').proxy;
 const log = require('debug')('hostlab:route:api:container');
+const slugify = require("slugify");
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
 const hostlab_ip = process.env.VM_HOSTLAB_IP;
@@ -81,7 +82,7 @@ router.post('/:repositoryID', async (req, res, next) => {
                         return next(err);		
                     }
                     const userObj = user.email.split('@');
-                    proxy.register(`${hostlab_ip}:${proxy_port}/${userObj[1]}/${userObj[0]}/${appName}`, `${hostlab_ip}:${freePort}`);
+                    proxy.register(`${hostlab_ip}:${proxy_port}/${userObj[1]}/${userObj[0]}/${slugify(appName)}`, `${hostlab_ip}:${freePort}`);
                     res.send(200);
                 });
             });

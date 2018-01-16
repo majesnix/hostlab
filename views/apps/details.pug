@@ -1,0 +1,7 @@
+extends ../layouts/main
+
+block content
+    .row
+        .col-sm12.col-lg-12
+            h3 Console
+            textarea.console(name="console",readonly) #{container.logs}

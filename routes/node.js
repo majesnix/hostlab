@@ -5,45 +5,53 @@ const {docker, dockerfile} = require('../common/docker');
 const stream = require('stream');
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
+const ObjectId = require('mongoose').Types.ObjectId;
+const slugify = require('slugify');
 
 // WIP: Container Log
 let cl = "";
 let container_user;
+
+router.get('/:name', async(req, res, next) => {
+    const container = req.user.containers.find(e => slugify(e.name) === req.params.name);
+    res.render('apps/details', { container, headerTitle: container.name + " details" });
+});
+
 router.get('/', async (req, res, next) => {
   // Example get MongoDB log
   let container = docker.getContainer('e706d86b6f70');
   console.log(container);
- /**
- * Get logs from running container
- */
-function containerLogs(container) {
+  /**
+  * Get logs from running container
+  */
+  function containerLogs(container) {
 
-  // create a single stream for stdin and stdout
-  const logStream = new stream.PassThrough();
-  logStream.on('data', function(chunk){
-    cl += chunk.toString('utf8');
-    console.log(chunk.toString('utf8'));
-  });
-
-  container.logs({
-    follow: true,
-    stdout: true,
-    stderr: true
-  }, function(err, stream){
-    if(err) {
-      //return logger.error(err.message);
-        return;
-    }
-    container.modem.demuxStream(stream, logStream, logStream);
-    stream.on('end', function(){
-      logStream.end('!stop!');
+    // create a single stream for stdin and stdout
+    const logStream = new stream.PassThrough();
+    logStream.on('data', function(chunk){
+      cl += chunk.toString('utf8');
+      console.log(chunk.toString('utf8'));
     });
 
-    setTimeout(function() {
-      stream.destroy();
-    }, 1000);
-  });
-}
+    container.logs({
+      follow: true,
+      stdout: true,
+      stderr: true
+    }, function(err, stream){
+      if(err) {
+        //return logger.error(err.message);
+          return;
+      }
+      container.modem.demuxStream(stream, logStream, logStream);
+      stream.on('end', function(){
+        logStream.end('!stop!');
+      });
+
+      setTimeout(function() {
+        stream.destroy();
+      }, 1000);
+    });
+  }
 
   try {
     containerLogs(container);

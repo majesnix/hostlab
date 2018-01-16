@@ -14,9 +14,9 @@ block content
             if container
                 each containerObject in container
                     .col-sm-6.col-lg-4
-                        .box.box-solid(id=containerObject.id)
+                        .box.box-solid(id=containerObject._id)
                             .box-header.with-border
-                                a(href="/")
+                                a(href="/node/" + slugify(containerObject.name))
                                     h3.box-title= containerObject.name
                                 .pull-right.box-tools
                                     // TODO Link to proxied container (/org/user/name)
@@ -33,11 +33,6 @@ block content
                                     // TODO Add Running or not
                                     input.activation(type="checkbox" checked=containerObject.isRunning)
                                     span.slider
-                    .row
-                    .col-sm12.col-lg-12
-                        h3 Console
-                        textarea.console(name="console",readonly) #{containerObject.logs}
-
     .modal.fade.in#createContainerModal
         .modal-dialog
             .modal-content
