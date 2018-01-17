@@ -48,9 +48,11 @@ Hier sehen Sie viele Informationen zu Ihrer Datenbank und können von hier Anpas
 # Verwaltung der PostgreSQL DB
 
 # Gitlab
+
 Wenn Sie sich das erste mal erfolgreich im Hostlab eingeloggt haben wird Ihnen ein [Gitlab](#) Account erstellt.
 Um eine Node.js App deployen zu können müssen Sie Ihren Quellcode in ein Repository pushen.
 Nach einem erfolgreichen Push wird die Anwendung sofort im Hostlab registriert sobald das erste mal auf [Node.js](#/node) navigiert wird.
+
 ---
 # Zusätzliche Bedienung für Administratoren
 
@@ -63,9 +65,9 @@ Sollten tiefgreifendere Anpassungen vorgenommen werden müssen muss direkt in de
 
 ---
 # License
-Apache License
-Version 2.0, January 2004
-https://www.apache.org/licenses/
+Apache License  
+Version 2.0, January 2004  
+https://www.apache.org/licenses/  
 
    TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
