@@ -2,78 +2,149 @@ extends ../layouts/main
 
 block config
     - var headerTitle = "Node.js Applications"
+    // TODO Remove and replace with actual var
+    - var blueprints = [{id: 1, name: "Demo", repoId: 1, repoName: "testrepo", branch: "master"}]
+    - var applications = [{id: 1, name: "TestDemo", isRunning: true, blueprint: blueprints[0], path: "path", script: "demo.js"}]
 
 
 block content
     .row
         .col-md-12
-            .btn.btn-success.btn-block(data-toggle="modal" data-target="#createContainerModal") Create Application
-    h2.page-header Created Applications
+
+    h2.page-header
+        span(style="margin-right: 10px;")= ` Available Blueprints (${blueprints.length})`
+        .btn.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") New Blueprint
     .row
-        .col-md-12
-            if container
-                each containerObject in container.node
-                    .col-sm-6.col-lg-4
-                        .box.box-solid(id=containerObject._id)
-                            .box-header.with-border
-                                a(href="/node/" + slugify(containerObject.name))
-                                    h3.box-title= containerObject.name
-                                .pull-right.box-tools
-                                    a.btn.btn-box-tool(href=containerObject.proxyLink, target="_blank")
-                                        i.fas.fa-link
-                                    // TODO Add Details page
-                                    a.btn.btn-box-tool(href="#", target="_blank")
-                                        i.fas.fa-wrench
-                            .box-body
-                                p= "Base Repository: " + containerObject.repoName
-                                hr
-                                label.switch
-                                    // TODO Add Running or not
-                                    input.activation(type="checkbox" checked=containerObject.isRunning)
-                                    span.slider
-    .modal.fade.in#createContainerModal
+        each blueprint in blueprints
+            .col-md-12
+                .col-sm-6.col-lg-4
+                    .box.box-solid.blueprint(id=blueprint.id)
+                        .box-header.with-border
+                            h3.box-title= blueprint.name
+                            .pull-right.box-tools
+                                a.btn.btn-box-tool(href="#", target="_blank")
+                                    i.fas.fa-times.deleteBlueprint(data-id=blueprint.id)
+                        .box-body
+                            p= "Base Repository: " + blueprint.repoName
+                            hr
+                            button.btn.btn-block.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint.id data-name=blueprint.name) New Application
+
+    h2.page-header
+        span(style="margin-right: 10px;")= ` Available Applications (${blueprints.length})`
+    .row
+        each application in applications
+            .col-md-12
+                .col-sm-6.col-lg-4
+                    .box.box-solid.application(id=application.id)
+                        .box-header.with-border
+                            h3.box-title= application.name
+                            .pull-right.box-tools
+                                a.btn.btn-box-tool(href="#", target="_blank")
+                                    i.fas.fa-link.link(data-id=application.id)
+                                a.btn.btn-box-tool(href="#", target="_blank")
+                                    i.fas.fa-wrench.edit
+                        .box-body
+                            p= "Base Blueprint: " + application.blueprint.name
+                            hr
+                            label.switch
+                                input.activation(type="checkbox" checked=application.isRunning)
+                                span.slider
+
+    .modal.fade.in#newAppModal
         .modal-dialog
             .modal-content
                 .modal-header
                     button.close(data-dismiss="modal" aria-label="Close")
                         span(aria-hidden="true")
-                    h4.modal-title Create Application
+                    h4.modal-title n/A
 
                 // TODO Call with selected Repo
-                form(action="#" method="post", class="createApp")
+                form.createApplication(action="#" method="post", class="createApp")
+                    input(type="hidden" id="createAppBlueprintId" name="blueprintId" value="0")
                     .modal-body
+                        .form-group
+                            label(for="path") Mount Path
+                            input.form-control#path(type="text" name="path" placeholder="Path Name...")
+                        .form-group
+                            label Location of your Start-Script
+                            input.form-control(type="text" name="script" placeholder="Runscript...")
+                        .checkbox
+                            label
+                                input(type="checkbox", name="needsMongo")
+                                | Add MongoDB-Connection
+                    .modal-footer
+                        button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
+                        button.btn.btn-primary Create Application
+
+    .modal.fade.in#newBlueprintModal
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(data-dismiss="modal" aria-label="Close")
+                        span(aria-hidden="true")
+                    h4.modal-title New Blueprint
+
+                form.createBlueprint(action="#" method="post")
+                    .modal-body
+                        .form-group
+                            label Name
+                            input.form-control(type="text" name="name" placeholder="Name...")
                         .form-group
                             label Choose your Project
                             select.form-control.repo(name="repo")
                                 for repo in repositories
                                     option(value=repo.id)= repo.name
-                            label Name
-                            input.form-control(type="text" name="name" placeholder="Name...")
-                            label Location of your Start-Script
-                            input.form-control(type="text" name="startScript" placeholder="Start-Script...")
+                        .form-group
+                            label Branch Name
+                            input.form-control(type="text" name="branch" placeholder="e.g. master")
 
                     .modal-footer
                         button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
-                        button.btn.btn-primary.createProj Application
+                        button.btn.btn-primary Create Blueprint
 
 block scripts
     script.
         $(document).ready(function(){
-          $('.createApp').on('submit', function(e) {
-            e.preventDefault();
+            $('#newAppModal').on('show.bs.modal', function(event) {
+                let blueprintId = $(event.relatedTarget).data('id');
+                let modal = $(this);
 
-            let repoId = $('.createApp .repo option:selected').val();
-            console.log(repoId);
-            $.ajax({
-              url: '/api/v1/container/' + repoId,
-              method: 'POST',
-              data: $(this).serialize(),
-              success: function(res) {
-                location.reload();
-              },
-              error: function(err) {
-                // TODO Error Handling
-              }
-            })
-          });
+                $('#createAppBlueprintId').val(blueprintId);
+
+                modal.find('.modal-title').text('New Application based on Blueprint ' + $(event.relatedTarget).data('name'));
+            });
+
+            $('.createApplication').on('submit', function(e) {
+                e.preventDefault()
+                $(this).find('button').attr("disabled", true);
+
+                $.ajax({
+                    url: '/api/v1/application/',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        location.reload();
+                    },
+                    error: function(err) {
+                        // TODO Error Handling
+                    }
+                })
+            });
+
+            $('.createBlueprint').on('submit', function(e) {
+                e.preventDefault()
+                $(this).find('button').attr("disabled", true);
+
+                $.ajax({
+                    url: '/api/v1/blueprint/',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        location.reload();
+                    },
+                    error: function(err) {
+                        // TODO Error Handling
+                    }
+                })
+            });
         })
