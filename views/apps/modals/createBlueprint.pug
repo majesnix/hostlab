@@ -19,7 +19,7 @@ mixin createBlueprintModal
                                     option(value=repo.id)= repo.name
                         .form-group
                             label Branch Name
-                            select.form-control#createBlueprintRepo(name="repo")
+                            select.form-control#createBlueprintBranch(name="repo")
                                 each branch in repositories[0].branches
                                     option(value=branch selected=(branch === 'master'))= branch
                     .modal-footer
@@ -38,9 +38,9 @@ block append scripts
                 $('#createBlueprintName').val(repo.text().toLowerCase());
                 $('#createBlueprintBranch').empty();
 
-                for(branch in branches[repo.val()]) {
-                    $('#createBlueprintBranch').append(`<option value='${branch}'> ${branch}`);
-                }
+                branches[repo.val()].forEach(function(branch) {
+                    $('#createBlueprintBranch').append(`<option value='${branch}' selected='${branch==="master"}'> ${branch}`);
+                });
             });
             $('.createBlueprint').on('submit', function(e) {
                 e.preventDefault()
