@@ -12,7 +12,7 @@ block config
 block content
     h2.page-header
         span(style="margin-right: 10px;")= ` Blueprints (${blueprints.length})`
-        .btn.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") New Blueprint
+        .btn.btn-flat.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") New Blueprint
     .row
         each blueprint in blueprints
             .col-md-12
@@ -26,7 +26,7 @@ block content
                         .box-body
                             p= "Base Repository: " + blueprint.repoName
                             hr
-                            button.btn.btn-block.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint.id data-name=blueprint.name) New Application
+                            button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint.id data-name=blueprint.name) New Application
 
 
     h2.page-header
@@ -46,9 +46,7 @@ block content
                         .box-body
                             p= "Base Blueprint: " + application.blueprint.name
                             hr
-                            label.switch
-                                input.activation(type="checkbox" checked=application.isRunning)
-                                span.slider
+                            input.onOffToggle(type="checkbox" checked data-id=application.id)
 
 
     +createBlueprintModal()
@@ -57,6 +55,47 @@ block content
 block append scripts
     script.
         $(document).ready(function(){
+            const toggleOpts = {
+                on: 'Running',
+                onstyle: 'success',
+                off: 'Stopped',
+                offstyle: 'danger',
+                width: '128px',
+                style: 'btn-flat'
+            };
+
+            $('.onOffToggle').bootstrapToggle(toggleOpts).on('change', function(e) {
+                e.preventDefault();
+                let context = $(this);
+                context.bootstrapToggle('disable');
+
+                let checked = context.prop('checked');
+                let toggle = context.closest('.toggle');
+
+                if(checked) {
+                    toggle.toggleClass('btn-success btn-warning').find('.toggle-on').text("Starting...").toggleClass('btn-success btn-warning');
+                } else {
+                    toggle.toggleClass('btn-danger btn-warning').find('.toggle-off').text("Stopping...").toggleClass('btn-danger btn-warning');
+                }
+
+                $.ajax({
+                    url: '/api/v1/application/' + context.data('id') + "/" + (checked?"start":"stop"),
+                    method: 'POST',
+                    success: function(res) {
+                        if(checked) {
+                            toggle.toggleClass('btn-success btn-warning').find('.toggle-on').text("Running").toggleClass('btn-success btn-warning');
+                        } else {
+                            toggle.toggleClass('btn-danger btn-warning').find('.toggle-off').text("Stopped").toggleClass('btn-danger btn-warning');
+                        }
+
+                        context.bootstrapToggle('enable');
+                    },
+                    error: function(xhr) {
+                        $('#alerts').empty().append(`<div class="alert alert-danger">Toggle failed: ${xhr.responseJSON.message}`);
+                    }
+                });
+            });
+
             $('.blueprint .destroy').on('click', function(e) {
                 e.preventDefault();
                 if(confirm("Are you sure you want to delete this blueprint?")) {
