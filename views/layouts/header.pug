@@ -12,7 +12,8 @@ header.main-header
                 li.dropdown.user.user-menu
                     a.dropdown-toggle(href="#", data-toggle="dropdown")
                         img.user-image(src=user.avatar_url, alt="User Image")
-                        span.hidden-xs= user.firstname
+                        span.hidden-xs(style="padding-right: 8px;")= user.firstname
+                        i.hidden-xs.fas.fa-angle-down
                     ul.dropdown-menu
                         li.user-header
                             img.img-circle(src=user.avatar_url, alt="User Image")
