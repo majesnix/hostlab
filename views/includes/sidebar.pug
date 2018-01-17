@@ -9,8 +9,10 @@ aside.main-sidebar
         ul.sidebar-menu.tree(data-widget="tree")
             +menuItem("Dashboard", "/dashboard").fas.fa-tachometer-alt
             +menuItem("Node.js", "/node").fab.fa-node-js
-            +menuItem("MongoDB", "/mongo", "_blank").fas.fa-database
-            +menuItem("PostgreSQL", "/postgres", "_blank").fas.fa-database
+            if user.containers.mongo && user.containers.mongo.id
+                +menuItem("MongoDB", "/mongo", "_blank").fas.fa-database
+            if user.containers.postgres && user.containers.postgres.id
+                +menuItem("PostgreSQL", "/postgres", "_blank").fas.fa-database
             +menuItem("GitLab", gitlab_url, "_blank").fab.fa-gitlab
             +menuItem("Help", "/help").fas.fa-question-circle
             if user.isAdmin
