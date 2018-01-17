@@ -5,13 +5,15 @@ header.main-header
 
     nav.navbar.navbar-static-top
         a.sidebar-toggle(href="#", data-toggle="push-menu" role="button")
+            i.fas.fa-bars
             span.sr-only "Toggle Navigation
         .navbar-custom-menu
             ul.nav.navbar-nav
                 li.dropdown.user.user-menu
                     a.dropdown-toggle(href="#", data-toggle="dropdown")
                         img.user-image(src=user.avatar_url, alt="User Image")
-                        span.hidden-xs= user.firstname
+                        span.hidden-xs(style="padding-right: 8px;")= user.firstname
+                        i.hidden-xs.fas.fa-angle-down
                     ul.dropdown-menu
                         li.user-header
                             img.img-circle(src=user.avatar_url, alt="User Image")

@@ -32,8 +32,8 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     const blueprintID = req.param("id");
-    const userID = req.user._id;
-    User.findById(userID, function(err, user) {
+
+    User.findById(req.user._id, function(err, user) {
         user.blueprints.node.id(blueprintID).remove();
         user.save();
         res.send(200);
