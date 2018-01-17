@@ -1,0 +1,47 @@
+mixin createBlueprintModal
+    .modal.fade.in#newBlueprintModal
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(data-dismiss="modal" aria-label="Close")
+                        span(aria-hidden="true")
+                    h4.modal-title New Blueprint
+
+                form.createBlueprint(action="#" method="post")
+                    .modal-body
+                        .form-group
+                            label Name
+                            input.form-control(type="text" name="name" placeholder="Name...")
+                        .form-group
+                            label Choose your Project
+                            select.form-control.repo(name="repo")
+                                for repo in repositories
+                                    option(value=repo.id)= repo.name
+                        .form-group
+                            label Branch Name
+                            input.form-control(type="text" name="branch" placeholder="e.g. master")
+
+                    .modal-footer
+                        button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
+                        button.btn.btn-primary Create Blueprint
+
+block scripts
+    script.
+        $(document).ready(function() {
+            $('.createBlueprint').on('submit', function(e) {
+                e.preventDefault()
+                $(this).find('button').attr("disabled", true);
+
+                $.ajax({
+                    url: '/api/v1/blueprint/',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        location.reload();
+                    },
+                    error: function(err) {
+                        // TODO Error Handling
+                    }
+                })
+            });
+        });
