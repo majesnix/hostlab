@@ -9,14 +9,14 @@ mixin createApplicationModal
 
                 // TODO Call with selected Repo
                 form.createApplication(action="#" method="post", class="createApp")
-                    input(type="hidden" id="createAppBlueprintId" name="blueprintId" value="0")
+                    input#createAppBlueprintId(type="hidden" name="blueprintId" value="0")
                     .modal-body
                         .form-group
-                            label(for="path") Mount Path
-                            input.form-control#path(type="text" name="path" placeholder="Path Name...")
+                            label(for="createAppMountPath") Mount Path
+                            input.form-control#createAppMountPath(type="text" name="path" placeholder="Mount Path...")
                         .form-group
-                            label Location of your Start-Script
-                            input.form-control(type="text" name="script" placeholder="Runscript...")
+                            label(for="createAppScript") Location of your Start-Script
+                            input.form-control#createAppScript(type="text" name="script" placeholder="Runscript...")
                         .checkbox
                             label
                                 input(type="checkbox", name="needsMongo")
@@ -25,16 +25,16 @@ mixin createApplicationModal
                         button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
                         button.btn.btn-primary Create Application
 
-block scripts
+block append scripts
     script.
         $(document).ready(function() {
             $('#newAppModal').on('show.bs.modal', function(event) {
-                let blueprintId = $(event.relatedTarget).data('id');
-                let modal = $(this);
+                let target = $(event.relatedTarget);
 
-                $('#createAppBlueprintId').val(blueprintId);
+                $('#createAppBlueprintId').val(target.data('id'));
+                $('#createAppMountPath').val(target.data('name').toLowerCase());
 
-                modal.find('.modal-title').text('New Application based on Blueprint ' + $(event.relatedTarget).data('name'));
+                $(this).find('.modal-title').text('New Application based on Blueprint ' + target.data('name'));
             });
 
             $('.createApplication').on('submit', function(e) {

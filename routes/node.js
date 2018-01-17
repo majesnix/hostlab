@@ -63,6 +63,7 @@ router.get('/', async (req, res, next) => {
       const projects = JSON.parse(text);
       
       const repositories = [];
+      const branches = {};
       
       for (let project of projects) {
 
@@ -72,12 +73,16 @@ router.get('/', async (req, res, next) => {
         } catch (err) {}
         
         if (!project.archived && packagejson) {
+          let projBranches = JSON.parse((await snek.get(project._links.repo_branches + `?private_token=${gitlab_token}`)).text);
+          branches[project.id] = projBranches.map(e=>e.name);
+
           repositories.push({
             id: project.id,
             name: project.name,
             logs: cl,
             path: project.path_with_namespace,
             repo_url: project.http_url_to_repo,
+            branches: branches[project.id]
           });
         }
       }
@@ -87,7 +92,7 @@ router.get('/', async (req, res, next) => {
         snek.get(`http://localhost:${req.app.settings.port}/api/v1/users/${req.user._id}`).set('cookie', req.headers.cookie).then((response) => {
             users = response.body;
             container = users.containers;
-            res.render('apps/overview', { repositories, container });
+            res.render('apps/overview', { repositories, container, branches });
         });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';

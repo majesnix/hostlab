@@ -10,24 +10,38 @@ mixin createBlueprintModal
                 form.createBlueprint(action="#" method="post")
                     .modal-body
                         .form-group
-                            label Name
-                            input.form-control(type="text" name="name" placeholder="Name...")
+                            label(for="createBlueprintName") Name
+                            input.form-control#createBlueprintName(type="text" name="name" value=repositories[0].name.toLowerCase() placeholder="Name...")
                         .form-group
                             label Choose your Project
-                            select.form-control.repo(name="repo")
-                                for repo in repositories
+                            select.form-control#createBlueprintRepo(name="repo")
+                                each repo in repositories
                                     option(value=repo.id)= repo.name
                         .form-group
                             label Branch Name
-                            input.form-control(type="text" name="branch" placeholder="e.g. master")
-
+                            select.form-control#createBlueprintRepo(name="repo")
+                                each branch in repositories[0].branches
+                                    option(value=branch selected=(branch === 'master'))= branch
                     .modal-footer
                         button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
                         button.btn.btn-primary Create Blueprint
 
-block scripts
+block append scripts
     script.
         $(document).ready(function() {
+            const branches = !{JSON.stringify(branches)};
+
+            $('#createBlueprintRepo').on('change', function(e) {
+                let repo = $(this).find('option:selected').first();
+
+
+                $('#createBlueprintName').val(repo.text().toLowerCase());
+                $('#createBlueprintBranch').empty();
+
+                for(branch in branches[repo.val()]) {
+                    $('#createBlueprintBranch').append(`<option value='${branch}'> ${branch}`);
+                }
+            });
             $('.createBlueprint').on('submit', function(e) {
                 e.preventDefault()
                 $(this).find('button').attr("disabled", true);
