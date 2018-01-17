@@ -5,8 +5,7 @@ include modals/createApplication
 block config
     - var headerTitle = "Node.js Applications"
     // TODO Remove and replace with actual var
-    - var blueprints = [{id: 1, name: "Demo", repoId: 1, repoName: "testrepo", branch: "master"}]
-    - var applications = [{id: 1, name: "TestDemo", isRunning: true, blueprint: blueprints[0], path: "path", script: "demo.js"}]
+    - var applications = [{id: 1, name: "TestDemo", isRunning: true, blueprint: [{id: 1, name: "Demo", repoId: 1, repoName: "testrepo", branch: "master"}], path: "path", script: "demo.js"}]
 
 
 block content
@@ -17,16 +16,17 @@ block content
         each blueprint in blueprints
             .col-md-12
                 .col-sm-6.col-lg-4
-                    .box.box-solid.blueprint(id=blueprint.id)
+                    .box.box-solid.blueprint(id=blueprint._id)
                         .box-header.with-border
                             h3.box-title= blueprint.name
                             .pull-right.box-tools
-                                a.btn.btn-box-tool.destroy(href="#" data-id=blueprint.id)
+                                a.btn.btn-box-tool.destroy(href="#" data-id=blueprint._id)
                                     i.fas.fa-trash
                         .box-body
-                            p= "Base Repository: " + blueprint.repoName
+                            p= "Base Repository: " + blueprint.containingRepoName
+                            p= "Branch: " + blueprint.containingRepoBranch
                             hr
-                            button.btn.btn-block.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint.id data-name=blueprint.name) New Application
+                            button.btn.btn-block.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name) New Application
 
 
     h2.page-header

@@ -67,6 +67,16 @@ const userSchema = mongoose.Schema({
       },
     ],
   },
+  blueprints: {
+    node: [
+    {
+      name: String,
+      containingRepoName: String,
+      containingRepoID: Number,
+      containingRepoBranch: String,
+    },
+    ],
+  },
 });
 
 // ```js
