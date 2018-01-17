@@ -81,13 +81,20 @@ router.post('/:repositoryID', async (req, res, next) => {
                 const projID = JSON.parse(response.text).id;
                 const repoName = JSON.parse(response.text).name;
 
-                User.findByIdAndUpdate(req.user._id, {$push: {containers: {_id: `${mongoID}`, name: `${appName}`, port: freePort, scriptLoc: '/a/path/', repoName: `${repoName}`}}}, (err, user) => {
-                    if (err) {		
-                        return next(err);		
+                User.findById(req.user._id, (err, user) => {
+                    if (err) {
+                        return next(err);
                     }
                     const userObj = user.email.split('@');
-                    proxy.register(`${hostlab_ip}:${proxy_port}/${userObj[1]}/${userObj[0]}/${slugify(appName)}`, `${hostlab_ip}:${freePort}`);
-                    res.send(200);
+                    const proxyLink = `${hostlab_ip}:${proxy_port}/${userObj[1]}/${userObj[0]}/${slugify(appName)}`;
+
+                    User.findByIdAndUpdate(req.user._id, {$push: {containers: {_id: `${mongoID}`, name: `${appName}`, port: freePort, scriptLoc: '/a/path/', repoName: `${repoName}`, proxyLink: `${proxyLink}`}}}, (err, user) => {
+                        if (err) {
+                            return next(err);
+                        }
+                        proxy.register(`${hostlab_ip}:${proxy_port}/${userObj[1]}/${userObj[0]}/${slugify(appName)}`, `${hostlab_ip}:${freePort}`);
+                        res.send(200);
+                    });
                 });
             });
         });

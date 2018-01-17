@@ -41,6 +41,7 @@ const userSchema = mongoose.Schema({
       default: Date.now,
     },
     repoName: String,
+    proxyLink: String,
   }],
 });
 

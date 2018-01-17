@@ -19,14 +19,12 @@ block content
                                 a(href="/node/" + slugify(containerObject.name))
                                     h3.box-title= containerObject.name
                                 .pull-right.box-tools
-                                    // TODO Link to proxied container (/org/user/name)
                                     a.btn.btn-box-tool(href=containerObject.proxyLink, target="_blank")
                                         i.fas.fa-link
                                     // TODO Add Details page
                                     a.btn.btn-box-tool(href="#", target="_blank")
                                         i.fas.fa-wrench
                             .box-body
-                                // TODO Add Repo Name
                                 p= "Base Repository: " + containerObject.repoName
                                 hr
                                 label.switch
