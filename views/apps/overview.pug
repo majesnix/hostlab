@@ -22,8 +22,8 @@ block content
                         .box-header.with-border
                             h3.box-title= blueprint.name
                             .pull-right.box-tools
-                                a.btn.btn-box-tool(href="#", target="_blank")
-                                    i.fas.fa-times.deleteBlueprint(data-id=blueprint.id)
+                                a.destroy(href="#" data-id=blueprint.id)
+                                    i.fas.fa-trash
                         .box-body
                             p= "Base Repository: " + blueprint.repoName
                             hr
@@ -105,6 +105,23 @@ block content
 block scripts
     script.
         $(document).ready(function(){
+            $('.blueprint .destroy').on('click', function(e) {
+                e.preventDefault();
+                if(confirm("Are you sure you want to Delete this blueprint?")) {
+                    $.ajax({
+                        url: '/api/v1/blueprint/' + $(this).data('id'),
+                        method: 'DELETE',
+                        success: function(res) {
+                            location.reload();
+                        },
+                        error: function(err) {
+                            // TODO Error Handling
+                        }
+                    });
+                }
+            });
+
+
             $('#newAppModal').on('show.bs.modal', function(event) {
                 let blueprintId = $(event.relatedTarget).data('id');
                 let modal = $(this);
