@@ -12,7 +12,7 @@ block content
     .row
         .col-md-12
             if container
-                each containerObject in container
+                each containerObject in container.node
                     .col-sm-6.col-lg-4
                         .box.box-solid(id=containerObject._id)
                             .box-header.with-border
