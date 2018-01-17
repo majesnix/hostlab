@@ -79,8 +79,9 @@ router.post('/:repositoryID', async (req, res, next) => {
                 const response = await snek.get(`${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`);
                 const appName = req.body.name;
                 const projID = JSON.parse(response.text).id;
+                const repoName = JSON.parse(response.text).name;
 
-                User.findByIdAndUpdate(req.user._id, {$push: {containers: {_id: `${mongoID}`, name: `${appName}`, port: freePort, scriptLoc: '/a/path/'}}}, (err, user) => {
+                User.findByIdAndUpdate(req.user._id, {$push: {containers: {_id: `${mongoID}`, name: `${appName}`, port: freePort, scriptLoc: '/a/path/', repoName: `${repoName}`}}}, (err, user) => {
                     if (err) {		
                         return next(err);		
                     }

@@ -33,9 +33,14 @@ const userSchema = mongoose.Schema({
     type: Date,
   },
   containers: [{
-      name: String,
-      port: Number,
-      scriptLoc: String,
+    name: String,
+    port: Number,
+    scriptLoc: String,
+    created: {
+      type: Date,
+      default: Date.now,
+    },
+    repoName: String,
   }],
 });
 
