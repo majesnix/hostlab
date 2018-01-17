@@ -20,7 +20,7 @@ router.get('/:name', async(req, res, next) => {
 router.get('/', async (req, res, next) => {
   // Example get MongoDB log
   let container = docker.getContainer('e706d86b6f70');
-  console.log(container);
+  //console.log(container);
   /**
   * Get logs from running container
   */
@@ -30,7 +30,7 @@ router.get('/', async (req, res, next) => {
     const logStream = new stream.PassThrough();
     logStream.on('data', function(chunk){
       cl += chunk.toString('utf8');
-      console.log(chunk.toString('utf8'));
+      //console.log(chunk.toString('utf8'));
     });
 
     container.logs({
@@ -63,8 +63,15 @@ router.get('/', async (req, res, next) => {
       const projects = JSON.parse(text);
       
       const repositories = [];
+      
       for (let project of projects) {
-        if (!project.archived) {
+
+        let packagejson;
+        try {
+          packagejson = (await snek.head(`${gitlab_url}/api/v4/projects/${project.id}/repository/files/package.json?private_token=${gitlab_token}&ref=master`)) ? true : false;
+        } catch (err) {}
+        
+        if (!project.archived && packagejson) {
           repositories.push({
             id: project.id,
             name: project.name,
