@@ -1,0 +1,59 @@
+extends ../layouts/main
+
+block content
+    .panel.panel-default
+        .box.box-warning
+            .box-header.with-border
+                h3.box-title= "Editing User " + userToEdit.email
+            form.form-horizontal#editUser(action="" data-id=userToEdit._id)
+                .box-body
+                        .form-group
+                            label.col-sm-2.control-label(for="id") ID
+                            .col-sm-10: input.form-control#id(type="text", name="id" value=userToEdit._id, readonly)
+                        .form-group
+                            label.col-sm-2.control-label(for="gitlab") Gitlab ID
+                            .col-sm-10: input.form-control#gitlab(type="text", name="gitlab_id" value=userToEdit.gitlab_id, readonly)
+                        .form-group
+                            label.col-sm-2.control-label(for="email") E-Mail
+                            .col-sm-10: input.form-control#email(type="email", name="email" value=userToEdit.email, readonly)
+                        .form-group
+                            label.col-sm-2.control-label(for="active") Active
+                            .col-sm-10: input#active(type="checkbox", name="active" checked=userToEdit.active)
+                        .form-group
+                            label.col-sm-2.control-label(for="isAdmin") Admin
+                            .col-sm-10: input#isAdmin(type="checkbox", name="isAdmin" checked=userToEdit.isAdmin)
+                        .form-group
+                            label.col-sm-2.control-label(for="created") Created at
+                            .col-sm-10: input.form-control#created(type="text", name="created" value=userToEdit.created, readonly)
+                .box-footer
+                    button.btn.btn-primary.btn-flat.btn-block(type="submit") Update User
+
+block scripts
+    script.
+        $(document).ready(function() {
+            $('#editUser').on('submit', function(e) {
+                e.preventDefault();
+                let formButtons = $(this).find('button');
+
+                formButtons.attr('disabled', 1);
+
+                $.ajax({
+                    url: '/api/v1/users/' + $(this).data('id'),
+                    contentType: "application/json",
+                    method: 'PUT',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        active: $('#active').is(':checked'),
+                        isAdmin: $('#isAdmin').is(':checked')
+                    }),
+                    success: function(res) {
+                        formButtons.removeAttr('disabled');
+                        $('#alerts').empty().append("<div class='alert alert-success'><p>Update Successful</p></div>");
+                    },
+                    error: function(err) {
+                        formButtons.removeAttr('disabled');
+                        $('#alerts').empty().append("<div class='alert alert-danger'><p>Update Failed; " + err + "</p></div>");
+                    }
+                });
+            });
+        });

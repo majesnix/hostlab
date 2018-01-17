@@ -1,4 +1,4 @@
-extends layouts/main
+extends ../layouts/main
 
 mixin toggleIcon(state)
     span
@@ -17,5 +17,5 @@ block content
             for user in users
                 tr.user(data-id=user._id)
                     td: a(href="/admin/users/" + user._id)= user.email
-                    td: +toggleIcon(user.isActive)
+                    td: +toggleIcon(user.active)
                     td: +toggleIcon(user.isAdmin)

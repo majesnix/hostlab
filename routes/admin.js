@@ -24,7 +24,7 @@ router.get('/users', (req, res, next) => {
         users = r.body;
         // Zeige alle Nutzer
         log(users);
-        res.render('users', {users});
+        res.render('admin/users', {users});
       });
 
 });
@@ -38,7 +38,7 @@ router.get('/users/:id', (req, res, next) => {
         log(r.body);
         const user = r.body;
         // Zeige alle Nutzer
-        res.render('usersEdit', {user});
+        res.render('admin/usersEdit', {userToEdit: user});
       });
 });
 

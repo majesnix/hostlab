@@ -49,11 +49,11 @@ router.put('/:id', (req, res, next) => {
   // Ändere bestehenden Nutzer in der DB
   User.findByIdAndUpdate(id, update, {new: true}, function(err, user) {
     if (err) {
+      log(err);
       return next(err);
     }
-    log(user);
     // Erfolgreich geändert --> 200 OK
-    res.status(200).end(user);
+    res.status(200).json(user);
   });
 });
 
