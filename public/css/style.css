@@ -64,3 +64,7 @@
   }
 
 .toggle .toggle-handle { border-radius: 0; }
+
+.main-header .sidebar-toggle:before {
+  content: none;
+}
