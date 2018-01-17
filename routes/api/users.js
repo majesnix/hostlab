@@ -46,15 +46,22 @@ router.put('/:id', (req, res, next) => {
   const {id} = req.params;
   log(req.body);
   const update = req.body;
-  // Ändere bestehenden Nutzer in der DB
-  User.findByIdAndUpdate(id, update, {new: true}, function(err, user) {
-    if (err) {
-      log(err);
-      return next(err);
-    }
-    // Erfolgreich geändert --> 200 OK
-    res.status(200).json(user);
-  });
+  // Ändere den Nutzer nur, wenn er sich nicht selbst editiert
+  if(req.user._id.toString() === id) {
+    res.status(403).json({
+      message: "Unable to edit own user."
+    });
+  } else {
+    // Ändere bestehenden Nutzer in der DB
+    User.findByIdAndUpdate(id, update, {new: true}, function(err, user) {
+      if (err) {
+        log(err);
+        return next(err);
+      }
+      // Erfolgreich geändert --> 200 OK
+      res.status(200).json(user);
+    });
+  }
 });
 
 module.exports = router;

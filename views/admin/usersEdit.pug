@@ -50,9 +50,9 @@ block scripts
                         formButtons.removeAttr('disabled');
                         $('#alerts').empty().append("<div class='alert alert-success'><p>Update Successful</p></div>");
                     },
-                    error: function(err) {
+                    error: function(xhr) {
                         formButtons.removeAttr('disabled');
-                        $('#alerts').empty().append("<div class='alert alert-danger'><p>Update Failed; " + err + "</p></div>");
+                        $('#alerts').empty().append("<div class='alert alert-danger'><p>Update Failed; " + xhr.responseJSON.message + "</p></div>");
                     }
                 });
             });
