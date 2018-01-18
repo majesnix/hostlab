@@ -63,7 +63,6 @@ const userSchema = mongoose.Schema({
           default: Date.now,
         },
         repoName: String,
-        proxyLink: String,
         blueprint: {
           name: String,
           containingRepoName: String,

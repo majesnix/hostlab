@@ -98,7 +98,6 @@ router.post('/', async (req, res, next) => {
           const projID = JSON.parse(response.text).id;
           const repoName = JSON.parse(response.text).name;
           const userObj = user.email.split('@');
-          const proxyLink = `${hostlab_ip}:${proxy_port}/${userObj[1]}/${userObj[0]}/${slugify(mountPath)}`;
 
           User.findByIdAndUpdate(req.user._id, {
             $push: {
@@ -108,7 +107,6 @@ router.post('/', async (req, res, next) => {
                 port: freePort,
                 scriptLoc: '/a/path/',
                 repoName: `${repoName}`,
-                proxyLink: `${proxyLink}`,
                 blueprint: blueprint,
               },
             },
@@ -129,10 +127,27 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.delete('/:repositoryID', (req, res, next) => {
-  const {repositoryID} = req.params;
-  log('Deleting Container with Repository ID:', repositoryID);
-  res.send(repositoryID);
+router.delete('/:id', async (req, res, next) => {
+  const applicationID = req.param("id");
+  User.findById(req.user._id, function(err, user) {
+    user.containers.node.id(applicationID).remove();
+    user.save();
+    const container = docker.getContainer(applicationID);
+    container.inspect(function (err, data) {
+      if(data.State.Status == "running")
+      {
+        container.stop(function (err, data) {
+          container.remove(function (err, data) {
+            res.send(200);
+          });
+        });
+      } else {
+        container.remove(function (err, data) {
+          res.send(200);
+        });
+      }
+    });
+  })
 });
 
 module.exports = router;
