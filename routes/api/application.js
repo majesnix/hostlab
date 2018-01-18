@@ -90,6 +90,10 @@ router.post('/', async (req, res, next) => {
                   HostIP: hostlab_ip,
                 }],
             },
+            RestartPolicy: {
+              Name: 'unless-stopped',
+              MaximumRetryCount: 0
+            },
           },
         });
         container.start(async () => {
