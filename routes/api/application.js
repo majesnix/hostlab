@@ -52,7 +52,7 @@ router.post('/', async (req, res, next) => {
       const out = await docker.buildImage({
         context: path,
         src: ['Dockerfile', archive],
-      }, {t: 'nodeimage'});
+      }, {t: 'node_'+bluePrintID});
       out.pipe(process.stdout, {
         end: true,
       });
@@ -78,7 +78,7 @@ router.post('/', async (req, res, next) => {
         } while (usedPortFound);
 
         const container = await docker.createContainer({
-          Image: 'nodeimage',
+          Image: 'node_'+bluePrintID,
           name: mongoID.toString(),
           ExposedPorts: {
             [(process.env.CONTAINER_USER_PORT || '8080') + '/tcp']: {},
