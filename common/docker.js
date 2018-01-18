@@ -22,6 +22,7 @@ const docker = !host
     ? new Docker({socketPath})
     : new Docker({protocol, host, port});
 const networkUsers = process.env.DOCKER_NETWORK_NAME_USERS || 'hostlab_users';
+const stream = require('stream');
 
 log(docker);
 
@@ -41,6 +42,7 @@ module.exports = {
   docker,
   dockerfile,
   createAndStartUsersMongoInstance,
+  retrieveContainerLogs
 };
 
 /**
@@ -79,4 +81,39 @@ function createAndStartUsersMongoInstance(user, callback) {
               });
         });
       });
+}
+
+
+function retrieveContainerLogs(containerId) {
+    return new Promise(function(resolve, reject) {
+        let container = docker.getContainer(containerId);
+        let logOpts = {
+            stdout: 1,
+            stderr: 1,
+            tail:100,
+            follow:0
+        };
+
+        let containerLogs = [];
+
+        var logStream = new stream.PassThrough();
+        logStream.on('data', function(chunk){
+            containerLogs.push(chunk.toString('utf8'));
+        });
+
+        container.logs(logOpts, function(err, stream){
+            if(err) {
+                reject(err);
+            }
+            container.modem.demuxStream(stream, logStream, logStream);
+            stream.on('end', function(){
+                logStream.end();
+                resolve(containerLogs);
+            });
+
+            setTimeout(function() {
+                stream.destroy();
+            }, 2000);
+        });
+    });
 }

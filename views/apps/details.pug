@@ -1,7 +1,37 @@
 extends ../layouts/main
+include includes/toggle
 
 block content
     .row
         .col-sm12.col-lg-12
-            h3 Console
-            textarea.console(name="console",readonly) #{container.logs}
+            .box.box-solid
+                .box-header.with-border
+                    h3.box-title Application Details
+                .box-body
+                    p container.name
+                    input.onOffToggle(type="checkbox" checked=container.isRunning data-id=container._id)
+        .col-sm12.col-lg-12
+            .box.box-solid
+                .box-header.with-border
+                    h3.box-title Blueprint Details
+                .box-body
+                    p container.name
+        .col-sm12.col-lg-12
+            .box.box-solid
+                .box-header.with-border
+                    h3.box-title Container Logs
+                .box-body
+                    pre.console(name="console" style="font-family: Monospace;" readonly) !{containerLogs}
+        .col-sm12.col-lg-12
+            .box.box-solid
+                .box-header.with-border
+                    h3.box-title Danger Zone
+                .box-body
+                    button.btn.btn-flat.btn-danger.destroy Delete Application
+
+block append scripts
+    script.
+        $(document).ready(function() {
+            let console = $('.console');
+            console.scrollTop(console[0].scrollHeight);
+        });

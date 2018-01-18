@@ -1,20 +1,31 @@
 const router = require('express').Router();
 const log = require('debug')('hostlab:route:node');
 const snek = require('snekfetch');
-const {docker, dockerfile} = require('../common/docker');
+const {docker, dockerfile, retrieveContainerLogs} = require('../common/docker');
 const stream = require('stream');
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
 const ObjectId = require('mongoose').Types.ObjectId;
 const slugify = require('slugify');
+const Converter = require('ansi-to-html');
+const ansiConverter = new Converter;
+const sanitizeHtml = require('sanitize-html');
 
 // WIP: Container Log
 let cl = "";
 let container_user;
 
+
 router.get('/:name', async(req, res, next) => {
-    const container = req.user.containers.find(e => slugify(e.name) === req.params.name);
-    res.render('apps/details', { container, headerTitle: container.name + " details" });
+    const container = req.user.containers.node.find(e => slugify(e.name) === req.params.name);
+    container.isRunning = getStatusOfApplication(container._id);
+    containerLogs = (await retrieveContainerLogs(container._id)).map(e => sanitizeHtml(ansiConverter.toHtml(e), {
+        allowedTags: ['span'],
+        allowedAttributes: {
+            'span': ['style']
+        }
+    }));
+    res.render('apps/details', { container, containerLogs, headerTitle: container.name + " details" });
 });
 
 router.get('/', async (req, res, next) => {
