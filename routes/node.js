@@ -20,41 +20,8 @@ router.get('/:name', async(req, res, next) => {
 router.get('/', async (req, res, next) => {
   // Example get MongoDB log
   let container = docker.getContainer('e706d86b6f70');
-  //console.log(container);
-  /**
-  * Get logs from running container
-  */
-  function containerLogs(container) {
-
-    // create a single stream for stdin and stdout
-    const logStream = new stream.PassThrough();
-    logStream.on('data', function(chunk){
-      cl += chunk.toString('utf8');
-      //console.log(chunk.toString('utf8'));
-    });
-
-    container.logs({
-      follow: true,
-      stdout: true,
-      stderr: true
-    }, function(err, stream){
-      if(err) {
-        //return logger.error(err.message);
-          return;
-      }
-      container.modem.demuxStream(stream, logStream, logStream);
-      stream.on('end', function(){
-        logStream.end('!stop!');
-      });
-
-      setTimeout(function() {
-        stream.destroy();
-      }, 1000);
-    });
-  }
 
   try {
-    containerLogs(container);
     const gitlab_id = req.user.gitlab_id;
 
     if (gitlab_id) {
@@ -89,12 +56,20 @@ router.get('/', async (req, res, next) => {
       if (repositories.length === 0) {
         res.locals.message.info = 'You got no repositories';
       }
-        snek.get(`http://localhost:${req.app.settings.port}/api/v1/users/${req.user._id}`).set('cookie', req.headers.cookie).then((response) => {
-            users = response.body;
-            applications = users.containers.node;
-            blueprints = users.blueprints.node;
-            res.render('apps/overview', { repositories, applications, branches, blueprints });
-        });
+        const user = await snek.get(`http://localhost:${req.app.settings.port}/api/v1/users/${req.user._id}`).set('cookie', req.headers.cookie);
+        const parsedUser = JSON.parse(user.text)
+        applications = parsedUser.containers.node;
+        blueprints = parsedUser.blueprints.node;
+
+        for (var i=0; i<applications.length; i++){
+            const status = await getStatusOfApplication(applications[i]._id);
+            if (status == "running"){
+                applications[i]["isRunning"] = true;
+            } else {
+            applications[i]["isRunning"] = false;
+            }
+        }
+        res.render('apps/overview', { repositories, applications, branches, blueprints });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';
       res.render('apps/overview', { container});
@@ -108,5 +83,15 @@ router.get('/', async (req, res, next) => {
     //return next(err);
   }
 });
+
+function getStatusOfApplication(applicationName){
+    return new Promise(function(resolve, reject) {
+        const containerToInspect = docker.getContainer(applicationName);
+        containerToInspect.inspect(function (err, data) {
+            resolve(data.State.Status);
+        });
+    })
+
+}
 
 module.exports = router;
