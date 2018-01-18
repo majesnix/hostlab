@@ -35,6 +35,8 @@ router.post('/', async (req, res, next) => {
         }
       }
       repositoryID = blueprint.containingRepoID;
+      repositoryBranch = blueprint.containingRepoBranch;
+
       log('Creating Container with Repository ID:', repositoryID);
       const archive = 'archive.tar.gz';
       const {path} = await tmp.dir({
@@ -42,7 +44,7 @@ router.post('/', async (req, res, next) => {
         unsafeCleanup: true,
       });
       const response = await snek.get(
-          `${gitlab_url}/api/v4/projects/${repositoryID}/repository/archive?private_token=${gitlab_token}`);
+          `${gitlab_url}/api/v4/projects/${repositoryID}/repository/archive?private_token=${gitlab_token}&sha=${repositoryBranch}`);
       await write(`${path}/${archive}`, response.body);
       log('File Saved.');
       await write(`${path}/Dockerfile`, dockerfile.node(archive), 'utf-8');
