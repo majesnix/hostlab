@@ -4,8 +4,6 @@ include modals/createApplication
 
 block config
     - var headerTitle = "Node.js Applications"
-    // TODO Remove and replace with actual var
-    - var applications = [{id: 1, name: "TestDemo", isRunning: true, blueprint: [{id: 1, name: "Demo", repoId: 1, repoName: "testrepo", branch: "master"}], path: "path", script: "demo.js"}]
 
 
 block content
@@ -30,23 +28,23 @@ block content
 
 
     h2.page-header
-        span(style="margin-right: 10px;")= ` Applications (${blueprints.length})`
+        span(style="margin-right: 10px;")= ` Applications (${applications.length})`
     .row
         each application in applications
             .col-md-12
                 .col-sm-6.col-lg-4
-                    .box.box-solid.application(id=application.id)
+                    .box.box-solid.application(id=application._id)
                         .box-header.with-border
                             h3.box-title= application.name
                             .pull-right.box-tools
-                                a.btn.btn-box-tool(href="#", target="_blank")
-                                    i.fas.fa-link.link(data-id=application.id)
+                                a.btn.btn-box-tool(href=application.proxyLink, target="_blank")
+                                    i.fas.fa-link.link(data-id=application._id)
                                 a.btn.btn-box-tool(href="/node/" + slugify(application.name))
                                     i.fas.fa-wrench.edit
                         .box-body
-                            p= "Base Blueprint: " + application.blueprint.name
+                            p= "Base Blueprint: "+ application.blueprint.name
                             hr
-                            input.onOffToggle(type="checkbox" checked data-id=application.id)
+                            input.onOffToggle(type="checkbox" checked data-id=application._id)
 
 
     +createBlueprintModal()

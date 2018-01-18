@@ -64,6 +64,12 @@ const userSchema = mongoose.Schema({
         },
         repoName: String,
         proxyLink: String,
+        blueprint: {
+          name: String,
+          containingRepoName: String,
+          containingRepoID: Number,
+          containingRepoBranch: String,
+        },
       },
     ],
   },

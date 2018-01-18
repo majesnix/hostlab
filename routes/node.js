@@ -91,9 +91,9 @@ router.get('/', async (req, res, next) => {
       }
         snek.get(`http://localhost:${req.app.settings.port}/api/v1/users/${req.user._id}`).set('cookie', req.headers.cookie).then((response) => {
             users = response.body;
-            container = users.containers;
+            applications = users.containers.node;
             blueprints = users.blueprints.node;
-            res.render('apps/overview', { repositories, container, branches, blueprints });
+            res.render('apps/overview', { repositories, applications, branches, blueprints });
         });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';
