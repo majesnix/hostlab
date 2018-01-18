@@ -127,6 +127,36 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.post('/:id/start', async (req, res, next) => {
+  const applicationID = req.param("id");
+  log("nice");
+  const container = docker.getContainer(applicationID);
+  container.inspect(function (err, data) {
+    if(data.State.Status == "running") {
+      res.send(400,{ message: 'Bad Request: Container is already running.' });
+    }else {
+      container.start(function (err, data) {
+        res.send(200);
+      });
+    }
+  });
+});
+
+router.post('/:id/stop', async (req, res, next) => {
+  const applicationID = req.param("id");
+  log("nice");
+  const container = docker.getContainer(applicationID);
+  container.inspect(function (err, data) {
+    if(data.State.Status == "running") {
+      container.stop(function (err, data) {
+        res.send(200);
+      });
+    }else {
+      res.send(400,{ message: 'Bad Request: Container is not running.' });
+    }
+  });
+});
+
 router.delete('/:id', async (req, res, next) => {
   const applicationID = req.param("id");
   User.findById(req.user._id, function(err, user) {
@@ -134,8 +164,7 @@ router.delete('/:id', async (req, res, next) => {
     user.save();
     const container = docker.getContainer(applicationID);
     container.inspect(function (err, data) {
-      if(data.State.Status == "running")
-      {
+      if(data.State.Status == "running") {
         container.stop(function (err, data) {
           container.remove(function (err, data) {
             res.send(200);
