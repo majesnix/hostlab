@@ -121,7 +121,7 @@ module.exports = (app) => {
             // user has a hostlab account
             else {
                 //check for Gitlab Account
-                
+
             // DISCUSS: Or check for Unique key constraint error
                 hostlabUser.updateLastLogin();
                 return done(null, hostlabUser);
@@ -131,9 +131,9 @@ module.exports = (app) => {
         catch (err) {
             if (err.message.includes('getaddrinfo ENOTFOUND')) {
                 return done(null, false,
-                    {message: 'Gitlab is temporarily not available, please try again later'});
+                    {message: 'GitLab is temporarily unavailable.\nPlease try again later.'});
             } else if (err.message.includes('connect ECONNREFUSED')) {
-                return done(null, false, { message: 'Gitlab is temorarily not available, please try again later'});
+                return done(null, false, { message: 'GitLab is temporarily unavailable.\nPlease try again later.'});
             } else if (err.message.includes('401 Unauthorized')) {
                 return done(null, false, { message: '[GITLAB] Invalid Access Token'});
             } else {
@@ -141,7 +141,6 @@ module.exports = (app) => {
                 return done(null, false, {message: err.message});
             }
         }
-
     },
     ));
 };
