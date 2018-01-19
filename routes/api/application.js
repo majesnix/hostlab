@@ -3,7 +3,8 @@ const {promisify} = require('util');
 const tmp = require('tmp-promise');
 const snek = require('snekfetch');
 const write = promisify(require('fs').writeFile);
-const {docker, dockerfile} = require('../../common/docker');
+const {docker, dockerfile, createAndStartUsersMongoInstance, createAndStartUsersMongoExpressInstance} = require(
+    '../../common/docker');
 const proxy = require('../../common/connections').proxy;
 const log = require('debug')('hostlab:route:api:application');
 const slugify = require('slugify');
@@ -18,9 +19,9 @@ const User = require('../../models/user');
 router.post('/', async (req, res, next) => {
   try {
     const mongoID = mongoose.Types.ObjectId();
-    const bluePrintID = req.param("blueprintId");
-    const mountPath = req.param("path");
-    const script = req.param("script");
+    const bluePrintID = req.param('blueprintId');
+    const mountPath = req.param('path');
+    const script = req.param('script');
 
     var blueprint;
 
@@ -30,7 +31,7 @@ router.post('/', async (req, res, next) => {
       }
       const blueprints = user.blueprints.node;
       for (var i in blueprints) {
-        if(blueprints[i]._id == bluePrintID){
+        if (blueprints[i]._id == bluePrintID) {
           blueprint = blueprints[i];
         }
       }
@@ -52,7 +53,7 @@ router.post('/', async (req, res, next) => {
       const out = await docker.buildImage({
         context: path,
         src: ['Dockerfile', archive],
-      }, {t: 'node_'+bluePrintID});
+      }, {t: 'node_' + bluePrintID});
       out.pipe(process.stdout, {
         end: true,
       });
@@ -61,7 +62,7 @@ router.post('/', async (req, res, next) => {
 
         const resUsers = await snek.get(
             `http://localhost:${req.app.settings.port}/api/v1/users`).
-        set('cookie', req.headers.cookie);
+            set('cookie', req.headers.cookie);
         users = resUsers.body;
         let usedPortFound = false;
 
@@ -78,7 +79,7 @@ router.post('/', async (req, res, next) => {
         } while (usedPortFound);
 
         const container = await docker.createContainer({
-          Image: 'node_'+bluePrintID,
+          Image: 'node_' + bluePrintID,
           name: mongoID.toString(),
           ExposedPorts: {
             [(process.env.CONTAINER_USER_PORT || '8080') + '/tcp']: {},
@@ -94,7 +95,7 @@ router.post('/', async (req, res, next) => {
             },
             RestartPolicy: {
               Name: 'unless-stopped',
-              MaximumRetryCount: 0
+              MaximumRetryCount: 0,
             },
           },
         });
@@ -124,6 +125,7 @@ router.post('/', async (req, res, next) => {
                 `${hostlab_ip}:${proxy_port}/${userObj[1]}/${userObj[0]}/${slugify(
                     mountPath)}`, `${hostlab_ip}:${freePort}`);
             res.send(200);
+            log('done');
           });
         });
       });
@@ -134,14 +136,14 @@ router.post('/', async (req, res, next) => {
 });
 
 router.post('/:id/start', async (req, res, next) => {
-  const applicationID = req.param("id");
-  log("nice");
+  const applicationID = req.param('id');
+  log('nice');
   const container = docker.getContainer(applicationID);
-  container.inspect(function (err, data) {
-    if(data.State.Status == "running") {
-      res.send(400,{ message: 'Bad Request: Container is already running.' });
-    }else {
-      container.start(function (err, data) {
+  container.inspect(function(err, data) {
+    if (data.State.Status == 'running') {
+      res.send(400, {message: 'Bad Request: Container is already running.'});
+    } else {
+      container.start(function(err, data) {
         res.send(200);
       });
     }
@@ -149,40 +151,40 @@ router.post('/:id/start', async (req, res, next) => {
 });
 
 router.post('/:id/stop', async (req, res, next) => {
-  const applicationID = req.param("id");
-  log("nice");
+  const applicationID = req.param('id');
+  log('nice');
   const container = docker.getContainer(applicationID);
-  container.inspect(function (err, data) {
-    if(data.State.Status == "running") {
-      container.stop(function (err, data) {
+  container.inspect(function(err, data) {
+    if (data.State.Status == 'running') {
+      container.stop(function(err, data) {
         res.send(200);
       });
-    }else {
-      res.send(400,{ message: 'Bad Request: Container is not running.' });
+    } else {
+      res.send(400, {message: 'Bad Request: Container is not running.'});
     }
   });
 });
 
 router.delete('/:id', async (req, res, next) => {
-  const applicationID = req.param("id");
+  const applicationID = req.param('id');
   User.findById(req.user._id, function(err, user) {
     user.containers.node.id(applicationID).remove();
     user.save();
     const container = docker.getContainer(applicationID);
-    container.inspect(function (err, data) {
-      if(data.State.Status == "running") {
-        container.stop(function (err, data) {
-          container.remove(function (err, data) {
+    container.inspect(function(err, data) {
+      if (data.State.Status == 'running') {
+        container.stop(function(err, data) {
+          container.remove(function(err, data) {
             res.send(200);
           });
         });
       } else {
-        container.remove(function (err, data) {
+        container.remove(function(err, data) {
           res.send(200);
         });
       }
     });
-  })
+  });
 });
 
 module.exports = router;

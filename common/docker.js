@@ -46,7 +46,7 @@ const usersNetwork = 'hostlab_users';
 function createAndStartUsersMongoInstance(req, callback) {
   // Check if user already owns a mongoDB instance
   if (req.user.containers.mongo.id) {
-    return callback(new Error('User already owns a mongoDB instance.'));
+    return callback(null);
   }
   docker.createContainer({
         Image: 'mvertes/alpine-mongo:latest',
@@ -73,6 +73,52 @@ function createAndStartUsersMongoInstance(req, callback) {
               });
         });
       });
+}
+
+function createAndStartUsersMongoExpressInstance(req, callback) {
+
+  docker.getContainer(req.user.containers.mongo.id).inspect((err, data) => {
+        if (err) {
+          next(err);
+        }
+        const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
+        log(containerIP);
+        docker.createContainer({
+              Image: 'mongo-express',
+              Env: [
+                'ME_CONFIG_MONGODB_ENABLE_ADMIN=true',
+                `ME_CONFIG_MONGODB_SERVER=${containerIP}`,
+              ],
+              ExposedPorts: {
+                '8081/tcp': {},
+              },
+              Hostconfig: {
+                NetworkMode: networkUsers,
+              },
+            },
+            function createdContainer(err, container) {
+              if (err) {
+                return callback(err);
+              }
+              container.start(function startedContainer(err, data) {
+                if (err) {
+                  return callback(err);
+                }
+                log(data);
+                req.user.update({'containers.mongoExpress.id': container.id},
+                    function updatedUser(err, raw) {
+                      if (err) {
+                        return callback(err);
+                      }
+                      callback(null, container.id);
+                    });
+
+              });
+            });
+      },
+  )
+  ;
+
 }
 
 function retrieveContainerLogs(containerId) {
@@ -113,5 +159,6 @@ module.exports = {
   docker,
   dockerfile,
   createAndStartUsersMongoInstance,
+  createAndStartUsersMongoExpressInstance,
   retrieveContainerLogs,
 };
