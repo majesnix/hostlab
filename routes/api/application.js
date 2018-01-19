@@ -95,11 +95,7 @@ router.post('/', async (req, res, next) => {
                   HostPort: freePort.toString(),
                   HostIP: hostlab_ip,
                 }],
-            },
-            RestartPolicy: {
-              Name: 'unless-stopped',
-              MaximumRetryCount: 0,
-            },
+            }
           },
         });
         container.start(async () => {
