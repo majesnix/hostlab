@@ -38,7 +38,7 @@ block content
                         .box-header.with-border
                             h3.box-title= application.name
                             .pull-right.box-tools
-                                a.btn.btn-box-tool(href=application.proxyLink, target="_blank")
+                                a.btn.btn-box-tool(href=generateMountPath(user.email, application.name), target="_blank")
                                     i.fas.fa-link.link(data-id=application._id)
                                 a.btn.btn-box-tool(href="/node/" + slugify(application.name))
                                     i.fas.fa-wrench.edit

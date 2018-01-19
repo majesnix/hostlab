@@ -11,6 +11,7 @@ const Converter = require('ansi-to-html');
 const ansiConverter = new Converter;
 const sanitizeHtml = require('sanitize-html');
 const {getPackageJSON} = require('../modules/getpackagejson');
+const { generateMountPath } = require('../modules/generatemountpath');
 
 // WIP: Container Log
 let cl = "";
@@ -92,7 +93,7 @@ router.get('/', async (req, res, next) => {
             applications[i]["isRunning"] = status === "running";
         }
 
-        res.render('apps/overview', { repositories, applications, branches, blueprints });
+        res.render('apps/overview', { repositories, applications, branches, blueprints, generateMountPath });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';
       res.render('apps/overview', { container});
