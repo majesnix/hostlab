@@ -13,15 +13,16 @@ const gitlab_url = process.env.GITLAB_URL;
 const hostlab_ip = process.env.VM_HOSTLAB_IP;
 const proxy_port = process.env.PROXY_PORT;
 const mongoose = require('mongoose');
+const { getPackageJSON } = require('../../modules/getpackagejson');
 
 const User = require('../../models/user');
 
 router.post('/', async (req, res, next) => {
   try {
     const mongoID = mongoose.Types.ObjectId();
-    const bluePrintID = req.param('blueprintId');
-    const mountPath = req.param('path');
-    const script = req.param('script');
+    const bluePrintID = req.body.blueprintId;
+    const mountPath = req.body.path;
+    const scriptIndex = req.body.scriptIndex;
 
     var blueprint;
 
@@ -37,6 +38,7 @@ router.post('/', async (req, res, next) => {
       }
       repositoryID = blueprint.containingRepoID;
       repositoryBranch = blueprint.containingRepoBranch;
+      const packageJson = await getPackageJSON(repositoryID, repositoryBranch);
 
       log('Creating Container with Repository ID:', repositoryID);
       const archive = 'archive.tar.gz';
@@ -80,6 +82,7 @@ router.post('/', async (req, res, next) => {
 
         const container = await docker.createContainer({
           Image: 'node_' + bluePrintID,
+          Cmd: (Object.keys(packageJson.scripts)[scriptIndex] || 'start'),
           name: mongoID.toString(),
           ExposedPorts: {
             [(process.env.CONTAINER_USER_PORT || '8080') + '/tcp']: {},
@@ -105,14 +108,12 @@ router.post('/', async (req, res, next) => {
           const projID = JSON.parse(response.text).id;
           const repoName = JSON.parse(response.text).name;
           const userObj = user.email.split('@');
-
           User.findByIdAndUpdate(req.user._id, {
             $push: {
               'containers.node': {
                 _id: `${mongoID}`,
                 name: `${mountPath}`,
                 port: freePort,
-                scriptLoc: '/a/path/',
                 repoName: `${repoName}`,
                 blueprint: blueprint,
               },
@@ -155,7 +156,7 @@ router.post('/:id/stop', async (req, res, next) => {
   log('nice');
   const container = docker.getContainer(applicationID);
   container.inspect(function(err, data) {
-    if (data.State.Status == 'running') {
+    if(data.State.Status === "running") {
       container.stop(function(err, data) {
         res.send(200);
       });
@@ -172,7 +173,7 @@ router.delete('/:id', async (req, res, next) => {
     user.save();
     const container = docker.getContainer(applicationID);
     container.inspect(function(err, data) {
-      if (data.State.Status == 'running') {
+      if(data.State.Status === "running") {
         container.stop(function(err, data) {
           container.remove(function(err, data) {
             res.send(200);

@@ -10,6 +10,7 @@ const slugify = require('slugify');
 const Converter = require('ansi-to-html');
 const ansiConverter = new Converter;
 const sanitizeHtml = require('sanitize-html');
+const {getPackageJSON} = require('../modules/getpackagejson');
 
 // WIP: Container Log
 let cl = "";
@@ -68,18 +69,29 @@ router.get('/', async (req, res, next) => {
         res.locals.message.info = 'You got no repositories';
       }
         const user = await snek.get(`http://localhost:${req.app.settings.port}/api/v1/users/${req.user._id}`).set('cookie', req.headers.cookie);
-        const parsedUser = JSON.parse(user.text)
+        const parsedUser = JSON.parse(user.text);
         applications = parsedUser.containers.node;
-        blueprints = parsedUser.blueprints.node;
+        let blueprints = [];
 
-        for (var i=0; i<applications.length; i++){
-            const status = await getStatusOfApplication(applications[i]._id);
-            if (status == "running"){
-                applications[i]["isRunning"] = true;
+        for(blueprint of parsedUser.blueprints.node) {
+            let packageJson = await getPackageJSON(blueprint.containingRepoID, blueprint.containingRepoBranch);
+
+            if(typeof packageJson.scripts === 'object' && Object.keys(packageJson.scripts).length > 0) {
+                blueprint.scripts = Object.keys(packageJson.scripts);
             } else {
-            applications[i]["isRunning"] = false;
+                blueprint.scripts = [];
             }
+
+            log(blueprint);
+
+            blueprints.push(blueprint);
         }
+
+        for(let i=0; i<applications.length; i++){
+            let status = await getStatusOfApplication(applications[i]._id);
+            applications[i]["isRunning"] = status === "running";
+        }
+
         res.render('apps/overview', { repositories, applications, branches, blueprints });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';

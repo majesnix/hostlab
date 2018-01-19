@@ -25,7 +25,7 @@ block content
                             p= "Base Repository: " + blueprint.containingRepoName
                             p= "Branch: " + blueprint.containingRepoBranch
                             hr
-                            button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name) New Application
+                            button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name, data-scripts=(new Buffer(JSON.stringify(blueprint.scripts)).toString('base64'))) New Application
 
 
     h2.page-header

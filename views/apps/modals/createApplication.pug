@@ -15,8 +15,8 @@ mixin createApplicationModal
                             label(for="createAppMountPath") Mount Path
                             input.form-control#createAppMountPath(type="text" name="path" placeholder="Mount Path...")
                         .form-group
-                            label(for="createAppScript") Location of your Start-Script
-                            input.form-control#createAppScript(type="text" name="script" placeholder="Runscript...")
+                            label Select your Start Script
+                            select.form-control#createBlueprintScripts(name="scriptIndex")
                         .checkbox
                             label
                                 input(type="checkbox", name="needsMongo")
@@ -33,6 +33,15 @@ block append scripts
 
                 $('#createAppBlueprintId').val(target.data('id'));
                 $('#createAppMountPath').val(target.data('name').toLowerCase());
+                const createBlueprintScripts = $('#createBlueprintScripts').empty();
+
+                JSON.parse(atob(target.data('scripts'))).forEach(function(script, idx) {
+                    createBlueprintScripts.append($('<option>', {
+                        value: idx,
+                        selected: script === 'start',
+                        text: script
+                    }));
+                });
 
                 $(this).find('.modal-title').text('New Application based on Blueprint ' + target.data('name'));
             });
