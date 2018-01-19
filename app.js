@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
+const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -11,6 +12,7 @@ const debug = require('debug')('hostlab:app');
 const mongoConnection = require('./common/connections').mongo;
 const initPassport = require('./common/passport');
 const mountRoutes = require('./routes');
+const methodOverride = require('method-override');
 
 mongoose.connect(mongoConnection.url, {
   useMongoClient: true,
@@ -29,17 +31,18 @@ app.use((req, res, next) => {
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'keyboard cat',
-  store: new MongoStore({
-    mongooseConnection: mongoose.connection,
-    // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
-    touchAfter: 5 // time period in seconds
-  }),
+      secret: 'keyboard cat',
+      store: new MongoStore({
+        mongooseConnection: mongoose.connection,
+        // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
+        touchAfter: 5 // time period in seconds
+      }),
       // Cookies werden nach der maxAge Zeit gelöscht, auch bei Nutzerinteraktion
       // Durch rolling: true wird bei jedem Request das maxAge neu gesetzt
       rolling: true,
@@ -57,6 +60,16 @@ app.use(flash());
 
 // Initialize und configure Passport
 initPassport(app);
+
+// Override the original HTTP method with the method in `req.body._method`
+app.use(methodOverride((req) => {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    // look in urlencoded POST bodies and delete it
+    const {_method} = req.body;
+    delete req.body._method;
+    return _method;
+  }
+}));
 
 // Mount routes
 mountRoutes(app);
