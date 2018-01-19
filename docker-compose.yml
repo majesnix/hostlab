@@ -1,36 +1,28 @@
 version: "3"
-
 services:
   app:
-    build: .
+    image: hostlab/hostlab:latest
     ports:
-     - "192.168.33.10:80:80"
-     - "9229:9229"
-     - "8080:8080"
+      - ${REMOTE_IP}:${REMOTE_PORT:-8080}:8080
+    networks:
+      - app
+      - users
+    depends_on:
+      - db
     env_file:
-      - ./.env
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./:/app
-  mongo:
-    image: "mongo:latest"
-  ldap:
-    image: "osixia/openldap:1.1.11"
+      - .env
     environment:
-      - LDAP_DOMAIN=hostlab.local
-      - LDAP_ADMIN_PASSWORD=12345
+      - MONGO_URL=mongodb://db/hostlab
     volumes:
-      - ./common/ldapseed.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/testuser.ldif:ro
-    command: [--copy-service, --loglevel, debug]
-  gitlab:
-    image: "gitlab/gitlab-ce"
-    hostname: gitlab
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  db:
+    image: mvertes/alpine-mongo:latest
+    networks:
+      - app
     volumes:
-      - /srv/gitlab/config:/etc/gitlab
-      - /srv/gitlab/logs:/var/log/gitlab
-      - /srv/gitlab/data:/var/opt/gitlab
-      - ./common/gitlab.rb:/etc/gitlab/gitlab.rb
-    ports:
-      - "9080:80"
-      - "9443:443"
-      - "9022:22"
+      - /srv/hostlab/db:/data/db:rw
+networks:
+  app:
+    driver: bridge
+  users:
+    driver: bridge

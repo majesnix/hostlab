@@ -14,14 +14,17 @@ const debug = require('debug')('hostlab:server');
 const http = require('http');
 
 /**
- * Get port from environment and store in Express.
+ * Since App gets registered by RedBird, just set Settings and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(3000);
 app.set('port', port);
 
+const hostname = process.env.HOSTNAME || process.env.REMOTE_IP;
+app.set('hostname', hostname);
+
 const proxy = require('../common/connections').proxy;
-proxy.register(`${process.env.VM_HOSTLAB_IP}:${process.env.PROXY_PORT}`, `localhost:${port}`);
+proxy.register(hostname, `localhost:${ port }`);
 
 /**
  * Create HTTP server.
@@ -30,10 +33,11 @@ proxy.register(`${process.env.VM_HOSTLAB_IP}:${process.env.PROXY_PORT}`, `localh
 const server = http.createServer(app);
 
 /**
- * Listen on provided port, on all network interfaces.
+ * Because the application will not be exposed as is,
+ * just listen on provided port and only on localhost.
  */
 
-server.listen(port);
+server.listen(port, 'localhost');
 server.on('error', onError);
 server.on('listening', onListening);
 

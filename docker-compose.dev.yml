@@ -1,0 +1,40 @@
+version: "3"
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    networks:
+      - dev
+    environment:
+      - DEBUG=hostlab:*
+      - LDAP_URL=ldap://ldap
+      - GITLAB_URL=http://gitlab.local
+  ldap:
+    image: osixia/openldap:1.1.11
+    networks:
+      - dev
+    environment:
+      - LDAP_DOMAIN=hostlab.local
+      - LDAP_ADMIN_PASSWORD=12345
+    volumes:
+      - ./common/ldapseed.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/testuser.ldif:ro
+    command: [--copy-service, --loglevel, debug]
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    networks:
+      dev:
+        aliases:
+          - gitlab.local
+    volumes:
+      - /srv/gitlab/config:/etc/gitlab:rw
+      - /srv/gitlab/logs:/var/log/gitlab:rw
+      - /srv/gitlab/data:/var/opt/gitlab:rw
+      - ./common/gitlab.rb:/etc/gitlab/gitlab.rb:ro
+    ports:
+      - ${GITLAB_IP:-0.0.0.0}:${GITLAB_PORT_80:-80}:80
+      - ${GITLAB_IP:-0.0.0.0}:${GITLAB_PORT_443:-443}:443
+      - ${GITLAB_IP:-0.0.0.0}:${GITLAB_PORT_22:-22}:22
+networks:
+  dev:
+    driver: bridge
