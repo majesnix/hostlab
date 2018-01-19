@@ -80,7 +80,7 @@ function createAndStartUsersMongoExpressInstance(req, callback) {
 
   docker.getContainer(req.user.containers.mongo.id).inspect((err, data) => {
         if (err) {
-          next(err);
+          return callback(err);
         }
         const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
         log(containerIP);
@@ -94,7 +94,7 @@ function createAndStartUsersMongoExpressInstance(req, callback) {
                 '8081/tcp': {},
               },
               Hostconfig: {
-                NetworkMode: networkUsers,
+                NetworkMode: usersNetwork,
               },
             },
             function createdContainer(err, container) {
@@ -113,7 +113,6 @@ function createAndStartUsersMongoExpressInstance(req, callback) {
                       }
                       callback(null, container.id);
                     });
-
               });
             });
       },
