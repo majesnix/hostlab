@@ -21,9 +21,7 @@ const {socketPath, protocol, host, port} = require('./connections').docker;
 const docker = !host
     ? new Docker({socketPath})
     : new Docker({protocol, host, port});
-const networkUsers = process.env.DOCKER_NETWORK_NAME_USERS || 'hostlab_users';
 const stream = require('stream');
-
 log(docker);
 
 const dockerfile = {
@@ -37,13 +35,7 @@ ENV PORT=8080
 EXPOSE 8080
 CMD ["npm", "start"]`,
 };
-
-module.exports = {
-  docker,
-  dockerfile,
-  createAndStartUsersMongoInstance,
-  retrieveContainerLogs,
-};
+const usersNetwork = 'hostlab_users';
 
 /**
  * Creates and starts a mongoDB instance for the user if not already owns one.
@@ -59,7 +51,7 @@ function createAndStartUsersMongoInstance(user, callback) {
   docker.createContainer({
         Image: 'mvertes/alpine-mongo:latest',
         Hostconfig: {
-          NetworkMode: networkUsers,
+          NetworkMode: usersNetwork,
         },
       },
       function createdContainer(err, container) {
@@ -116,3 +108,10 @@ function retrieveContainerLogs(containerId) {
     });
   });
 }
+
+module.exports = {
+  docker,
+  dockerfile,
+  createAndStartUsersMongoInstance,
+  retrieveContainerLogs,
+};
