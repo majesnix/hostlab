@@ -5,23 +5,23 @@ mixin createBlueprintModal
                 .modal-header
                     button.close(data-dismiss="modal" aria-label="Close")
                         span(aria-hidden="true")
-                    h4.modal-title New Blueprint
+                    h4.modal-title Create Blueprint
 
                 form.createBlueprint(action="#" method="post")
                     .modal-body
                         .form-group
-                            label(for="createBlueprintName") Name
-                            input.form-control#createBlueprintName(type="text" name="name" value=repositories[0].name.toLowerCase() placeholder="Name...")
-                        .form-group
-                            label Choose your Project
+                            label Select a Repository
                             select.form-control#createBlueprintRepo(name="repo")
                                 each repo in repositories
                                     option(value=repo.id)= repo.name
                         .form-group
-                            label Branch Name
+                            label Select a Branch
                             select.form-control#createBlueprintBranch(name="repo")
                                 each branch in repositories[0].branches
                                     option(value=branch selected=(branch === 'master'))= branch
+                        .form-group
+                            label(for="createBlueprintName") Select a Name
+                            input.form-control#createBlueprintName(type="text" name="name" value=repositories[0].name.toLowerCase() placeholder="Name...")
                     .modal-footer
                         button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
                         button.btn.btn-primary Create Blueprint

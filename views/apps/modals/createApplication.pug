@@ -12,15 +12,15 @@ mixin createApplicationModal
                     input#createAppBlueprintId(type="hidden" name="blueprintId" value="0")
                     .modal-body
                         .form-group
-                            label(for="createAppMountPath") Mount Path
-                            input.form-control#createAppMountPath(type="text" name="path" placeholder="Mount Path...")
-                        .form-group
-                            label Select your Start Script
+                            label Select a Run-Script
                             select.form-control#createBlueprintScripts(name="scriptIndex")
+                        .form-group
+                            label(for="createAppMountPath") Select a Mount Path
+                            input.form-control#createAppMountPath(type="text" name="path" placeholder="Mount Path...")
                         .checkbox
                             label
                                 input(type="checkbox", name="needsMongo")
-                                | Add MongoDB-Connection
+                                | Need MongoDB Connection?
                     .modal-footer
                         button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
                         button.btn.btn-primary Create Application

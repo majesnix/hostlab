@@ -10,7 +10,7 @@ block config
 block content
     h2.page-header
         span(style="margin-right: 10px;")= ` Blueprints (${blueprints.length})`
-        .btn.btn-flat.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") New Blueprint
+        .btn.btn-flat.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") Create Blueprint
     .row
         each blueprint in blueprints
             .col-md-12
@@ -25,7 +25,8 @@ block content
                             p= "Base Repository: " + blueprint.containingRepoName
                             p= "Branch: " + blueprint.containingRepoBranch
                             hr
-                            button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name, data-scripts=(new Buffer(JSON.stringify(blueprint.scripts)).toString('base64'))) New Application
+                            button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name, data-scripts=(new Buffer(
+                                JSON.stringify(blueprint.scripts)).toString('base64'))) Create Application
 
 
     h2.page-header
