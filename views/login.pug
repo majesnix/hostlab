@@ -7,7 +7,7 @@ html(lang="en")
                 p.login-box-msg Sign in
                 if (message && message.error)
                     .alert.alert-danger
-                        p= message.error
+                        p!= message.error
                 form(method="post")
                     .form-group.has-feedback
                         input.form-control#inputEmail(type="text", name="email" placeholder="E-Mail", required, autofocus)

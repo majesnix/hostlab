@@ -129,17 +129,20 @@ module.exports = (app) => {
         }
         // Errorhandling
         catch (err) {
-            if (err.message.includes('getaddrinfo ENOTFOUND')) {
-                return done(null, false,
-                    {message: 'GitLab is temporarily unavailable.\nPlease try again later.'});
-            } else if (err.message.includes('connect ECONNREFUSED')) {
-                return done(null, false, { message: 'GitLab is temporarily unavailable.\nPlease try again later.'});
-            } else if (err.message.includes('401 Unauthorized')) {
-                return done(null, false, { message: '[GITLAB] Invalid Access Token'});
-            } else {
-                console.log(err.stack);
-                return done(null, false, {message: err.message});
-            }
+          let logMsg = 'Error while requesting GitLab: ';
+          if (err.message.includes('getaddrinfo ENOTFOUND')) {
+            logMsg += 'ENOTFOUND';
+          } else if (err.message.includes('connect ECONNREFUSED')) {
+            logMsg += 'ECONNREFUSED';
+          } else if (err.message.includes('401 Unauthorized')) {
+            logMsg += 'Invalid Access Token';
+          } else {
+            logMsg += err.message + '\n' + err.stack;
+          }
+          log(logMsg);
+          req.flash('error',
+              'The service is temporarily unavailable.<br>Please try again later.');
+          return done(null, false);
         }
     },
     ));
