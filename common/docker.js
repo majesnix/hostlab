@@ -40,12 +40,12 @@ const usersNetwork = 'hostlab_users';
 /**
  * Creates and starts a mongoDB instance for the user if not already owns one.
  *
- * @param user      The user object, i.e. req.user
+ * @param req       The req object
  * @param callback  The callback function
  */
-function createAndStartUsersMongoInstance(user, callback) {
+function createAndStartUsersMongoInstance(req, callback) {
   // Check if user already owns a mongoDB instance
-  if (user.containers.mongo.id) {
+  if (req.user.containers.mongo.id) {
     return callback(new Error('User already owns a mongoDB instance.'));
   }
   docker.createContainer({
@@ -63,7 +63,7 @@ function createAndStartUsersMongoInstance(user, callback) {
             return callback(err);
           }
           log(data);
-          user.update({'containers.mongo.id': container.id},
+          req.user.update({'containers.mongo.id': container.id},
               function updatedUser(err, raw) {
                 if (err) {
                   return callback(err);
