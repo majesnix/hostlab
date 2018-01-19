@@ -33,8 +33,8 @@ WORKDIR /app
 ADD ${file} .
 RUN mv */* .
 RUN npm install
-ENV PORT=${process.env.CONTAINER_USER_PORT || '8080'}
-EXPOSE ${process.env.CONTAINER_USER_PORT || '8080'}
+ENV PORT=8080
+EXPOSE 8080
 CMD ["npm", "start"]`,
 };
 
@@ -42,7 +42,7 @@ module.exports = {
   docker,
   dockerfile,
   createAndStartUsersMongoInstance,
-  retrieveContainerLogs
+  retrieveContainerLogs,
 };
 
 /**
@@ -83,37 +83,36 @@ function createAndStartUsersMongoInstance(user, callback) {
       });
 }
 
-
 function retrieveContainerLogs(containerId) {
-    return new Promise(function(resolve, reject) {
-        let container = docker.getContainer(containerId);
-        let logOpts = {
-            stdout: 1,
-            stderr: 1,
-            tail:100,
-            follow:0
-        };
+  return new Promise(function(resolve, reject) {
+    let container = docker.getContainer(containerId);
+    let logOpts = {
+      stdout: 1,
+      stderr: 1,
+      tail: 100,
+      follow: 0,
+    };
 
-        let containerLogs = [];
+    let containerLogs = [];
 
-        var logStream = new stream.PassThrough();
-        logStream.on('data', function(chunk){
-            containerLogs.push(chunk.toString('utf8'));
-        });
-
-        container.logs(logOpts, function(err, stream){
-            if(err) {
-                reject(err);
-            }
-            container.modem.demuxStream(stream, logStream, logStream);
-            stream.on('end', function(){
-                logStream.end();
-                resolve(containerLogs);
-            });
-
-            setTimeout(function() {
-                stream.destroy();
-            }, 2000);
-        });
+    var logStream = new stream.PassThrough();
+    logStream.on('data', function(chunk) {
+      containerLogs.push(chunk.toString('utf8'));
     });
+
+    container.logs(logOpts, function(err, stream) {
+      if (err) {
+        reject(err);
+      }
+      container.modem.demuxStream(stream, logStream, logStream);
+      stream.on('end', function() {
+        logStream.end();
+        resolve(containerLogs);
+      });
+
+      setTimeout(function() {
+        stream.destroy();
+      }, 2000);
+    });
+  });
 }
