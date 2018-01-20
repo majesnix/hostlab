@@ -87,6 +87,7 @@ router.post('/', async (req, res, next) => {
               name: `${mountPath}`,
               repoName: `${repoName}`,
               blueprint: blueprint,
+              autostart: true,
             },
           },
         }, (err, user) => {
@@ -114,14 +115,18 @@ router.post('/', async (req, res, next) => {
 
 router.post('/:id/start', async (req, res, next) => {
   const applicationID = req.param('id');
-  log('nice');
   const container = docker.getContainer(applicationID);
   container.inspect(function(err, data) {
     if (data.State.Status == 'running') {
       res.send(400, {message: 'Bad Request: Container is already running.'});
     } else {
-      container.start(function(err, data) {
-        res.send(200);
+      User.findById(req.user._id, function(err, user) {
+        user.containers.node.id(applicationID).autostart = true;
+        user.save();
+
+        container.start(function(err, data) {
+          res.send(200);
+        });
       });
     }
   });
@@ -129,12 +134,16 @@ router.post('/:id/start', async (req, res, next) => {
 
 router.post('/:id/stop', async (req, res, next) => {
   const applicationID = req.param('id');
-  log('nice');
   const container = docker.getContainer(applicationID);
   container.inspect(function(err, data) {
     if (data.State.Status === 'running') {
-      container.stop(function(err, data) {
-        res.send(200);
+      User.findById(req.user._id, function(err, user) {
+        user.containers.node.id(applicationID).autostart = false;
+        user.save();
+
+        container.stop(function(err, data) {
+          res.send(200);
+        });
       });
     } else {
       res.send(400, {message: 'Bad Request: Container is not running.'});

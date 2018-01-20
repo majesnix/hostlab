@@ -72,6 +72,7 @@ const userSchema = mongoose.Schema({
           containingRepoID: Number,
           containingRepoBranch: String,
         },
+        autostart: Boolean,
       },
     ],
   },
