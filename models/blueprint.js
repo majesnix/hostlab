@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const getPackageJSON = require('../modules/getpackagejson');
+const getGitlabRepository = require('../modules/getGitlabRepository');
 // Fixes deprecation warning
 mongoose.Promise = Promise;
 
@@ -11,7 +12,7 @@ const blueprintSchema = new mongoose.Schema({
 });
 
 blueprintSchema.post('init', async function() {
-    let packageJson = await getPackageJSON(this.containingRepoID, this.containingRepoBranch);
+    const packageJson = await getPackageJSON(this.containingRepoID, this.containingRepoBranch);
 
     if(typeof packageJson.scripts === 'object' && Object.keys(packageJson.scripts).length > 0) {
         this.scripts = Object.keys(packageJson.scripts);

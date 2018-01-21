@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Blueprint = require('./blueprint');
-const Converter = require('ansi-to-html');
 const slugify = require('slugify');
 
 const { getStatusOfApplication } = require('../common/docker');
