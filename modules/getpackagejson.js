@@ -31,14 +31,8 @@ const snek = require('snekfetch');
  * const info = await getPackageJSON('1','test');
  */
 
-module.exports = (repositoryID, branch = 'master') => {
+module.exports = async (repositoryID, branch = 'master') => {
 
-    return new Promise(async (resolve,reject) => {
-        try {
-            const { text } = await snek.get(`${process.env.GITLAB_URL}/api/v4/projects/${repositoryID}/repository/files/package.json/raw?private_token=${process.env.GITLAB_TOKEN}&ref=${branch}`);
-            resolve(JSON.parse(text));
-        } catch (err) {
-            reject(err);
-        }
-    });
+    const { text } = await snek.get(`${process.env.GITLAB_URL}/api/v4/projects/${repositoryID}/repository/files/package.json/raw?private_token=${process.env.GITLAB_TOKEN}&ref=${branch}`);
+    return JSON.parse(text);
 };
