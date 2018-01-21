@@ -16,7 +16,9 @@ const methodOverride = require('method-override');
 
 mongoose.connect(mongoConnection.url, {
   useMongoClient: true,
-});
+}).then (
+  require('./modules/autostartusercontainer')()
+);
 
 const app = express();
 

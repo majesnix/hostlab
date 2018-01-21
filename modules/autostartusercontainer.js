@@ -13,20 +13,20 @@ module.exports = function() {
     }
     users.forEach(user => {
       user.containers.node.forEach(container => {
-        if (container.autostart == true) {
-          try {
-            const containerToInspect = docker.getContainer(container._id);
+        try {
+          const containerToInspect = docker.getContainer(container._id);
+          const userObj = user.email.split('@');
+          const mountPath = container.name;
+          if (container.autostart == true) {
             containerToInspect.start(function(err, data) {
               containerToInspect.inspect(function(err, data) {
                 const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
-                const userObj = user.email.split('@');
-                const mountPath = container.name;
                 proxy.register(`${hostlab_ip}/${userObj[1]}/${userObj[0]}/${slugify(mountPath)}`, `${containerIP}:8080`);
               });
             });
-          }catch (err) {
-            log(err);
           }
+        }catch (err) {
+          log(err);
         }
       });
     });

@@ -125,7 +125,14 @@ router.post('/:id/start', async (req, res, next) => {
         user.save();
 
         container.start(function(err, data) {
-          res.send(200);
+          container.inspect(function(err, data) {
+            const userObj = user.email.split('@');
+            const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
+            const mountPath = user.containers.node.id(applicationID).name;
+
+            proxy.register(`${hostlab_ip}/${userObj[1]}/${userObj[0]}/${slugify(mountPath)}`, `${containerIP}:8080`);
+            res.send(200);
+          });
         });
       });
     }

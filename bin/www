@@ -51,11 +51,6 @@ mongoResolver.priority = 100;
 proxy.addResolver(mongoResolver);
 
 /**
- *  Start User-Container and register them when they were running before a restart.
- */
-require('../modules/autostartusercontainer')()
-
-/**
  * Create HTTP server.
  */
 
