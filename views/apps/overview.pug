@@ -13,7 +13,6 @@ block content
         .btn.btn-flat.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") Create Blueprint
     .row
         each blueprint in user.blueprints.node
-            p= console.log(blueprint.scripts)
             .col-md-12
                 .col-sm-6.col-lg-4
                     .box.box-solid.blueprint(id=blueprint._id)
@@ -26,7 +25,6 @@ block content
                             p= "Base Repository: " + blueprint.containingRepoName
                             p= "Branch: " + blueprint.containingRepoBranch
                             hr
-                            p= console.log(blueprint.scripts)
                             button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name, data-scripts=(new Buffer(
                                 JSON.stringify(blueprint.scripts)).toString('base64'))) Create Application
 

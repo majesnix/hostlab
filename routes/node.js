@@ -16,7 +16,7 @@ router.get('/:name', async(req, res) => {
         }
     }));
 
-    res.render('apps/details', { container,containerLogs, headerTitle: container.name + " details" });
+    res.render('apps/details', { container,containerLogs });
 });
 
 router.get('/', async (req, res) => {
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
         res.locals.message.info = 'You got no repositories';
       }
 
-      res.render('apps/overview', { repositories,branches, /*blueprints*/});
+      res.render('apps/overview', { repositories,branches });
     } else {
       res.locals.message.error = '[HOSTLAB] Gitlab ID not found';
       res.render('apps/overview', {});
