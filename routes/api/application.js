@@ -26,17 +26,14 @@ router.post('/', async (req, res, next) => {
     const scriptIndex = req.body.scriptIndex;
     const needsMongo = req.body.needsMongo;
 
-    var blueprint;
-
-    if(needsMongo == "on")
-    {
-      createAndStartUsersMongoInstance(req, function () {
-        createAndStartUsersMongoExpressInstance(req, function () {
-
-        });
-      });
-    
+    let mongoContainerID = "";
+    if (needsMongo) {
+      mongoContainerID = await createAndStartUsersMongoInstance(req);
+      const mongoExpressID = await createAndStartUsersMongoExpressInstance(
+          req, mongoContainerID);
     }
+
+    var blueprint;
 
     const blueprints = req.user.blueprints.node;
     for (var i in blueprints) {
@@ -74,17 +71,23 @@ router.post('/', async (req, res, next) => {
           set('cookie', req.headers.cookie);
       users = resUsers.body;
 
-      const container = await docker.createContainer({
+      const createContainerOpts = {
         Image: 'node_' + bluePrintID,
         Cmd: (Object.keys(packageJson.scripts)[scriptIndex] || 'start'),
         name: mongoID.toString(),
+        Env: [
+          `MONGO=${mongoContainerID}`,
+        ],
         ExposedPorts: {
           '8080/tcp': {},
         },
         Hostconfig: {
           NetworkMode: usersNetwork,
         },
-      });
+      };
+
+      const container = await docker.createContainer(createContainerOpts);
+
       container.start(async () => {
         const response = await snek.get(
             `${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`);
@@ -99,7 +102,7 @@ router.post('/', async (req, res, next) => {
               repoName: `${repoName}`,
               blueprint: blueprint,
               autostart: true,
-              needsMongo: needsMongo
+              needsMongo: needsMongo,
             },
           },
         }, (err, user) => {
@@ -108,7 +111,6 @@ router.post('/', async (req, res, next) => {
           }
           container.inspect((err, data) => {
             if (err) {
-              log(err);
               return next(err);
             }
             const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
@@ -142,7 +144,8 @@ router.post('/:id/start', async (req, res, next) => {
             const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
             const mountPath = user.containers.node.id(applicationID).name;
 
-            proxy.register(`${hostlab_ip}/${userObj[1]}/${userObj[0]}/${slugify(mountPath)}`, `${containerIP}:8080`);
+            proxy.register(`${hostlab_ip}/${userObj[1]}/${userObj[0]}/${slugify(
+                mountPath)}`, `${containerIP}:8080`);
             res.send(200);
           });
         });
