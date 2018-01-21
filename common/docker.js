@@ -43,76 +43,91 @@ const usersNetwork = 'hostlab_users';
  * @param req       The req object
  * @param callback  The callback function
  */
-function createAndStartUsersMongoInstance(req, callback) {
-  // Check if user already owns a mongoDB instance
-  if (req.user.containers.mongo.id) {
-    return callback(null, req.user.containers.mongo.id);
-  }
-  docker.createContainer({
-        Image: 'mvertes/alpine-mongo:latest',
-        Hostconfig: {
-          NetworkMode: usersNetwork,
+function createAndStartUsersMongoInstance(req) {
+
+  return new Promise(function(resolve, reject) {
+
+    // Check if user already owns a mongoDB instance
+    if (req.user.containers.mongo.id) {
+      return resolve(req.user.containers.mongo.id);
+    }
+    docker.createContainer({
+          Image: 'mvertes/alpine-mongo:latest',
+          Hostconfig: {
+            NetworkMode: usersNetwork,
+          },
         },
-      },
-      function createdContainer(err, container) {
-        if (err) {
-          return callback(err);
-        }
-        container.start(function startedContainer(err, data) {
+        function createdContainer(err, container) {
           if (err) {
-            return callback(err);
+            return reject(err);
           }
-          req.user.update({'containers.mongo.id': container.id},
-              function updatedUser(err, raw) {
-                if (err) {
-                  return callback(err);
-                }
-                callback(null, container.id);
-              });
-        });
-      });
+          container.start(function startedContainer(err, data) {
+            if (err) {
+              return  reject(err);
+            }
+            container.inspect((err, data) => {
+              if (err) {
+                return reject(err);
+              }
+              req.user.update({'containers.mongo.id': data.Config.Hostname},
+                  function updatedUser(err, raw) {
+                    if (err) {
+                      return reject(err);
+                    }
+                    return resolve(data.Config.Hostname);
+                  },
+              );
+            });
+          });
+        },
+    );
+  });
+
 }
 
-function createAndStartUsersMongoExpressInstance(req, callback) {
-  docker.getContainer(req.user.containers.mongo.id).inspect((err, data) => {
-        if (err) {
-          return callback(err);
-        }
-        const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
-        log(containerIP);
-        docker.createContainer({
-              Image: 'mongo-express',
-              Env: [
-                'ME_CONFIG_MONGODB_ENABLE_ADMIN=true',
-                `ME_CONFIG_MONGODB_SERVER=${containerIP}`,
-              ],
-              ExposedPorts: {
-                '8081/tcp': {},
-              },
-              Hostconfig: {
-                NetworkMode: usersNetwork,
-              },
-            },
-            function createdContainer(err, container) {
+function createAndStartUsersMongoExpressInstance(req, mongoID) {
+  return new Promise(async function(resolve, reject) {
+    if (req.user.containers.mongoExpress.id) {
+      return resolve(req.user.containers.mongoExpress.id);
+    }
+    docker.createContainer({
+          Image: 'mongo-express',
+          Env: [
+            'ME_CONFIG_MONGODB_ENABLE_ADMIN=true',
+            `ME_CONFIG_MONGODB_SERVER=${mongoID}`,
+          ],
+          ExposedPorts: {
+            '8081/tcp': {},
+          },
+          Hostconfig: {
+            NetworkMode: usersNetwork,
+          },
+        },
+        function createdContainer(err, container) {
+          if (err) {
+            return reject(err);
+          }
+          container.start(function startedContainer(err, data) {
+            if (err) {
+              return reject(err);
+            }
+            container.inspect((err, data) => {
               if (err) {
-                return callback(err);
+                return reject(err);
               }
-              container.start(function startedContainer(err, data) {
-                if (err) {
-                  return callback(err);
-                }
-                log(data);
-                req.user.update({'containers.mongoExpress.id': container.id},
-                    function updatedUser(err, raw) {
-                      if (err) {
-                        return callback(err);
-                      }
-                      callback(null, container.id);
-                    });
-              });
+              req.user.update({'containers.mongoExpress.id': data.Config.Hostname},
+                  function updatedUser(err, raw) {
+                    if (err) {
+                      return reject(err);
+                    }
+                    return resolve(data.Config.Hostname);
+                  },
+              );
             });
-      },
-  );
+          });
+        });
+  });
+
 }
 
 function getStatusOfApplication(applicationName) {
