@@ -24,8 +24,19 @@ router.post('/', async (req, res, next) => {
     const bluePrintID = req.body.blueprintId;
     const mountPath = req.body.path;
     const scriptIndex = req.body.scriptIndex;
+    const needsMongo = req.body.needsMongo;
 
     var blueprint;
+
+    if(needsMongo == "on")
+    {
+      createAndStartUsersMongoInstance(req, function () {
+        createAndStartUsersMongoExpressInstance(req, function () {
+
+        });
+      });
+    
+    }
 
     const blueprints = req.user.blueprints.node;
     for (var i in blueprints) {
@@ -88,7 +99,7 @@ router.post('/', async (req, res, next) => {
               repoName: `${repoName}`,
               blueprint: blueprint,
               autostart: true,
-              needsMongo: req.body.needsMongo
+              needsMongo: needsMongo
             },
           },
         }, (err, user) => {
