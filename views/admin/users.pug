@@ -1,11 +1,5 @@
 extends ../layouts/main
-
-mixin toggleIcon(state)
-    span
-        if state
-            i.text-green.fas.fa-check-circle
-        else
-            i.text-red.fas.fa-times-circle
+include ../layouts/mixins/toggleIcon
 
 block content
     .panel.panel-default

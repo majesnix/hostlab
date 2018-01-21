@@ -88,6 +88,7 @@ router.post('/', async (req, res, next) => {
               repoName: `${repoName}`,
               blueprint: blueprint,
               autostart: true,
+              needsMongo: req.body.needsMongo
             },
           },
         }, (err, user) => {

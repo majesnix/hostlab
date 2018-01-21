@@ -10,36 +10,21 @@ const User = require('../models/user');
  * GET  /admin/users/:id
  */
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   // Leite weiter auf ersten Navigationspunkt
   res.redirect('/admin/users');
 });
 
-router.get('/users', (req, res, next) => {
-  let users;
-  // Hole alle Nutzer
-  request.get(`http://localhost:${req.app.settings.port}/api/v1/users`).
-      set('cookie', req.headers.cookie).
-      then((r) => {
-        users = r.body;
-        // Zeige alle Nutzer
-        log(users);
+router.get('/users', (req, res) => {
+    User.find({}, (err, users) => {
         res.render('admin/users', {users});
-      });
-
+    });
 });
 
-router.get('/users/:id', (req, res, next) => {
-  const {id} = req.params;
-  // Hole bestimmten Nutzer
-  request.get(`http://localhost:${req.app.settings.port}/api/v1/users/${id}`).
-      set('cookie', req.headers.cookie).
-      then((r) => {
-        log(r.body);
-        const user = r.body;
-        // Zeige alle Nutzer
-        res.render('admin/usersEdit', {userToEdit: user});
-      });
+router.get('/users/:id', (req, res) => {
+  User.findById(req.params.id, (err, userToEdit) => {
+      setTimeout(() => {res.render('admin/usersEdit', {userToEdit})}, 100);
+  });
 });
 
 module.exports = router;

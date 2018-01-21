@@ -1,4 +1,5 @@
 extends ../layouts/main
+include ../apps/includes/applicationBox
 
 block content
     .panel.panel-default
@@ -27,8 +28,13 @@ block content
                             .col-sm-10: input.form-control#created(type="text", name="created" value=userToEdit.created, readonly)
                 .box-footer
                     button.btn.btn-primary.btn-flat.btn-block(type="submit") Update User
+    h3 User Applications
+    .row
+        each application in userToEdit.containers.node
+            +applicationBox(application)
 
-block scripts
+
+block append scripts
     script.
         $(document).ready(function() {
             $('#editUser').on('submit', function(e) {

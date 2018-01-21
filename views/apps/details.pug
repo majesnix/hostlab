@@ -20,6 +20,8 @@ block content
                                 dd= container.commitHash
                                 dt Created
                                 dd(data-toggle="tooltip" title=moment(container.created).format())= moment(container.created).fromNow()
+                                dt Mongo Connection
+                                dd= container.needsMongo ? "Yes" : "No"
                         .box-footer
                             input.onOffToggle(type="checkbox" checked=container.isRunning data-id=container._id)
 

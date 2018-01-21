@@ -1,7 +1,7 @@
 extends ../layouts/main
 include modals/createBlueprint
 include modals/createApplication
-include includes/toggle
+include includes/applicationBox
 
 block config
     - var headerTitle = "Node.js Applications"
@@ -13,41 +13,26 @@ block content
         .btn.btn-flat.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") Create Blueprint
     .row
         each blueprint in user.blueprints.node
-            .col-md-12
-                .col-sm-6.col-lg-4
-                    .box.box-solid.blueprint(id=blueprint._id)
-                        .box-header.with-border
-                            h3.box-title= blueprint.name
-                            .pull-right.box-tools
-                                a.btn.btn-box-tool.destroy(href="#" data-id=blueprint._id)
-                                    i.fas.fa-trash
-                        .box-body
-                            p= "Base Repository: " + blueprint.containingRepoName
-                            p= "Branch: " + blueprint.containingRepoBranch
-                            hr
-                            button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name, data-scripts=(new Buffer(
-                                JSON.stringify(blueprint.scripts)).toString('base64'))) Create Application
+            .col-sm-6.col-lg-4
+                .box.box-solid.blueprint(id=blueprint._id)
+                    .box-header.with-border
+                        h3.box-title= blueprint.name
+                        .pull-right.box-tools
+                            a.btn.btn-box-tool.destroy(href="#" data-id=blueprint._id)
+                                i.fas.fa-trash
+                    .box-body
+                        p= "Base Repository: " + blueprint.containingRepoName
+                        p= "Branch: " + blueprint.containingRepoBranch
+                        hr
+                        button.btn.btn-block.btn-flat.btn-success.newApp(data-toggle="modal" data-target="#newAppModal" data-id=blueprint._id data-name=blueprint.name, data-scripts=(new Buffer(
+                            JSON.stringify(blueprint.scripts)).toString('base64'))) Create Application
 
 
     h2.page-header
         span(style="margin-right: 10px;")= ` Applications (${user.containers.node.length})`
     .row
         each application in user.containers.node
-            .col-md-12
-                .col-sm-6.col-lg-4
-                    .box.box-solid.application(id=application._id)
-                        .box-header.with-border
-                            h3.box-title= application.name
-                            .pull-right.box-tools
-                                a.btn.btn-box-tool(href=application.mountPath, target="_blank")
-                                    i.fas.fa-link.link(data-id=application._id)
-                                a.btn.btn-box-tool(href="/node/" + slugify(application.name))
-                                    i.fas.fa-wrench.edit
-                        .box-body
-                            div= console.log(application.blueprint)
-                            p= "Base Blueprint: "+ application.blueprint.name
-                            hr
-                            input.onOffToggle(type="checkbox" checked=application.isRunning data-id=application._id)
+            +applicationBox(application)
 
 
     +createBlueprintModal()
