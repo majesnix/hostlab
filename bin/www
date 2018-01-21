@@ -27,10 +27,6 @@ const proxy = require('../common/connections').proxy;
 proxy.register(hostname, `localhost:${ port }`);
 
 function mongoResolver(host, url, req) {
-  log("host", host);
-  log("url", url);
-  log(req);
-
   if (/^\/mongo/.test(url)) {
     require('../common/docker').
         docker.

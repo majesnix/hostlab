@@ -62,13 +62,11 @@ function createAndStartUsersMongoInstance(req, callback) {
           if (err) {
             return callback(err);
           }
-          log(data);
           req.user.update({'containers.mongo.id': container.id},
               function updatedUser(err, raw) {
                 if (err) {
                   return callback(err);
                 }
-                log(raw);
                 callback(null, container.id);
               });
         });
