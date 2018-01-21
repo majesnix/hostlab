@@ -4,13 +4,13 @@
  * Configure Environment
  */
 require('dotenv').config();
-const log = require('debug')('hostlab:www');
+
 /**
  * Module dependencies.
  */
 
 const app = require('../app');
-const debug = require('debug')('hostlab:server');
+const log = require('debug')('hostlab:server');
 const http = require('http');
 
 /**
@@ -35,7 +35,6 @@ function mongoResolver(host, url, req) {
           if (err) {
             return err;
           }
-
           const mongoExpressContainerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
           log(mongoExpressContainerIP);
           return `${mongoExpressContainerIP}:8081`;
@@ -43,7 +42,6 @@ function mongoResolver(host, url, req) {
   }
 }
 mongoResolver.priority = 100;
-
 proxy.addResolver(mongoResolver);
 
 /**
@@ -118,5 +116,5 @@ function onListening() {
   const bind = typeof addr === 'string'
       ? 'pipe ' + addr
       : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  log('Listening on ' + bind);
 }
