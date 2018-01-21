@@ -12,7 +12,7 @@ const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
 const hostlab_ip = process.env.HOSTNAME;
 const mongoose = require('mongoose');
-const {getPackageJSON} = require('../../modules/getpackagejson');
+const getPackageJSON = require('../../modules/getpackagejson');
 
 const User = require('../../models/user');
 

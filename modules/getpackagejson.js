@@ -14,7 +14,7 @@ const gitlab_url = process.env.GITLAB_URL;
  * // Holt die Package.json vom Projekt mit der ID 1 und dem Branch 'test'
  * const info = await getPackageJSON('1','test');
  */
-module.exports.getPackageJSON = (repositoryID, branch = 'master') => {
+module.exports = (repositoryID, branch = 'master') => {
 
     return new Promise(async (resolve,reject) => {
         try {

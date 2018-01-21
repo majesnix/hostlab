@@ -22,7 +22,6 @@ const docker = !host
     ? new Docker({socketPath})
     : new Docker({protocol, host, port});
 const stream = require('stream');
-log(docker);
 
 const dockerfile = {
   node: file => `\
@@ -121,6 +120,15 @@ function createAndStartUsersMongoExpressInstance(req, callback) {
 
 }
 
+function getStatusOfApplication(applicationName){
+    return new Promise(function(resolve, reject) {
+        const containerToInspect = docker.getContainer(applicationName);
+        containerToInspect.inspect(function (err, data) {
+            resolve(data.State.Status);
+        });
+    })
+}
+
 function retrieveContainerLogs(containerId) {
   return new Promise(function(resolve, reject) {
     let container = docker.getContainer(containerId);
@@ -161,4 +169,5 @@ module.exports = {
   createAndStartUsersMongoInstance,
   createAndStartUsersMongoExpressInstance,
   retrieveContainerLogs,
+  getStatusOfApplication
 };

@@ -17,7 +17,8 @@
  */
 const log = require('debug')('hostlab:mongo:user');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt-nodejs');
+const Blueprint = require('./blueprint');
+const Application = require('./application');
 // Fixes deprecation warning
 mongoose.Promise = Promise;
 
@@ -56,73 +57,16 @@ const userSchema = mongoose.Schema({
     mongoExpress: {
       id: String,
     },
-    node: [
-      {
-        name: String,
-        port: Number,
-        scriptLoc: String,
-        created: {
-          type: Date,
-          default: Date.now,
-        },
-        repoName: String,
-        blueprint: {
-          name: String,
-          containingRepoName: String,
-          containingRepoID: Number,
-          containingRepoBranch: String,
-        },
-        autostart: Boolean,
-      },
-    ],
+    node: {
+      type: [Application]
+    },
   },
   blueprints: {
-    node: [
-    {
-      name: String,
-      containingRepoName: String,
-      containingRepoID: Number,
-      containingRepoBranch: String,
+    node: {
+      type: [Blueprint]
     },
-    ],
   },
 });
-
-// ```js
-// const user = {
-//   containers: {
-//     mongo: {
-//       id: String,
-//     },
-//     futureStuff: {
-//       id: String,
-//     },
-//     node: [
-//       {
-//         id: String,
-//         mountpath: String,
-//         runScript: String,
-//       },
-//     ],
-//   },
-//   blueprints: {
-//     node: [
-//       {
-//         imageName: String,
-//         containingRepo: String,
-//         repoBranch: String,
-//       },
-//     ],
-//     futureStuff: [
-//       {
-//         imageName: String,
-//         containingRepo: String,
-//         repoBranch: String,
-//       },
-//     ],
-//   },
-// };
-// ```
 
 userSchema.methods.updateLastLogin = function() {
   this.update({lastLogin: new Date()}, function(err, raw) {
