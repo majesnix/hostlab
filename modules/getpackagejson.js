@@ -17,8 +17,6 @@
  */
 
 const snek = require('snekfetch');
-const gitlab_token = process.env.GITLAB_TOKEN;
-const gitlab_url = process.env.GITLAB_URL;
 
 /**
  * Retrieves the PackageJSON of the given Gitlab Repository (ID) and the given Branch
@@ -37,7 +35,7 @@ module.exports = (repositoryID, branch = 'master') => {
 
     return new Promise(async (resolve,reject) => {
         try {
-            const { text } = await snek.get(`${gitlab_url}/api/v4/projects/${repositoryID}/repository/files/package.json/raw?private_token=${gitlab_token}&ref=${branch}`);
+            const { text } = await snek.get(`${process.env.GITLAB_URL}/api/v4/projects/${repositoryID}/repository/files/package.json/raw?private_token=${process.env.GITLAB_TOKEN}&ref=${branch}`);
             resolve(JSON.parse(text));
         } catch (err) {
             reject(err);
