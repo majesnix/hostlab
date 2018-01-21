@@ -46,7 +46,7 @@ const usersNetwork = 'hostlab_users';
 function createAndStartUsersMongoInstance(req, callback) {
   // Check if user already owns a mongoDB instance
   if (req.user.containers.mongo.id) {
-    return callback(null);
+    return callback(null, req.user.containers.mongo.id);
   }
   docker.createContainer({
         Image: 'mvertes/alpine-mongo:latest',
@@ -113,18 +113,16 @@ function createAndStartUsersMongoExpressInstance(req, callback) {
               });
             });
       },
-  )
-  ;
-
+  );
 }
 
-function getStatusOfApplication(applicationName){
-    return new Promise(function(resolve, reject) {
-        const containerToInspect = docker.getContainer(applicationName);
-        containerToInspect.inspect(function (err, data) {
-            resolve(data.State.Status);
-        });
-    })
+function getStatusOfApplication(applicationName) {
+  return new Promise(function(resolve, reject) {
+    const containerToInspect = docker.getContainer(applicationName);
+    containerToInspect.inspect(function(err, data) {
+      resolve(data.State.Status);
+    });
+  });
 }
 
 function retrieveContainerLogs(containerId) {
@@ -167,5 +165,5 @@ module.exports = {
   createAndStartUsersMongoInstance,
   createAndStartUsersMongoExpressInstance,
   retrieveContainerLogs,
-  getStatusOfApplication
+  getStatusOfApplication,
 };
