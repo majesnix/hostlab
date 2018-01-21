@@ -3,7 +3,7 @@ const snek = require('snekfetch');
 const log = require('debug')('hostlab:module:retrieveUserGitlabProjects');
 
 module.exports = async function(userGitlabId) {
-    const { text } = await snek.get(`${process.env.GITLAB_URL}/api/v4/users/${userGitlabId}/projects?private_token=${process.env.GITLAB_TOKEN}`);
+    const { text } = await snek.get(`${process.env.GITLAB_URL}/api/v4/projects?private_token=${process.env.GITLAB_TOKEN}&sudo=${userGitlabId}&membership=true`);
     const projects = JSON.parse(text);
 
     const repositories = [];
