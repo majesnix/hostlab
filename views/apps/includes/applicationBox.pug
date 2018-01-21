@@ -4,7 +4,8 @@ mixin applicationBox(application)
     .col-sm-6.col-lg-4
         .box.box-solid.application(id=application._id)
             .box-header.with-border
-                h3.box-title= application.name
+                a(href="/node/" + slugify(application.name))
+                    h3.box-title= application.name
                 .pull-right.box-tools
                     a.btn.btn-box-tool(href=application.mountPath, target="_blank")
                         i.fas.fa-link.link(data-id=application._id)
