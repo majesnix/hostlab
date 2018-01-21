@@ -33,7 +33,7 @@ RUN npm install
 ENV PORT=8080
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/npm", "run-script"]
-CMD {"start"]`,
+CMD ["start"]`,
 };
 const usersNetwork = 'hostlab_users';
 
