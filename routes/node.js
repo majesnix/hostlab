@@ -25,7 +25,11 @@ router.get('/', async (req, res) => {
 
     if(gitlab_id) {
       const repositories = await fetchUserRepositories(gitlab_id);
-      const branches = Object.assign(...repositories.map(repo => ({[repo.id]: repo.branches})));
+
+      let branches = {};
+      if(repositories.length>0){
+        branches = Object.assign(...repositories.map(repo => ({[repo.id]: repo.branches})));
+      }
 
       if (repositories.length === 0) {
         res.locals.message.info = 'You got no repositories';

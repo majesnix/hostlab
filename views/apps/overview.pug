@@ -10,7 +10,8 @@ block config
 block content
     h2.page-header
         span(style="margin-right: 10px;")= ` Blueprints (${user.blueprints.node.length})`
-        .btn.btn-flat.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") Create Blueprint
+        if repositories.length > 0
+            .btn.btn-flat.btn-primary.newBlueprint(data-toggle="modal" data-target="#newBlueprintModal") Create Blueprint
     .row
         each blueprint in user.blueprints.node
             .col-sm-6.col-lg-4
@@ -34,8 +35,8 @@ block content
         each application in user.containers.node
             +applicationBox(application)
 
-
-    +createBlueprintModal()
+    if repositories.length > 0
+        +createBlueprintModal()
     +createApplicationModal()
 
 block append scripts
