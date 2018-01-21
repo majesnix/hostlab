@@ -74,7 +74,6 @@ function createAndStartUsersMongoInstance(req, callback) {
 }
 
 function createAndStartUsersMongoExpressInstance(req, callback) {
-
   docker.getContainer(req.user.containers.mongo.id).inspect((err, data) => {
         if (err) {
           return callback(err);
@@ -137,7 +136,7 @@ function retrieveContainerLogs(containerId) {
 
     let containerLogs = [];
 
-    var logStream = new stream.PassThrough();
+    const logStream = new stream.PassThrough();
     logStream.on('data', function(chunk) {
       containerLogs.push(chunk.toString('utf8'));
     });
