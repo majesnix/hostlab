@@ -35,7 +35,7 @@ module.exports = function() {
         containerToInspect.start(function(err, data) {
           containerToInspect.inspect(function(err, data) {
             const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
-            proxy.register(`${hostlab_ip}/${userObj[1]}/${userObj[0]}/mongo`, `${containerIP}:8081`);
+            proxy.register(`${hostlab_ip}/${userObj[1]}/${userObj[0]}/mongo`, `${data.NetworkSettings.Networks.hostlab_users.IPAddress}:8081/${userObj[1]}/${userObj[0]}/mongo/`);
           });
         });
 

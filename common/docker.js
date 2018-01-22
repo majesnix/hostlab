@@ -63,7 +63,7 @@ function createAndStartUsersMongoInstance(req) {
           }
           container.start(function startedContainer(err, data) {
             if (err) {
-              return  reject(err);
+              return reject(err);
             }
             container.inspect((err, data) => {
               if (err) {
@@ -95,6 +95,8 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
           Env: [
             'ME_CONFIG_MONGODB_ENABLE_ADMIN=true',
             `ME_CONFIG_MONGODB_SERVER=${mongoID}`,
+            `ME_CONFIG_SITE_BASEURL=/${req.user.email.split(
+                '@')[1]}/${req.user.email.split('@')[0]}/mongo/`,
           ],
           ExposedPorts: {
             '8081/tcp': {},
@@ -115,13 +117,18 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
               if (err) {
                 return reject(err);
               }
-              req.user.update({'containers.mongoExpress.id': data.Config.Hostname},
+              req.user.update(
+                  {'containers.mongoExpress.id': data.Config.Hostname},
                   function updatedUser(err, raw) {
                     if (err) {
                       return reject(err);
                     }
                     const userObj = req.user.email.split('@');
-                    require('./connections').proxy.register(`${process.env.HOSTNAME}/${userObj[1]}/${userObj[0]}/mongo`, `${data.NetworkSettings.Networks.hostlab_users.IPAddress}:8081`);
+                    require('./connections').
+                        proxy.
+                        register(
+                            `${process.env.HOSTNAME}/${userObj[1]}/${userObj[0]}/mongo`,
+                            `${data.NetworkSettings.Networks.hostlab_users.IPAddress}:8081/${userObj[1]}/${userObj[0]}/mongo/`);
                     return resolve(data.Config.Hostname);
                   },
               );
