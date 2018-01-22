@@ -10,7 +10,7 @@ aside.main-sidebar
             +menuItem("Dashboard", "/dashboard").fas.fa-tachometer-alt
             +menuItem("Node.js", "/node").fab.fa-node-js
             if user.containers.mongo && user.containers.mongo.id
-                +menuItem("MongoDB", "/mongo", "_blank").fas.fa-database
+                +menuItem("MongoDB", user.email.split('@')[1] + "/" + user.email.split('@')[0] +"/mongo", "_blank").fas.fa-database
             if user.containers.postgres && user.containers.postgres.id
                 +menuItem("PostgreSQL", "/postgres", "_blank").fas.fa-database
             +menuItem("GitLab", gitlab_url, "_blank").fab.fa-gitlab

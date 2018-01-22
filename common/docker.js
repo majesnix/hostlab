@@ -120,6 +120,8 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
                     if (err) {
                       return reject(err);
                     }
+                    const userObj = req.user.email.split('@');
+                    require('./connections').proxy.register(`${process.env.HOSTNAME}/${userObj[1]}/${userObj[0]}/mongo`, `${data.NetworkSettings.Networks.hostlab_users.IPAddress}:8081`);
                     return resolve(data.Config.Hostname);
                   },
               );
