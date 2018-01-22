@@ -17,7 +17,6 @@
  */
 const log = require('debug')('hostlab:mongo:user');
 const mongoose = require('mongoose');
-const Blueprint = require('./blueprint');
 const Application = require('./application');
 // Fixes deprecation warning
 mongoose.Promise = Promise;
@@ -59,11 +58,6 @@ const userSchema = mongoose.Schema({
     },
     node: {
       type: [Application]
-    },
-  },
-  blueprints: {
-    node: {
-      type: [Blueprint]
     },
   },
 });

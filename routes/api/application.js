@@ -17,13 +17,17 @@ const User = require('../../models/user');
 
 const usersNetwork = 'hostlab_users';
 
+
 router.post('/', async (req, res, next) => {
 	try {
 		const mongoID = mongoose.Types.ObjectId();
-		const bluePrintID = req.body.blueprintId;
-		const mountPath = req.body.path;
+		const repositoryID = req.body.repo[0];
+		const repositoryBranch = req.body.repo[1];
 		const scriptIndex = req.body.scriptIndex;
+		const mountPath = req.body.path;
 		const needsMongo = req.body.needsMongo;
+
+		const packageJson = await getPackageJSON(repositoryID, repositoryBranch);
 
 		let mongoContainerID = '';
 		if (needsMongo) {
@@ -31,18 +35,6 @@ router.post('/', async (req, res, next) => {
 			const mongoExpressID = await createAndStartUsersMongoExpressInstance(
 				req, mongoContainerID);
 		}
-		let blueprint;
-
-		const blueprints = req.user.blueprints.node;
-		for (const currentBlueprint of blueprints) {
-			if (currentBlueprint._id == bluePrintID) {
-				blueprint = currentBlueprint;
-			}
-		}
-	
-		const repositoryID = blueprint.containingRepoID;
-		const repositoryBranch = blueprint.containingRepoBranch;
-		const packageJson = await getPackageJSON(repositoryID, repositoryBranch);
 
 		log('Creating Container with Repository ID:', repositoryID);
 		const archive = 'archive.tar.gz';
@@ -59,7 +51,7 @@ router.post('/', async (req, res, next) => {
 		const out = await docker.buildImage({
 			context: path,
 			src: ['Dockerfile', archive],
-		}, {t: 'node_' + bluePrintID});
+		}, {t: 'node_' + mongoID});
 		out.pipe(process.stdout, {
 			end: true,
 		});
@@ -71,7 +63,7 @@ router.post('/', async (req, res, next) => {
 			users = resUsers.body;
 
 			const createContainerOpts = {
-				Image: 'node_' + bluePrintID,
+				Image: 'node_' + mongoID,
 				Cmd: (Object.keys(packageJson.scripts)[scriptIndex] || 'start'),
 				name: mongoID.toString(),
 				Env: [
@@ -99,7 +91,6 @@ router.post('/', async (req, res, next) => {
 							_id: `${mongoID}`,
 							name: `${mountPath}`,
 							repoName: `${repoName}`,
-							blueprint: blueprint,
 							autostart: true,
 							needsMongo: needsMongo,
 						},

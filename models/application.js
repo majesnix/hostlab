@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Blueprint = require('./blueprint');
 const slugify = require('slugify');
 
 const { getStatusOfApplication } = require('../common/docker');
@@ -10,15 +9,13 @@ mongoose.Promise = Promise;
 const applicationSchema = mongoose.Schema({
     name: String,
     port: Number,
-    scriptLoc: String,
     created: {
     type: Date,
         default: Date.now,
     },
     repoName: String,
-    blueprint: {
-        type: Blueprint
-    },
+    repoID: Number,
+    repoBranch: String,
     autostart: Boolean,
 });
 
