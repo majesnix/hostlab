@@ -1,7 +1,7 @@
 /*
  * This file is part of HostLab.
  *
- * Copyright 2017 Jan Wystub
+ * Copyright 2018 Jan Wystub
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,12 +41,9 @@ const usersNetwork = 'hostlab_users';
  * Creates and starts a mongoDB instance for the user if not already owns one.
  *
  * @param req       The req object
- * @param callback  The callback function
  */
 function createAndStartUsersMongoInstance(req) {
-
   return new Promise(function(resolve, reject) {
-
     // Check if user already owns a mongoDB instance
     if (req.user.containers.mongo.id) {
       return resolve(req.user.containers.mongo.id);
@@ -82,7 +79,6 @@ function createAndStartUsersMongoInstance(req) {
         },
     );
   });
-
 }
 
 function createAndStartUsersMongoExpressInstance(req, mongoID) {
@@ -127,7 +123,8 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
                     require('./connections').
                         proxy.
                         register(
-                            `${process.env.HOSTNAME}/${userObj[1]}/${userObj[0]}/mongo`,
+                            `${req.app.get(
+                                'host')}/${userObj[1]}/${userObj[0]}/mongo`,
                             `${data.NetworkSettings.Networks.hostlab_users.IPAddress}:8081/${userObj[1]}/${userObj[0]}/mongo/`);
                     return resolve(data.Config.Hostname);
                   },
@@ -136,7 +133,6 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
           });
         });
   });
-
 }
 
 function getStatusOfApplication(applicationName) {
@@ -157,14 +153,11 @@ function retrieveContainerLogs(containerId) {
       tail: 100,
       follow: 0,
     };
-
     let containerLogs = [];
-
     const logStream = new stream.PassThrough();
     logStream.on('data', function(chunk) {
       containerLogs.push(chunk.toString('utf8'));
     });
-
     container.logs(logOpts, function(err, stream) {
       if (err) {
         reject(err);
@@ -174,7 +167,6 @@ function retrieveContainerLogs(containerId) {
         logStream.end();
         resolve(containerLogs);
       });
-
       setTimeout(function() {
         stream.destroy();
       }, 2000);

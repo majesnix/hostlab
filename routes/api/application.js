@@ -10,7 +10,6 @@ const log = require('debug')('hostlab:route:api:application');
 const slugify = require('slugify');
 const gitlab_token = process.env.GITLAB_TOKEN;
 const gitlab_url = process.env.GITLAB_URL;
-const hostlab_ip = process.env.HOSTNAME;
 const mongoose = require('mongoose');
 const getPackageJSON = require('../../modules/getpackagejson');
 
@@ -26,19 +25,18 @@ router.post('/', async (req, res, next) => {
     const scriptIndex = req.body.scriptIndex;
     const needsMongo = req.body.needsMongo;
 
-    let mongoContainerID = "";
+    let mongoContainerID = '';
     if (needsMongo) {
       mongoContainerID = await createAndStartUsersMongoInstance(req);
       const mongoExpressID = await createAndStartUsersMongoExpressInstance(
           req, mongoContainerID);
     }
-
-    var blueprint;
+    let blueprint;
 
     const blueprints = req.user.blueprints.node;
-    for (var i in blueprints) {
-      if (blueprints[i]._id == bluePrintID) {
-        blueprint = blueprints[i];
+    for (let currentBlueprint of blueprints) {
+      if (currentBlueprint._id === bluePrintID) {
+        blueprint = currentBlueprint;
       }
     }
     const repositoryID = blueprint.containingRepoID;
@@ -115,8 +113,8 @@ router.post('/', async (req, res, next) => {
             }
             const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
             proxy.register(
-                `${hostlab_ip}/${userObj[1]}/${userObj[0]}/${slugify(
-                    mountPath)}`, `${containerIP}:8080`);
+                `${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
+                    slugify(mountPath)}`, `${containerIP}:8080`);
             res.send(200);
           });
         });
@@ -131,7 +129,7 @@ router.post('/:id/start', async (req, res, next) => {
   const applicationID = req.param('id');
   const container = docker.getContainer(applicationID);
   container.inspect(function(err, data) {
-    if (data.State.Status == 'running') {
+    if (data.State.Status === 'running') {
       res.send(400, {message: 'Bad Request: Container is already running.'});
     } else {
       User.findById(req.user._id, function(err, user) {
@@ -144,8 +142,9 @@ router.post('/:id/start', async (req, res, next) => {
             const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
             const mountPath = user.containers.node.id(applicationID).name;
 
-            proxy.register(`${hostlab_ip}/${userObj[1]}/${userObj[0]}/${slugify(
-                mountPath)}`, `${containerIP}:8080`);
+            proxy.register(
+                `${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
+                    slugify(mountPath)}`, `${containerIP}:8080`);
             res.send(200);
           });
         });
