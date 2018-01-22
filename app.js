@@ -25,10 +25,11 @@ mongoose.connect(mongoConnection.url, {
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-// add slug for pug use
+// add some useful locals
 app.use((req, res, next) => {
   res.locals.moment = require('moment');
   res.locals.slugify = require('slugify');
+  res.locals.hostlabUrl = app.get('host');
   next();
 });
 

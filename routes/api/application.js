@@ -121,9 +121,10 @@ router.post('/', async (req, res, next) => {
 				});
 			});
 		});
-		//}
 	} catch (err) {
 		log(err);
+		// Timeout to prevent abuse of resources in case of errors
+		setTimeout(() => res.send(500, {message: "Unable to create application"}), 5000);
 	}
 });
 

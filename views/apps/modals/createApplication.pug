@@ -1,64 +1,106 @@
+block append config
+    - let userObj = user.email.split('@')
+
 mixin createApplicationModal
     .modal.fade.in#newAppModal
         .modal-dialog
             .modal-content
                 .modal-header
-                    button.close(data-dismiss="modal" aria-label="Close")
-                        span(aria-hidden="true")
-                    h4.modal-title n/A
+                    button.close(data-dismiss="modal")
+                        i.fas.fa-times
+                    h4.modal-title Create Application
 
-                // TODO Call with selected Repo
                 form.createApplication(action="#" method="post", class="createApp")
-                    input#createAppBlueprintId(type="hidden" name="blueprintId" value="0")
                     .modal-body
+                        h4 Base Configuration
+                        .form-group
+                            label Select a Repository
+                            select.form-control#createApplicationRepo(name="repo")
+                                each repo in repositories
+                                    option(value=repo.id)= repo.name
+                        .form-group
+                            label Select a Branch
+                            select.form-control#createApplicationBranch(name="repo")
+                                each branch in repositories[0].branches
+                                    option(value=branch selected=(branch === 'master'))= branch
                         .form-group
                             label Select a Run-Script
-                            select.form-control#createBlueprintScripts(name="scriptIndex")
+                            select.form-control#createApplicationScripts(name="scriptIndex")
                         .form-group
                             label(for="createAppMountPath") Select a Mount Path
-                            input.form-control#createAppMountPath(type="text" name="path" placeholder="Mount Path...")
+                            .input-group
+                                span.input-group-addon= `${hostlabUrl}/${userObj[1]}/${userObj[0]}/`
+                                input.form-control#createApplicationMountPath(type="text" name="path" placeholder="my-project" required)
+                        hr
+                        h4 Additional Features
                         .checkbox
                             label
                                 input(type="checkbox", name="needsMongo")
-                                | Needs MongoDB Connection
+                                | Attach MongoDB
                     .modal-footer
-                        button.btn.btn-default.pull-left(data-dismiss="modal") Cancel
-                        button.btn.btn-primary Create Application
+                        button.btn.btn-default.btn-flat(type="button") Cancel
+                        button.btn.btn-primary.btn-flat(type="submit") Create Application
 
 block append scripts
     script.
         $(document).ready(function() {
-            $('#newAppModal').on('show.bs.modal', function(event) {
-                let target = $(event.relatedTarget);
+            refreshScripts();
 
-                $('#createAppBlueprintId').val(target.data('id'));
-                $('#createAppMountPath').val(target.data('name').toLowerCase());
-                const createBlueprintScripts = $('#createBlueprintScripts').empty();
+            function refreshScripts() {
+                $.get(`/api/v1/repository/${$('#createApplicationRepo').val()}/${$('#createApplicationBranch').val()}/scripts`, function(data) {
+                    $('#createApplicationScripts').empty();
 
-                JSON.parse(atob(target.data('scripts'))).forEach(function(script, idx) {
-                    createBlueprintScripts.append($('<option>', {
-                        value: idx,
-                        selected: script === 'start',
-                        text: script
+                    data.forEach(function(script, idx) {
+                        $('#createApplicationScripts').append($('<option>', {
+                            value: idx,
+                            selected: script === 'start',
+                            text: script
+                        }));
+                    });
+                });
+            }
+
+            const branches = !{JSON.stringify(branches)};
+
+            $('#createApplicationRepo').on('change', function(e) {
+                let repo = $(this).find('option:selected').first();
+
+
+                $('#createApplicationBranch').empty();
+                branches[repo.val()].forEach(function(branch) {
+                    $('#createApplicationBranch').append($('<option>', {
+                        value: branch,
+                        selected: branch === 'master',
+                        text: branch
                     }));
                 });
 
-                $(this).find('.modal-title').text('New Application based on Blueprint ' + target.data('name'));
+                refreshScripts();
+            });
+
+            $('#createApplicationBranch').on('change', function(e) {
+                e.preventDefault();
+
+                refreshScripts();
             });
 
             $('.createApplication').on('submit', function(e) {
                 e.preventDefault()
-                $(this).find('button').attr("disabled", true);
+                let modalBtn = $(this).find('button[type="submit"]');
+
+                modalBtn.attr("disabled", true).html('<i class="fas fa-spinner fa-pulse" style="margin-right: 4px;"></i><span>Creating Application...</span>');
 
                 $.ajax({
                     url: '/api/v1/application/',
                     method: 'POST',
                     data: $(this).serialize(),
-                    success: function(res) {
+                    success: function() {
                         location.reload();
                     },
-                    error: function(err) {
-                        // TODO Error Handling
+                    error: function(xhr) {
+                        $('#alerts').empty().append(`<div class="alert alert-danger">Toggle failed: ${xhr.responseJSON.message}`);
+                        modalBtn.attr("disabled", false).text("Create Application");
+                        $('#newAppModal').modal('hide');
                     }
                 })
             });

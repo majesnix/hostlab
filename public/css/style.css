@@ -68,3 +68,37 @@
 .main-header .sidebar-toggle:before {
   content: none;
 }
+
+.btn-success {
+  background-color: #3d9970!important;
+  border-color: #3d9970!important;
+}
+
+.btn-success:hover,
+.btn-success:active,
+.btn-success.hover {
+  background-color: #368964!important;
+}
+
+.btn-danger {
+  background-color: #c93d42!important;
+  border-color: #c93d42!important;
+}
+
+.btn-danger:hover,
+.btn-danger:active,
+.btn-danger.hover {
+  background-color: #b4363b!important;
+}
+
+
+.btn-warning {
+  background-color: #e5b570!important;
+  border-color: #e5b570!important;
+}
+
+.btn-warning:hover,
+.btn-warning:active,
+.btn-warning.hover {
+  background-color: #cea264!important;
+}

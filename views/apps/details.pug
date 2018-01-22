@@ -16,6 +16,10 @@ block content
                                 dd= container.name
                                 dt Available at
                                 dd= container.mountPath
+                                dt Repository Name
+                                dd= container.containingRepoName
+                                dt Repository Branch
+                                dd= container.containingRepoBranch
                                 dt Deployed Commit hash
                                 dd= container.commitHash
                                 dt Created
@@ -25,19 +29,6 @@ block content
                         .box-footer
                             input.onOffToggle(type="checkbox" checked=container.isRunning data-id=container._id)
 
-        .col-sm12.col-lg-12
-            .panel.panel-default
-                .box.box-info
-                    .box-header.with-border
-                        h3.box-title Blueprint Details
-                        .box-body
-                            dl.dl-horizontal
-                                dt Name
-                                dd= container.blueprint.name
-                                dt Repository Name
-                                dd= container.blueprint.containingRepoName
-                                dt Repository Branch
-                                dd= container.blueprint.containingRepoBranch
         .col-sm12.col-lg-12
             .panel.panel-default
                 .box.box-default
