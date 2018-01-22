@@ -4,7 +4,7 @@ const tmp = require('tmp-promise');
 const snek = require('snekfetch');
 const write = promisify(require('fs').writeFile);
 const {docker, dockerfile, createAndStartUsersMongoInstance, createAndStartUsersMongoExpressInstance} = require(
-    '../../common/docker');
+	'../../common/docker');
 const proxy = require('../../common/connections').proxy;
 const log = require('debug')('hostlab:route:api:application');
 const slugify = require('slugify');
@@ -18,180 +18,182 @@ const User = require('../../models/user');
 const usersNetwork = 'hostlab_users';
 
 router.post('/', async (req, res, next) => {
-  try {
-    const mongoID = mongoose.Types.ObjectId();
-    const bluePrintID = req.body.blueprintId;
-    const mountPath = req.body.path;
-    const scriptIndex = req.body.scriptIndex;
-    const needsMongo = req.body.needsMongo;
+	try {
+		const mongoID = mongoose.Types.ObjectId();
+		const bluePrintID = req.body.blueprintId;
+		const mountPath = req.body.path;
+		const scriptIndex = req.body.scriptIndex;
+		const needsMongo = req.body.needsMongo;
 
-    let mongoContainerID = '';
-    if (needsMongo) {
-      mongoContainerID = await createAndStartUsersMongoInstance(req);
-      const mongoExpressID = await createAndStartUsersMongoExpressInstance(
-          req, mongoContainerID);
-    }
-    let blueprint;
+		let mongoContainerID = '';
+		if (needsMongo) {
+			mongoContainerID = await createAndStartUsersMongoInstance(req);
+			const mongoExpressID = await createAndStartUsersMongoExpressInstance(
+				req, mongoContainerID);
+		}
+		let blueprint;
 
-    const blueprints = req.user.blueprints.node;
-    for (let currentBlueprint of blueprints) {
-      if (currentBlueprint._id === bluePrintID) {
-        blueprint = currentBlueprint;
-      }
-    }
-    const repositoryID = blueprint.containingRepoID;
-    const repositoryBranch = blueprint.containingRepoBranch;
-    const packageJson = await getPackageJSON(repositoryID, repositoryBranch);
+		const blueprints = req.user.blueprints.node;
+		for (let currentBlueprint of blueprints) {
+			if (currentBlueprint._id == bluePrintID) {
+				blueprint = currentBlueprint;
+			}
+		}
+	
+		const repositoryID = blueprint.containingRepoID;
+		const repositoryBranch = blueprint.containingRepoBranch;
+		const packageJson = await getPackageJSON(repositoryID, repositoryBranch);
 
-    log('Creating Container with Repository ID:', repositoryID);
-    const archive = 'archive.tar.gz';
-    const {path} = await tmp.dir({
-      template: '/tmp/tmp-XXXXXX',
-      unsafeCleanup: true,
-    });
-    const response = await snek.get(
-        `${gitlab_url}/api/v4/projects/${repositoryID}/repository/archive?private_token=${gitlab_token}&sha=${repositoryBranch}`);
-    await write(`${path}/${archive}`, response.body);
-    log('File Saved.');
-    await write(`${path}/Dockerfile`, dockerfile.node(archive), 'utf-8');
-    // Kein Fehler beim Schreiben
-    const out = await docker.buildImage({
-      context: path,
-      src: ['Dockerfile', archive],
-    }, {t: 'node_' + bluePrintID});
-    out.pipe(process.stdout, {
-      end: true,
-    });
-    out.on('end', async () => {
+		log('Creating Container with Repository ID:', repositoryID);
+		const archive = 'archive.tar.gz';
+		const {path} = await tmp.dir({
+			template: '/tmp/tmp-XXXXXX',
+			unsafeCleanup: true,
+		});
+		const response = await snek.get(
+			`${gitlab_url}/api/v4/projects/${repositoryID}/repository/archive?private_token=${gitlab_token}&sha=${repositoryBranch}`);
+		await write(`${path}/${archive}`, response.body);
+		log('File Saved.');
+		await write(`${path}/Dockerfile`, dockerfile.node(archive), 'utf-8');
+		// Kein Fehler beim Schreiben
+		const out = await docker.buildImage({
+			context: path,
+			src: ['Dockerfile', archive],
+		}, {t: 'node_' + bluePrintID});
+		out.pipe(process.stdout, {
+			end: true,
+		});
+		out.on('end', async () => {
 
-      const resUsers = await snek.get(
-          `http://localhost:${req.app.settings.port}/api/v1/users`).
-          set('cookie', req.headers.cookie);
-      users = resUsers.body;
+			const resUsers = await snek.get(
+				`http://localhost:${req.app.settings.port}/api/v1/users`).
+				set('cookie', req.headers.cookie);
+			users = resUsers.body;
 
-      const createContainerOpts = {
-        Image: 'node_' + bluePrintID,
-        Cmd: (Object.keys(packageJson.scripts)[scriptIndex] || 'start'),
-        name: mongoID.toString(),
-        Env: [
-          `MONGO=${mongoContainerID}`,
-        ],
-        ExposedPorts: {
-          '8080/tcp': {},
-        },
-        Hostconfig: {
-          NetworkMode: usersNetwork,
-        },
-      };
+			const createContainerOpts = {
+				Image: 'node_' + bluePrintID,
+				Cmd: (Object.keys(packageJson.scripts)[scriptIndex] || 'start'),
+				name: mongoID.toString(),
+				Env: [
+					`MONGO=${mongoContainerID}`,
+				],
+				ExposedPorts: {
+					'8080/tcp': {},
+				},
+				Hostconfig: {
+					NetworkMode: usersNetwork,
+				},
+			};
 
-      const container = await docker.createContainer(createContainerOpts);
+			const container = await docker.createContainer(createContainerOpts);
 
-      container.start(async () => {
-        const response = await snek.get(
-            `${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`);
-        const projID = JSON.parse(response.text).id;
-        const repoName = JSON.parse(response.text).name;
-        const userObj = req.user.email.split('@');
-        User.findByIdAndUpdate(req.user._id, {
-          $push: {
-            'containers.node': {
-              _id: `${mongoID}`,
-              name: `${mountPath}`,
-              repoName: `${repoName}`,
-              blueprint: blueprint,
-              autostart: true,
-              needsMongo: needsMongo,
-            },
-          },
-        }, (err, user) => {
-          if (err) {
-            return next(err);
-          }
-          container.inspect((err, data) => {
-            if (err) {
-              return next(err);
-            }
-            const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
-            proxy.register(
-                `${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
-                    slugify(mountPath)}`, `${containerIP}:8080`);
-            res.send(200);
-          });
-        });
-      });
-    });
-  } catch (err) {
-    log(err);
-  }
+			container.start(async () => {
+				const response = await snek.get(
+					`${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`);
+				const projID = JSON.parse(response.text).id;
+				const repoName = JSON.parse(response.text).name;
+				const userObj = req.user.email.split('@');
+				User.findByIdAndUpdate(req.user._id, {
+					$push: {
+						'containers.node': {
+							_id: `${mongoID}`,
+							name: `${mountPath}`,
+							repoName: `${repoName}`,
+							blueprint: blueprint,
+							autostart: true,
+							needsMongo: needsMongo,
+						},
+					},
+				}, (err, user) => {
+					if (err) {
+						return next(err);
+					}
+					container.inspect((err, data) => {
+						if (err) {
+							return next(err);
+						}
+						const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
+						proxy.register(
+							`${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
+								slugify(mountPath)}`, `${containerIP}:8080`);
+						res.send(200);
+					});
+				});
+			});
+		});
+		//}
+	} catch (err) {
+		log(err);
+	}
 });
 
 router.post('/:id/start', async (req, res, next) => {
-  const applicationID = req.param('id');
-  const container = docker.getContainer(applicationID);
-  container.inspect(function(err, data) {
-    if (data.State.Status === 'running') {
-      res.send(400, {message: 'Bad Request: Container is already running.'});
-    } else {
-      User.findById(req.user._id, function(err, user) {
-        user.containers.node.id(applicationID).autostart = true;
-        user.save();
+	const applicationID = req.param('id');
+	const container = docker.getContainer(applicationID);
+	container.inspect(function(err, data) {
+		if (data.State.Status === 'running') {
+			res.send(400, {message: 'Bad Request: Container is already running.'});
+		} else {
+			User.findById(req.user._id, function(err, user) {
+				user.containers.node.id(applicationID).autostart = true;
+				user.save();
 
-        container.start(function(err, data) {
-          container.inspect(function(err, data) {
-            const userObj = user.email.split('@');
-            const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
-            const mountPath = user.containers.node.id(applicationID).name;
+				container.start(function(err, data) {
+					container.inspect(function(err, data) {
+						const userObj = user.email.split('@');
+						const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
+						const mountPath = user.containers.node.id(applicationID).name;
 
-            proxy.register(
-                `${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
-                    slugify(mountPath)}`, `${containerIP}:8080`);
-            res.send(200);
-          });
-        });
-      });
-    }
-  });
+						proxy.register(
+							`${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
+								slugify(mountPath)}`, `${containerIP}:8080`);
+						res.send(200);
+					});
+				});
+			});
+		}
+	});
 });
 
 router.post('/:id/stop', async (req, res, next) => {
-  const applicationID = req.param('id');
-  const container = docker.getContainer(applicationID);
-  container.inspect(function(err, data) {
-    if (data.State.Status === 'running') {
-      User.findById(req.user._id, function(err, user) {
-        user.containers.node.id(applicationID).autostart = false;
-        user.save();
+	const applicationID = req.param('id');
+	const container = docker.getContainer(applicationID);
+	container.inspect(function(err, data) {
+		if (data.State.Status === 'running') {
+			User.findById(req.user._id, function(err, user) {
+				user.containers.node.id(applicationID).autostart = false;
+				user.save();
 
-        container.stop(function(err, data) {
-          res.send(200);
-        });
-      });
-    } else {
-      res.send(400, {message: 'Bad Request: Container is not running.'});
-    }
-  });
+				container.stop(function(err, data) {
+					res.send(200);
+				});
+			});
+		} else {
+			res.send(400, {message: 'Bad Request: Container is not running.'});
+		}
+	});
 });
 
 router.delete('/:id', async (req, res, next) => {
-  const applicationID = req.param('id');
-  User.findById(req.user._id, function(err, user) {
-    user.containers.node.id(applicationID).remove();
-    user.save();
-    const container = docker.getContainer(applicationID);
-    container.inspect(function(err, data) {
-      if (data.State.Status === 'running') {
-        container.stop(function(err, data) {
-          container.remove(function(err, data) {
-            res.send(200);
-          });
-        });
-      } else {
-        container.remove(function(err, data) {
-          res.send(200);
-        });
-      }
-    });
-  });
+	const applicationID = req.param('id');
+	User.findById(req.user._id, function(err, user) {
+		user.containers.node.id(applicationID).remove();
+		user.save();
+		const container = docker.getContainer(applicationID);
+		container.inspect(function(err, data) {
+			if (data.State.Status === 'running') {
+				container.stop(function(err, data) {
+					container.remove(function(err, data) {
+						res.send(200);
+					});
+				});
+			} else {
+				container.remove(function(err, data) {
+					res.send(200);
+				});
+			}
+		});
+	});
 });
 
 module.exports = router;
