@@ -20,11 +20,11 @@ const http = require('http');
 const port = normalizePort(3000);
 app.set('port', port);
 
-const hostname = process.env.HOSTNAME || process.env.REMOTE_IP;
-app.set('hostname', hostname);
+const host = process.env.HOSTLAB_DOMAIN || process.env.HOSTLAB_IP;
+app.set('host', host);
 
 const proxy = require('../common/connections').proxy;
-proxy.register(hostname, `localhost:${ port }`);
+proxy.register(host, `localhost:${ port }`);
 
 function mongoResolver(host, url, req) {
   if (/^\/mongo/.test(url)) {
@@ -41,6 +41,7 @@ function mongoResolver(host, url, req) {
         });
   }
 }
+
 mongoResolver.priority = 100;
 proxy.addResolver(mongoResolver);
 
