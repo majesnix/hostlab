@@ -98,7 +98,7 @@ block append scripts
                         location.reload();
                     },
                     error: function(xhr) {
-                        $('#alerts').empty().append(`<div class="alert alert-danger">Toggle failed: ${xhr.responseJSON.message}`);
+                        $('#alerts').empty().append(`<div class="alert alert-danger">Error: ${xhr.responseJSON.message}`);
                         modalBtn.attr("disabled", false).text("Create Application");
                         $('#newAppModal').modal('hide');
                     }
