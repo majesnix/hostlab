@@ -116,7 +116,7 @@ router.post('/', async (req, res, next) => {
 						proxy.register(
 							`${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
 								slugify(mountPath)}`, `${containerIP}:8080`);
-						res.send(200);
+						res.sendStatus(200);
 					});
 				});
 			});
@@ -147,7 +147,7 @@ router.post('/:id/start', async (req, res, next) => {
 						proxy.register(
 							`${req.app.get('host')}/${userObj[1]}/${userObj[0]}/${
 								slugify(mountPath)}`, `${containerIP}:8080`);
-						res.send(200);
+						res.sendStatus(200);
 					});
 				});
 			});
@@ -165,7 +165,7 @@ router.post('/:id/stop', async (req, res, next) => {
 				user.save();
 
 				container.stop(function(err, data) {
-					res.send(200);
+					res.sendStatus(200);
 				});
 			});
 		} else {
@@ -184,12 +184,12 @@ router.delete('/:id', async (req, res, next) => {
 			if (data.State.Status === 'running') {
 				container.stop(function(err, data) {
 					container.remove(function(err, data) {
-						res.send(200);
+						res.sendStatus(200);
 					});
 				});
 			} else {
 				container.remove(function(err, data) {
-					res.send(200);
+					res.sendStatus(200);
 				});
 			}
 		});
