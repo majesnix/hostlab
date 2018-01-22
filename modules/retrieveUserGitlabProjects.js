@@ -13,7 +13,7 @@ module.exports = async function(userGitlabId) {
 		try {
 			packagejson = (await snek.head(`${process.env.GITLAB_URL}/api/v4/projects/${project.id}/repository/files/package.json?private_token=${process.env.GITLAB_TOKEN}&ref=master`)) ? true : false;
 		} catch (err) {
-			// Catches snekfetch promise rejection, no need to process this.
+			// Catches snekfetch promise rejection (thrown when the project has no package.json), no need to process this.
 		}
 
 		if (!project.archived && packagejson) {
