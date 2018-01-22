@@ -34,7 +34,7 @@ router.post('/', async (req, res, next) => {
 		let blueprint;
 
 		const blueprints = req.user.blueprints.node;
-		for (let currentBlueprint of blueprints) {
+		for (const currentBlueprint of blueprints) {
 			if (currentBlueprint._id == bluePrintID) {
 				blueprint = currentBlueprint;
 			}
