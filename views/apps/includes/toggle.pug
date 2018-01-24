@@ -1,44 +1,63 @@
+//-
+ This file is part of The HostLab Software.
+
+ Copyright 2018
+     Adrian Beckmann, Denis Paris, Dominic Claßen,
+     Jan Wystub, Manuel Eder, René Heinen, René Neißer.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
 block append scripts
     script.
-        $(document).ready(function() {
-            const toggleOpts = {
-                on: 'Running',
-                onstyle: 'success',
-                off: 'Stopped',
-                offstyle: 'danger',
-                width: '128px',
-                style: 'btn-flat'
-            };
+      $(document).ready(function() {
+        const toggleOpts = {
+          on: 'Running',
+          onstyle: 'success',
+          off: 'Stopped',
+          offstyle: 'danger',
+          width: '128px',
+          style: 'btn-flat'
+        };
 
-            $('.onOffToggle').bootstrapToggle(toggleOpts).on('change', function(e) {
-                e.preventDefault();
-                let context = $(this);
-                context.bootstrapToggle('disable');
+        $('.onOffToggle').bootstrapToggle(toggleOpts).on('change', function(e) {
+          e.preventDefault();
+          let context = $(this);
+          context.bootstrapToggle('disable');
 
-                let checked = context.prop('checked');
-                let toggle = context.closest('.toggle');
+          let checked = context.prop('checked');
+          let toggle = context.closest('.toggle');
 
-                if(checked) {
-                    toggle.toggleClass('btn-success btn-warning').find('.toggle-on').text("Starting...").toggleClass('btn-success btn-warning');
-                } else {
-                    toggle.toggleClass('btn-danger btn-warning').find('.toggle-off').text("Stopping...").toggleClass('btn-danger btn-warning');
-                }
+          if(checked) {
+            toggle.toggleClass('btn-success btn-warning').find('.toggle-on').text("Starting...").toggleClass('btn-success btn-warning');
+          } else {
+            toggle.toggleClass('btn-danger btn-warning').find('.toggle-off').text("Stopping...").toggleClass('btn-danger btn-warning');
+          }
 
-                $.ajax({
-                    url: '/api/v1/application/' + context.data('id') + "/" + (checked ? "start" : "stop"),
-                    method: 'POST',
-                    success: function(res) {
-                        if(checked) {
-                            toggle.toggleClass('btn-success btn-warning').find('.toggle-on').text("Running").toggleClass('btn-success btn-warning');
-                        } else {
-                            toggle.toggleClass('btn-danger btn-warning').find('.toggle-off').text("Stopped").toggleClass('btn-danger btn-warning');
-                        }
+          $.ajax({
+            url: '/api/v1/application/' + context.data('id') + "/" + (checked ? "start" : "stop"),
+            method: 'POST',
+            success: function(res) {
+              if(checked) {
+                toggle.toggleClass('btn-success btn-warning').find('.toggle-on').text("Running").toggleClass('btn-success btn-warning');
+              } else {
+                toggle.toggleClass('btn-danger btn-warning').find('.toggle-off').text("Stopped").toggleClass('btn-danger btn-warning');
+              }
 
-                        context.bootstrapToggle('enable');
-                    },
-                    error: function(xhr) {
-                        $('#alerts').empty().append(`<div class="alert alert-danger">Toggle failed: ${xhr.responseJSON.message}`);
-                    }
-                });
-            });
+              context.bootstrapToggle('enable');
+            },
+            error: function(xhr) {
+              $('#alerts').empty().append(`<div class="alert alert-danger">Toggle failed: ${xhr.responseJSON.message}`);
+            }
+          });
         });
+      });

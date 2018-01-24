@@ -1,7 +1,9 @@
 /*
- * This file is part of HostLab.
+ * This file is part of The HostLab Software.
  *
- * Copyright 2017 Dominic Claßen
+ * Copyright 2018
+ *     Adrian Beckmann, Denis Paris, Dominic Claßen, 
+ *     Jan Wystub, Manuel Eder, René Heinen, René Neißer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +28,7 @@ const snek = require('snekfetch');
  * @example
  * // Retrieves the Package.json of the project with the ID 1 and branch 'master'
  * const info = await getPackageJSON('1');
- * 
+ *
  * // Retrieves the Package.json of the project with the ID 1 and branch 'test'
  * const info = await getPackageJSON('1','test');
  */

@@ -1,7 +1,9 @@
 /*
- * This file is part of HostLab.
+ * This file is part of The HostLab Software.
  *
- * Copyright 2018 Jan Wystub
+ * Copyright 2018
+ *     Adrian Beckmann, Denis Paris, Dominic Claßen,
+ *     Jan Wystub, Manuel Eder, René Heinen, René Neißer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 const log = require('debug')('hostlab:docker');
 const Docker = require('dockerode');
 const {socketPath, protocol, host, port} = require('./connections').docker;

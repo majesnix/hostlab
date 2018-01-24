@@ -1,3 +1,22 @@
+//-
+ This file is part of The HostLab Software.
+
+ Copyright 2018
+     Adrian Beckmann, Denis Paris, Dominic Claßen,
+     Jan Wystub, Manuel Eder, René Heinen, René Neißer.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
 extends ../layouts/main
 include ../apps/includes/applicationBox
 
@@ -8,24 +27,24 @@ block content
                 h3.box-title= "Editing User " + userToEdit.email
             form.form-horizontal#editUser(action="" data-id=userToEdit._id)
                 .box-body
-                        .form-group
-                            label.col-sm-2.control-label(for="id") ID
-                            .col-sm-10: input.form-control#id(type="text", name="id" value=userToEdit._id, readonly)
-                        .form-group
-                            label.col-sm-2.control-label(for="gitlab") Gitlab ID
-                            .col-sm-10: input.form-control#gitlab(type="text", name="gitlab_id" value=userToEdit.gitlab_id, readonly)
-                        .form-group
-                            label.col-sm-2.control-label(for="email") E-Mail
-                            .col-sm-10: input.form-control#email(type="email", name="email" value=userToEdit.email, readonly)
-                        .form-group
-                            label.col-sm-2.control-label(for="active") Active
-                            .col-sm-10: input#active(type="checkbox", name="active" checked=userToEdit.active)
-                        .form-group
-                            label.col-sm-2.control-label(for="isAdmin") Admin
-                            .col-sm-10: input#isAdmin(type="checkbox", name="isAdmin" checked=userToEdit.isAdmin)
-                        .form-group
-                            label.col-sm-2.control-label(for="created") Created at
-                            .col-sm-10: input.form-control#created(type="text", name="created" value=userToEdit.created, readonly)
+                    .form-group
+                        label.col-sm-2.control-label(for="id") ID
+                        .col-sm-10: input.form-control#id(type="text", name="id" value=userToEdit._id, readonly)
+                    .form-group
+                        label.col-sm-2.control-label(for="gitlab") Gitlab ID
+                        .col-sm-10: input.form-control#gitlab(type="text", name="gitlab_id" value=userToEdit.gitlab_id, readonly)
+                    .form-group
+                        label.col-sm-2.control-label(for="email") E-Mail
+                        .col-sm-10: input.form-control#email(type="email", name="email" value=userToEdit.email, readonly)
+                    .form-group
+                        label.col-sm-2.control-label(for="active") Active
+                        .col-sm-10: input#active(type="checkbox", name="active" checked=userToEdit.active)
+                    .form-group
+                        label.col-sm-2.control-label(for="isAdmin") Admin
+                        .col-sm-10: input#isAdmin(type="checkbox", name="isAdmin" checked=userToEdit.isAdmin)
+                    .form-group
+                        label.col-sm-2.control-label(for="created") Created at
+                        .col-sm-10: input.form-control#created(type="text", name="created" value=userToEdit.created, readonly)
                 .box-footer
                     button.btn.btn-primary.btn-flat.btn-block(type="submit") Update User
     h3 User Applications
@@ -36,30 +55,30 @@ block content
 
 block append scripts
     script.
-        $(document).ready(function() {
-            $('#editUser').on('submit', function(e) {
-                e.preventDefault();
-                let formButtons = $(this).find('button');
+      $(document).ready(function() {
+        $('#editUser').on('submit', function(e) {
+          e.preventDefault();
+          let formButtons = $(this).find('button');
 
-                formButtons.attr('disabled', 1);
+          formButtons.attr('disabled', 1);
 
-                $.ajax({
-                    url: '/api/v1/users/' + $(this).data('id'),
-                    contentType: "application/json",
-                    method: 'PUT',
-                    dataType: 'json',
-                    data: JSON.stringify({
-                        active: $('#active').is(':checked'),
-                        isAdmin: $('#isAdmin').is(':checked')
-                    }),
-                    success: function(res) {
-                        formButtons.removeAttr('disabled');
-                        $('#alerts').empty().append("<div class='alert alert-success'><p>Update Successful</p></div>");
-                    },
-                    error: function(xhr) {
-                        formButtons.removeAttr('disabled');
-                        $('#alerts').empty().append("<div class='alert alert-danger'><p>Update Failed; " + xhr.responseJSON.message + "</p></div>");
-                    }
-                });
-            });
+          $.ajax({
+            url: '/api/v1/users/' + $(this).data('id'),
+            contentType: "application/json",
+            method: 'PUT',
+            dataType: 'json',
+            data: JSON.stringify({
+              active: $('#active').is(':checked'),
+              isAdmin: $('#isAdmin').is(':checked')
+            }),
+            success: function(res) {
+              formButtons.removeAttr('disabled');
+              $('#alerts').empty().append("<div class='alert alert-success'><p>Update Successful</p></div>");
+            },
+            error: function(xhr) {
+              formButtons.removeAttr('disabled');
+              $('#alerts').empty().append("<div class='alert alert-danger'><p>Update Failed; " + xhr.responseJSON.message + "</p></div>");
+            }
+          });
         });
+      });
