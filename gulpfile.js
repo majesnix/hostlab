@@ -28,7 +28,7 @@ gulp.task('css', function() {
     './node_modules/bootstrap/dist/css/bootstrap-reboot.css',
     './node_modules/admin-lte/dist/css/AdminLTE.css',
     './node_modules/admin-lte/dist/css/skins/skin-black.css',
-  ]).pipe(concat('bundle.css')).pipe(gulp.dest('./public/vendor/'));
+  ]).pipe(concat('bundle.css')).pipe(gulp.dest('./public/css/'));
 });
 
 gulp.task('js', function() {
@@ -37,13 +37,7 @@ gulp.task('js', function() {
     './node_modules/bootstrap/dist/js/bootstrap.js',
     './node_modules/icheck/icheck.js',
     './node_modules/admin-lte/dist/js/adminlte.js',
-  ]).pipe(concat('bundle.js')).pipe(gulp.dest('./public/vendor/'));
+  ]).pipe(concat('bundle.js')).pipe(gulp.dest('./public/js/'));
 });
 
-gulp.task('static', function() {
-  return gulp.src([
-    './node_modules/admin-lte/dist/img/**/*',
-  ]).pipe(gulp.dest('./public/vendor/assets/'));
-});
-
-gulp.task('default', ['css', 'js', 'static']);
+gulp.task('default', ['css', 'js']);
