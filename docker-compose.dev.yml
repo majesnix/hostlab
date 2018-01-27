@@ -6,6 +6,8 @@ services:
       - .:/app
     networks:
       - dev
+    stdin_open: true
+    tty: true
     environment:
       - DEBUG=hostlab:*
       - LDAP_URL=ldap://ldap
