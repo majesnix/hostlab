@@ -26,6 +26,7 @@ services:
       dev:
         aliases:
           - gitlab.local
+    hostname: gitlab.local
     volumes:
       - /srv/gitlab/config:/etc/gitlab:rw
       - /srv/gitlab/logs:/var/log/gitlab:rw
