@@ -34,7 +34,7 @@ block content
                                 dt Name
                                 dd= container.name
                                 dt Available at
-                                dd= container.mountPath
+                                dd: a(href=container.mountPath)=container.mountPath
                                 dt Repository Name
                                 dd= container.repoName
                                 dt Repository Branch
