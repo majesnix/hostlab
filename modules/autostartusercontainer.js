@@ -49,17 +49,20 @@ module.exports = function(app) {
         } catch (err) {
           log(err);
         }
+
       });
       if (user.containers.mongoExpress.id) {
-        const containerToInspect = docker.getContainer(
-            user.containers.mongoExpress.id);
+        const containerToInspectMongo = docker.getContainer(user.containers.mongo.id);
+        const containerToInspectMongoExpress = docker.getContainer(user.containers.mongoExpress.id);
         const userObj = user.email.split('@');
-        containerToInspect.start(function(err, data) {
-          containerToInspect.inspect(function(err, data) {
-            const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
-            proxy.register(
-                `${app.settings.host}/${userObj[1]}/${userObj[0]}/mongo`,
-                `${containerIP}:8081/${userObj[1]}/${userObj[0]}/mongo/`);
+        containerToInspectMongo.start(function(err, data) {
+          containerToInspectMongoExpress.start(function(err, data) {
+            containerToInspectMongoExpress.inspect(function(err, data) {
+              const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
+              proxy.register(
+                  `${app.settings.host}/${userObj[1]}/${userObj[0]}/mongo`,
+                  `${containerIP}:8081/${userObj[1]}/${userObj[0]}/mongo/`);
+            });
           });
         });
       }
