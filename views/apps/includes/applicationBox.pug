@@ -31,8 +31,7 @@ mixin applicationBox(application)
                     a.btn.btn-box-tool(href="/node/" + slugify(application.name))
                         i.fas.fa-wrench.edit
             .box-body
-                //div= console.log(application.blueprint)
-                // TODO: Box
-                //p= "Base Blueprint: " + application.blueprint.name
+                div= "Reponame: " + application.repoName
+                p= "Branch: " + application.repoBranch
                 hr
                 input.onOffToggle(type="checkbox" checked=application.isRunning data-id=application._id)

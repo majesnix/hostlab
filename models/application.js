@@ -28,7 +28,6 @@ mongoose.Promise = Promise;
 
 const applicationSchema = mongoose.Schema({
   name: String,
-  port: Number,
   created: {
     type: Date,
     default: Date.now,
@@ -37,6 +36,8 @@ const applicationSchema = mongoose.Schema({
   repoID: Number,
   repoBranch: String,
   autostart: Boolean,
+  commitHash: String,
+  needsMongo: String,
 });
 
 applicationSchema.post('init', async function() {

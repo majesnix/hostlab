@@ -99,10 +99,11 @@ router.post('/', async (req, res, next) => {
       const container = await docker.createContainer(createContainerOpts);
 
       container.start(async () => {
-        const response = await snek.get(
-            `${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`);
+        const response = await snek.get(`${gitlab_url}/api/v4/projects/${repositoryID}?private_token=${gitlab_token}`);
+        const responseCommit = await snek.get(`${gitlab_url}/api/v4/projects/${repositoryID}/repository/commits?private_token=${gitlab_token}&ref_name=${repositoryBranch}`);
         const projID = JSON.parse(response.text).id;
         const repoName = JSON.parse(response.text).name;
+        const commitHash = JSON.parse(responseCommit.text)[0].short_id;
         const userObj = req.user.email.split('@');
         User.findByIdAndUpdate(req.user._id, {
           $push: {
@@ -110,8 +111,10 @@ router.post('/', async (req, res, next) => {
               _id: `${mongoID}`,
               name: `${mountPath}`,
               repoName: `${repoName}`,
+              repoBranch: `${repositoryBranch}`,
               autostart: true,
               needsMongo: needsMongo,
+              commitHash: `${commitHash}`
             },
           },
         }, (err, user) => {
