@@ -38,7 +38,7 @@ html
                                     p= message.error
                             if (message.info)
                                 .alert.alert-success
-                                    p= message.info
+                                    p !{message.info}
                     block content
         include scripts
         block scripts

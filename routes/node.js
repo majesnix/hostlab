@@ -27,7 +27,7 @@ const sanitizeHtml = require('sanitize-html');
 const fetchUserRepositories = require('../modules/retrieveUserGitlabProjects');
 const { retrieveContainerLogs } = require('../common/docker');
 
-router.get('/:name', async(req, res) => {
+router.get('/:name', async (req, res) => {
   const container = req.user.containers.node.find(
       e => slugify(e.name) === req.params.name);
   const containerLogs = (await retrieveContainerLogs(container._id)).map(
@@ -49,12 +49,12 @@ router.get('/', async (req, res) => {
       const repositories = await fetchUserRepositories(gitlab_id);
 
       let branches = {};
-      if(repositories.length>0){
+      if (repositories.length>0) { 
         branches = Object.assign(...repositories.map(repo => ({[repo.id]: repo.branches})));
       }
 
       if (repositories.length === 0) {
-        res.locals.message.info = 'You got no repositories';
+		  res.locals.message.info = `You got no repositories, create one on <a href="${process.env.GITLAB_URL}" target="_blank">Gitlab</a>`;
       }
 
       res.render('apps/overview', { repositories,branches });
