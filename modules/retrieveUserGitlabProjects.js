@@ -22,6 +22,15 @@ const slugify = require('slugify');
 const snek = require('snekfetch');
 const log = require('debug')('hostlab:module:retrieveUserGitlabProjects');
 
+/**
+ * Retrieves the Repositories (only if a package.json file exists) of the given Gitlab User (by ID)
+ * @param {number} userGitlabId The ID of the Gitlab User
+ * @returns {Promise<Object>}
+ * @example
+ * // Retrieves the non archived Repositories of the Gitlab User with the ID 1
+ * const info = await retrieveUserGitlabProjects(1);
+ */
+
 module.exports = async function(userGitlabId) {
   const {text} = await snek.get(
       `${process.env.GITLAB_URL}/api/v4/projects?private_token=${process.env.GITLAB_TOKEN}&sudo=${userGitlabId}&membership=true`);

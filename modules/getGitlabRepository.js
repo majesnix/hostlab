@@ -21,6 +21,15 @@
 const snek = require('snekfetch');
 const log = require('debug')('hostlab:module:retrieveUserGitlabProjects');
 
+/**
+ * Retrieves the given gitlab repository (by gitlabID)
+ * @param {number} repoId The ID of the gitlab repository
+ * @returns {Promise<Object>}
+ * @example
+ * // Retrieves a specific repository of the Gitlab User with the ID 1
+ * const info = await getGitlabRepository(1);
+ */
+
 module.exports = async function(repoId) {
   const {text} = await snek.get(
       `${process.env.GITLAB_URL}/api/v4/projects/${repoId}?private_token=${process.env.GITLAB_TOKEN}`);

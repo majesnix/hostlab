@@ -22,7 +22,7 @@ const snek = require('snekfetch');
 
 /**
  * Retrieves the PackageJSON of the given Gitlab Repository (ID) and the given Branch
- * @param {string} repositoryID The GitlabID of the repository
+ * @param {number} repositoryID The GitlabID of the repository
  * @param {string} [branch=master] The branch of the repository
  * @returns {Promise<Object>}
  * @example
