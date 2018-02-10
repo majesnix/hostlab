@@ -43,7 +43,8 @@ const usersNetwork = 'hostlab_users';
 /**
  * Creates and starts a mongoDB instance for the user if not already owns one.
  *
- * @param req       The req object
+ * @param {Object} req       The req object
+ * @returns {Promise<Object>}
  */
 function createAndStartUsersMongoInstance(req) {
   return new Promise(function(resolve, reject) {
@@ -51,6 +52,7 @@ function createAndStartUsersMongoInstance(req) {
     if (req.user.containers.mongo.id) {
       return resolve(req.user.containers.mongo.id);
     }
+    // create container with latest alpine-mongo
     docker.createContainer({
           Image: 'mvertes/alpine-mongo:latest',
           Hostconfig: {
@@ -61,6 +63,7 @@ function createAndStartUsersMongoInstance(req) {
           if (err) {
             return reject(err);
           }
+          // start the created container
           container.start(function startedContainer(err, data) {
             if (err) {
               return reject(err);
@@ -69,11 +72,13 @@ function createAndStartUsersMongoInstance(req) {
               if (err) {
                 return reject(err);
               }
+              // save hostname of the container to the DB
               req.user.update({'containers.mongo.id': data.Config.Hostname},
                   function updatedUser(err, raw) {
                     if (err) {
                       return reject(err);
                     }
+                    // resolve the promise with the new hostname
                     return resolve(data.Config.Hostname);
                   },
               );
@@ -84,11 +89,20 @@ function createAndStartUsersMongoInstance(req) {
   });
 }
 
+/**
+ * Creates and starts a mongoExpress instance for the user if not already owns one.
+ *
+ * @param {Object} req       The req object
+ * @param {number} mongoID   The mongoDB ID of the user
+ * @returns {Promise<Object>}
+ */
 function createAndStartUsersMongoExpressInstance(req, mongoID) {
   return new Promise(async function(resolve, reject) {
     if (req.user.containers.mongoExpress.id) {
+      // resolve the promise with the ID of the users mongoExpress container
       return resolve(req.user.containers.mongoExpress.id);
     }
+    // create new mongo-express container
     docker.createContainer({
           Image: 'mongo-express',
           Env: [
@@ -108,6 +122,7 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
           if (err) {
             return reject(err);
           }
+          // start the created container
           container.start(function startedContainer(err, data) {
             if (err) {
               return reject(err);
@@ -116,6 +131,7 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
               if (err) {
                 return reject(err);
               }
+              // save the hostname of the container in the DB
               req.user.update(
                   {'containers.mongoExpress.id': data.Config.Hostname},
                   function updatedUser(err, raw) {
@@ -123,12 +139,14 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
                       return reject(err);
                     }
                     const userObj = req.user.email.split('@');
+                    // register the new mongoExpress container to the proxy
                     require('./connections').
                         proxy.
                         register(
                             `${req.app.get(
                                 'host')}/${userObj[1]}/${userObj[0]}/mongo`,
                             `${data.NetworkSettings.Networks.hostlab_users.IPAddress}:8081/${userObj[1]}/${userObj[0]}/mongo/`);
+                    // return the hostname of the new container
                     return resolve(data.Config.Hostname);
                   },
               );
@@ -138,6 +156,12 @@ function createAndStartUsersMongoExpressInstance(req, mongoID) {
   });
 }
 
+/**
+ * Returns the Application Status
+ *
+ * @param {string} applicationName name of the application
+ * @returns {Promise<Object>}
+ */
 function getStatusOfApplication(applicationName) {
   return new Promise(function(resolve, reject) {
     const containerToInspect = docker.getContainer(applicationName);
@@ -147,6 +171,12 @@ function getStatusOfApplication(applicationName) {
   });
 }
 
+/**
+ * Return the log of the given container
+ *
+ * @param {number} containerId ID of the wanted container
+ * @returns {Promise<Object>}
+ */
 function retrieveContainerLogs(containerId) {
   return new Promise(function(resolve, reject) {
     let container = docker.getContainer(containerId);
@@ -158,6 +188,7 @@ function retrieveContainerLogs(containerId) {
     };
     let containerLogs = [];
     const logStream = new stream.PassThrough();
+    // retrieve container logs and push it to the containerLogs array
     logStream.on('data', function(chunk) {
       containerLogs.push(chunk.toString('utf8'));
     });
@@ -168,6 +199,7 @@ function retrieveContainerLogs(containerId) {
       container.modem.demuxStream(stream, logStream, logStream);
       stream.on('end', function() {
         logStream.end();
+        // resolve the promise and return containerLogs
         resolve(containerLogs);
       });
       setTimeout(function() {

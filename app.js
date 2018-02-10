@@ -64,25 +64,29 @@ app.use(session({
       secret: 'keyboard cat',
       store: new MongoStore({
         mongooseConnection: mongoose.connection,
-        // Nach 24 Stunden wird die Session in der DB geupdated, auch wenn sie nicht modifiziert wurde und resave auf false gesetzt ist
+        // After 24 Hours the Session will be updated, even if it has not be modified and resave is set to false
         touchAfter: 5 // time period in seconds
       }),
-      // Cookies werden nach der maxAge Zeit gelöscht, auch bei Nutzerinteraktion
-      // Durch rolling: true wird bei jedem Request das maxAge neu gesetzt
+      /**
+       * Cookies will be deleted if they pass the maxAge duration, even if the User interacts with the service
+       * rolling: true updates the maxAge entry for every Request
+       */
       rolling: true,
-      // Wenn die Session nicht modifiziert wurde wird sie nicht bei jedem Request neu gespeichert
+      // if the session was not modified the session will not be resaved (for every request) to the SessionDB
       resave: false,
-      // Bei jedem Request werden Cookies erzeugt, auch wenn nicht eingeloggt wird.
-      // Durch saveUninitialized: false werden diese Cookies nicht gespeichert und die SessionDB wird nicht vollgemüllt
+      /** 
+       * Every request creates a cookie, even if the user doesnt log in
+       * saveUninitialized: false does prevent the SessionDB to be polluted by these cookies
+       */
       saveUninitialized: false,
-      // Setzt die CookiespeicherDAUER auf eine festgelegte Zeit
-      cookie: {maxAge: 24 * 60 * 60 * 1000} // 24 Stunden
+      // Set the duration a cookie is saved
+      cookie: {maxAge: 24 * 60 * 60 * 1000} // 24 hours
     },
 ));
 
 app.use(flash());
 
-// Initialize und configure Passport
+// Initialize and configure Passport
 initPassport(app);
 
 // Override the original HTTP method with the method in `req.body._method`

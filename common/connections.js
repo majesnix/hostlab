@@ -18,6 +18,10 @@
  * limitations under the License.
  */
 
+/**
+ * Contains all the needed information for the different services, used in
+ * Hostlab, to connect and use them.
+ */
 module.exports = {
   mongo: {
     url: process.env.MONGO_URL,
@@ -28,5 +32,5 @@ module.exports = {
     port: process.env.DOCKER_PORT || 2375,
     protocol: process.env.DOCKER_PROTOCOL || 'http',
   },
-  proxy: require('redbird')({port: 8080}),
+  proxy: require('redbird')({port: 8080, bunyan:false}),
 };

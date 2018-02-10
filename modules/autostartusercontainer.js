@@ -24,22 +24,34 @@ const {docker} = require('../common/docker');
 const proxy = require('../common/connections').proxy;
 const slugify = require('slugify');
 
+/**
+ * Retrieves all Users, loops through their containers and boots them up, also registers
+ * the starting containers to the proxy
+ * @param {Express App} app The current express application
+ */
+
 module.exports = function(app) {
   log(app.settings);
+  // Retrieve all users
   User.find(function(err, users) {
     if (err) {
       return next(err);
     }
+    // loop through the found Users
     users.forEach(user => {
+      // loop through each user containers
       user.containers.node.forEach(container => {
         try {
           const containerToInspect = docker.getContainer(container._id);
           const userObj = user.email.split('@');
           const mountPath = container.name;
           if (container.autostart === true) {
+            // start the container
             containerToInspect.start(function(err, data) {
+              // inspect the container informations
               containerToInspect.inspect(function(err, data) {
                 const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
+                // register containers IP address to the proxy
                 proxy.register(
                     `${app.settings.host}/${userObj[1]}/${userObj[0]}/${
                         slugify(mountPath)}`, `${containerIP}:8080`);
@@ -51,14 +63,21 @@ module.exports = function(app) {
         }
 
       });
+      // check for existing mongoExpress container
       if (user.containers.mongoExpress.id) {
+        // get mongoDB container ID
         const containerToInspectMongo = docker.getContainer(user.containers.mongo.id);
+        // get mongoExpress container ID
         const containerToInspectMongoExpress = docker.getContainer(user.containers.mongoExpress.id);
         const userObj = user.email.split('@');
+        // start mongoDB container
         containerToInspectMongo.start(function(err, data) {
+          // start mongoExpress container
           containerToInspectMongoExpress.start(function(err, data) {
+            // inspect the container informations
             containerToInspectMongoExpress.inspect(function(err, data) {
               const containerIP = data.NetworkSettings.Networks.hostlab_users.IPAddress;
+              // register mongoExpress IP address to the proxy
               proxy.register(
                   `${app.settings.host}/${userObj[1]}/${userObj[0]}/mongo`,
                   `${containerIP}:8081/${userObj[1]}/${userObj[0]}/mongo/`);

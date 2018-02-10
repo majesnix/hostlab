@@ -26,7 +26,7 @@ const log = require('debug')('hostlab:module:retrieveUserGitlabProjects');
  * @param {number} repoId The ID of the gitlab repository
  * @returns {Promise<Object>}
  * @example
- * // Retrieves a specific repository of the Gitlab User with the ID 1
+ * // Retrieves a specific repository of the Gitlab User with the repository ID 1
  * const info = await getGitlabRepository(1);
  */
 

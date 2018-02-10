@@ -32,9 +32,9 @@ module.exports = (app) => {
   app.use(passport.session());
 
   /**
-   * Diese Funktion wird bei erfolgreichem Login mit dem user Objekt aufgerufen
-   * Der Callback done(null, user.id) gibt an, welche Daten des Nutzers im Cookie gespeichert werden
-   * um ihn später wieder zu identifizieren
+   * This function will be executed after a succuessful login and the user object returned from passport.
+   * The callback done(null, user.id) specifies which information of the user will be save in the cookie
+   * to identify the user afterwards. 
    */
   passport.serializeUser((user, done) => {
     log('Serialize User ', user);
@@ -42,8 +42,8 @@ module.exports = (app) => {
   });
 
   /**
-   * User wird bei einem Request mit der in serializeUser definierten Paramater in der Datenbank
-   * gesucht und als Objekt in req.user gespeichert.
+   * deserializeUser will search the user in the database with parameters defined in serializeUser
+   * and save the found user object in req.user
    */
   passport.deserializeUser((id, done) => {
     User.findById(id, (err, user) => {
@@ -111,7 +111,7 @@ module.exports = (app) => {
 
               await newUser.save();
               /**
-               * Bei erfolgreichem Login wird das Usermodel geupdated und der letzte Login gespeichert
+               * If login is successful, update the user model
                */
               newUser.updateLastLogin();
 
@@ -122,16 +122,18 @@ module.exports = (app) => {
               // CREATE new password for gitlab user
               const pass = passwordgen(8, false);
 
-              // CREATE Gitlab account with random pass
+              // CREATE Gitlab account with generated password
               const {text} = await snek.post(
                   `${gitlab_url}/api/v4/users?private_token=${gitlab_token}&email=${user.mail}&password=${pass}&username=${user.cn}&name=${user.cn}&skip_confirmation=true&can_create_group=false`);
               const parsedRes = JSON.parse(text);
 
+              // add Gitlab User ID and the avatarURL to user model
               newUser.gitlab_id = parsedRes.id;
               newUser.avatar_url = parsedRes.avatar_url
                   ? parsedRes.avatar_url
                   : '/vendor/assets/default.png';
 
+              // Save changes to DB
               await newUser.save();
 
               newUser.updateLastLogin();
