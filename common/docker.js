@@ -90,7 +90,7 @@ function createAndStartUsersMongoInstance(req) {
 }
 
 /**
- * Creates and starts a mongoExpress instance for the user if not already owns one.
+ * Creates and starts a mongoExpress instance for the user if he does not already own one.
  *
  * @param {Object} req       The req object
  * @param {number} mongoID   The mongoDB ID of the user

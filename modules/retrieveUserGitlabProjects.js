@@ -24,6 +24,8 @@ const log = require('debug')('hostlab:module:retrieveUserGitlabProjects');
 
 /**
  * Retrieves the Repositories (only if a package.json file exists) of the given Gitlab User (by ID)
+ * 
+ * @module
  * @param {number} userGitlabId The ID of the Gitlab User
  * @returns {Promise<Object>}
  * @example

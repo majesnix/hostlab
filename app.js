@@ -67,17 +67,13 @@ app.use(session({
         // After 24 Hours the Session will be updated, even if it has not be modified and resave is set to false
         touchAfter: 5 // time period in seconds
       }),
-      /**
-       * Cookies will be deleted if they pass the maxAge duration, even if the User interacts with the service
-       * rolling: true updates the maxAge entry for every Request
-       */
+       // Cookies will be deleted if they pass the maxAge duration, even if the User interacts with the service
+       // rolling: true updates the maxAge entry for every Request
       rolling: true,
       // if the session was not modified the session will not be resaved (for every request) to the SessionDB
       resave: false,
-      /** 
-       * Every request creates a cookie, even if the user doesnt log in
-       * saveUninitialized: false does prevent the SessionDB to be polluted by these cookies
-       */
+      // Every request creates a cookie, even if the user doesnt log in
+      // saveUninitialized: false does prevent the SessionDB to be polluted by these cookies
       saveUninitialized: false,
       // Set the duration a cookie is saved
       cookie: {maxAge: 24 * 60 * 60 * 1000} // 24 hours

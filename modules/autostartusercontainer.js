@@ -27,7 +27,9 @@ const slugify = require('slugify');
 /**
  * Retrieves all Users, loops through their containers and boots them up, also registers
  * the starting containers to the proxy
- * @param {Express App} app The current express application
+ * 
+ * @module
+ * @param {ExpressApp} app The current express application
  */
 
 module.exports = function(app) {
