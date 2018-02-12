@@ -23,4 +23,4 @@ hostlab-docker.sh
 .DS_Store?
 
 # ignore jsdocs
-out/
+docs/
