@@ -22,58 +22,73 @@ block content
     :markdown-it(linkify langPrefix='highlight-')
         # Nutzerhandbuch
         Hier finden Sie das Benutzerhandbuch für die Bedienung des Hostlabs.
-        Für die Inbetriebnahme klicken Sie [hier](#)
+        ### Standardnutzer für den Login im Hostlab und GitLab
+        Administrator:
+        ```
+        email: admin@example.com
+        PW: 12345
+        ```
+        Nutzer:
+        ```
+        email: hans@hostlab.local
+        PW: 12345
+        ```
+
 
         # Anmeldung im Hostlab
-        Um sich im Hostlab anzumelden navigieren Sie zur [Login-Seite](./login) und melden sich mit den Hochschul Logindaten an (z.B. max.mustermann@hsrw.org).
-        Wenn Sie sich das erste mal einloggen wird ein [Gitlab](#) Account für Sie erstellt, der zur Versionsverwaltung, sowie dem Bereitstellen des Quellcodes zum deployen einer [Node.js](https://nodejs.org/en) App genutzt wird.
+        Um sich im Hostlab anzumelden navigieren Sie zur [Login-Seite](/login) und melden sich mit den Hochschul Logindaten an (z.B. max.mustermann@hsrw.org).
+        Wenn Sie sich das erste mal einloggen wird ein [Gitlab](http://gitlab.local) Account für Sie erstellt, der zur Versionsverwaltung, sowie dem Bereitstellen des Quellcodes zum deployen einer [Node.js](https://nodejs.org/en) App genutzt wird.
 
         # Konfiguration Ihrer Node.js App
-        // TODO: Ergänzen
+        Damit Ihre Node.js Applikation erreichbar ist, ist es notwendig in Ihrer App den **Port** folgendermaßen einzubinden
+        ```js
+            const port = process.env.PORT
+        ```
+        ---
         Um auf Ihre **Mongo** Datenbank zugreifen zu können verwenden Sie folgenden Connection-String in Ihrer App
         ```js
             mongodb://process.env.MONGO/<dbname>
         ```
 
-        # Deployen einer Node.js App
-        Durch Klicken auf den Reiter [Node.js](./node) gelangen Sie zu der Seite, auf der Sie Ihre Apps deployen können.
-        ## Blueprints erstellen
-        - Wenn Sie das erste mal auf diese Seite navigieren erstellen Sie einen **Blueprint** über den dafür vorgesehenen Button.
-        - Auf der darauffolgenden Seite sehen Sie Ihre Gitlab Repositories in einem Dropdown Menu
-        -- Wählen Sie eins aus und geben Sie ihm optional einen Namen
-        -- Bei Klick auf **Create Blueprint** wird dieser erstellt und Sie werden weitergeleitet
-
-        ## Blueprint nutzen
-        Nach Klick auf den Reiter [Node.js](./node) sehen Sie nun Ihren Blueprint.
-        Dieser dient als Ausgangspunkt um Ihre App zu starten. Blueprints können über den Button in der oberen rechten Ecke auch wieder gelöscht werden.
-
-        ### App erstellen
-        Klicken Sie in Ihrem erstellten **Blueprint** auf **Create App**
-        - Es öffnet sich eine neue Maske in der Sie den Pfad, auf dem die App verfügbar sein soll, eingeben können
-        - Wählen Sie ihr Script aus der *package.json* aus, welches Sie starten möchten
-        - Wählen Sie eine Datenbank aus, sofern benötigt
-        - Der Button **Create App** startet nun Ihre Node.js App
-
-        ### Apps verwalten
-        Ihre Apps können Sie auf der Seite [Node.js](./node) einsehen. Alle Apps können mit den dafür betitelten Buttons gelöscht oder deaktiviert/reaktiviert werden
-
-        # Verwaltung der MongoDB
-        Zur Verwaltung der zur Verfügung gestellten Mongo Datenbank klicken Sie auf den Reiter [MongoDB](./mongo) in der linken Navigation.
-        Hier sehen Sie viele Informationen zu Ihrer Datenbank und können von hier Anpassungen am Datenmodell vornehmen. Für weitere Informationen und Features siehe [Mongo-Express](https://github.com/mongo-express/mongo-express#features)
-
-        # Verwaltung der PostgreSQL DB
-
         # Gitlab
         Wenn Sie sich das erste mal erfolgreich im Hostlab eingeloggt haben wird Ihnen ein [Gitlab](#) Account erstellt.
         Um eine Node.js App deployen zu können müssen Sie Ihren Quellcode in ein Repository pushen.
-        Nach einem erfolgreichen Push wird die Anwendung sofort im Hostlab registriert sobald das erste mal auf [Node.js](./node) navigiert wird.
+        Nach einem erfolgreichen Push wird die Anwendung sofort im Hostlab registriert sobald das erste mal auf [Node.js](/node) navigiert wird. Von dort aus können Sie Ihre Applikation deployen.
+
+        # Deployen einer Node.js App
+        Durch Klicken auf den Reiter [Node.js](/node) gelangen Sie zu der Seite, auf der Sie Ihre Apps deployen können.
+
+        ## App erstellen
+        - Wenn Sie das erste mal auf diese Seite navigieren und noch keine Repositories im [internen GitLab](http://gitlab.local) angelegt haben bekommen Sie den Hinweis, dass sie zuerst ein Repository erstellen müssen.
+        - Ein Projektboilerplate kann [hier](http://gitlab.local/projects/new) erstellt werden
+            - Klicken Sie dazu auf die Schaltfläche "Create from Template" und nutzen sie das NodeJS Express Template
+        - Sofern Sie schon Repositories besitzen sehen sie einen Button mit der Aufschrift "+New"
+        - Durch Klicken dieses Buttons öffnet sich ein Dialog, in dem Sie Ihr Repository, den Branch, ein Run-Script, welches aus Ihrer package.json gelesen wird und einen Pfad zum Hosten des Projektes auswählen können
+        - Sofern Sie eine Mongo Datenbank benötigen klicken Sie bitte auf das entsprechende Häkchen am unten Ende des Dialogs
+        - Wenn Sie alle Parameter ausgewählt haben klicken Sie auf den Button "Create Application"
+        - Die Seite wird neu geladen, sobald Ihre Anwendung erstellt wurde
+
+        ## Apps verwalten
+        Ihre Apps können Sie auf der Seite [Node.js](/node) einsehen.
+        - Alle laufenden Apps können über die Schalfläche "Running" gestoppt werden und zu jedem Zeitpunkt über ein Klicken auf "Stopped" wieder reaktiviert werden
+        - Durch einen Klick auf das Link Symbol in der oberen rechten Ecke der jeweiligen Applikation gelangen Sie auf die Base URL ihrer Anwendung
+        - Durch einen Klick auf das Schraubenschlüsselsymbol gelangen Sie zu einer Detailseite Ihrer Anwendung
+        - Auf dieser Seite können Sie die Logs Ihrer Anwendung einsehen
+        - Im unteren Bereich der Detailansicht haben Sie die möglichkeit die Anwendung dauerhaft zu löschen
+            - Dies kann NICHT rückgängig gemacht werden
+
+        # Verwaltung der MongoDB
+        Bitte beachten Sie, dass dieser Navigationspunkt erst aktiv wird, nachdem Sie Ihre erste Mongo Datenbank beim Erstellen einer Applikation angefordert haben.
+        Zur Verwaltung der zur Verfügung gestellten Mongo Datenbank klicken Sie auf den Reiter "MongoDB" in der linken Navigationsleiste.
+        Hier sehen Sie viele Informationen zu Ihrer Datenbank und können von hier Anpassungen am Datenmodell vornehmen. Für weitere Informationen und Features siehe [Mongo-Express](https://github.com/mongo-express/mongo-express#features)
+
 
         ---
         # Zusätzliche Bedienung für Administratoren
 
         ## Userverwaltung
 
-        Um in die Nutzervewaltung zu gelangen klicken Sie in der Linken Navigation auf den Punkt [Users](./admin/users).
+        Um in die Nutzervewaltung zu gelangen klicken Sie in der Linken Navigation auf den Punkt [Users](/admin/users).
         Hier sehen Sie alle im Hostlab registrierten Accounts und ob diese aktiv sind bzw. administrative Rechte besitzen.
         Bei Klick auf einen Nutzernamen können Sie diesen editieren und den Account deaktivieren bzw. ihm Administratorrechte hinzufügen.
         Sollten tiefgreifendere Anpassungen vorgenommen werden müssen muss direkt in der MongoDB des Hostlabs der User editiert werden.
@@ -82,3 +97,7 @@ block content
         Copyright 2018
             Adrian Beckmann, Denis Paris, Dominic Claßen,
             Jan Wystub, Manuel Eder, René Heinen, René Neißer.
+
+
+
+
