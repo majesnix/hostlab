@@ -2,8 +2,8 @@ version: "3"
 services:
   app:
     build: .
-    volumes:
-      - .:/app
+    #volumes:
+      #- .:/app
     networks:
       - dev
     stdin_open: true
@@ -35,9 +35,9 @@ services:
       - /srv/gitlab/data:/var/opt/gitlab:rw
       - ./common/gitlab.rb:/etc/gitlab/gitlab.rb:ro
     ports:
-      - ${GITLAB_IP:-0.0.0.0}:${GITLAB_PORT_80:-80}:80
-      - ${GITLAB_IP:-0.0.0.0}:${GITLAB_PORT_443:-443}:443
-      - ${GITLAB_IP:-0.0.0.0}:${GITLAB_PORT_22:-22}:22
+      - 127.0.0.11:8081:80
+      - 127.0.0.11:8443:443
+      - 127.0.0.11:8822:22
 networks:
   dev:
     driver: bridge

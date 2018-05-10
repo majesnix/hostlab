@@ -3,7 +3,7 @@ services:
   app:
     image: hostlab/hostlab:latest
     ports:
-      - ${HOSTLAB_IP}:${HOSTLAB_PORT:-8080}:8080
+      - 127.0.0.10:8080:8080
     networks:
       - app
       - users
@@ -20,7 +20,7 @@ services:
     networks:
       - app
     volumes:
-      - /srv/hostlab/db:/data/db:rw
+      - ./db:/data/db:rw
 networks:
   app:
     driver: bridge

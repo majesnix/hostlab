@@ -32,5 +32,5 @@ module.exports = {
     port: process.env.DOCKER_PORT || 2375,
     protocol: process.env.DOCKER_PROTOCOL || 'http',
   },
-  proxy: require('redbird')({port: 8080, bunyan:false}),
+  proxy: require('redbird')({port: 8080}),
 };
